@@ -1,0 +1,5 @@
+script.js:336 🍜 Asiacuisine.re - Site web initialisé avec succès !
+:3000/api/disponibilites:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+script.js:35 Failed to fetch availability: Error: Network response was not ok (500)
+    at fetchAndInitializeDatepicker (script.js:16:19)
+fetchAndInitializeDatepicker @ script.js:35

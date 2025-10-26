@@ -1,0 +1,68 @@
+Suggestion d'amélioration pour la galerie photos
+=================================================
+
+Objectif : Afficher les photos de la galerie dans un ordre aléatoire à chaque chargement de la page.
+
+Approche proposée :
+--------------------
+Remplacer la galerie HTML statique par une galerie générée dynamiquement par JavaScript.
+
+Étapes d'implémentation :
+--------------------------
+1.  Modifier le fichier `index.html` :
+    - Laisser le conteneur de la galerie vide pour que le JavaScript puisse le remplir.
+      Exemple : `<div class="gallery-scroll-container"></div>`
+
+2.  Modifier le fichier `script.js` :
+    - Créer une nouvelle fonction, par exemple `initializeRandomGallery()`.
+    - Dans cette fonction :
+        a. Définir une liste (un tableau JavaScript) contenant les noms de toutes les photos de l'album (ex: `['ramen.jpg', 'curry-thai.jpg', ...]`).
+        b. Mélanger cette liste de manière aléatoire (en utilisant l'algorithme de Fisher-Yates, par exemple).
+        c. Parcourir la liste mélangée et générer le code HTML pour chaque photo.
+        d. Insérer ce code HTML généré dans le conteneur de la galerie.
+    - Appeler cette nouvelle fonction `initializeRandomGallery()` au chargement de la page (depuis `initializePageContent`).
+
+Exemple de code pour la fonction JavaScript :
+--------------------------------------------
+function initializeRandomGallery() {
+    const galleryContainer = document.querySelector('.gallery-scroll-container');
+    if (!galleryContainer) return;
+
+    const photos = [
+        'ramen-authentique.jpg',
+        'dim-sum-maison.jpg',
+        'riz-cantonais.jpg',
+        'curry-thai.jpg',
+        'tempura-japonais.jpg',
+        'salade-vietnamienne.jpg'
+        // Ajouter les nouveaux noms de fichiers ici
+    ];
+
+    // Mélange de la liste (Fisher-Yates shuffle)
+    for (let i = photos.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [photos[i], photos[j]] = [photos[j], photos[i]];
+    }
+
+    let galleryHTML = '';
+    photos.forEach(photoFile => {
+        // On déduit le titre de l'image à partir du nom du fichier (simplification)
+        const altText = photoFile.split('.')[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+        galleryHTML += `
+            <div class="gallery-item">
+                <img src="assets/images/${photoFile}" alt="${altText}">
+                <div class="gallery-item-overlay">
+                    <span>${altText}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    galleryContainer.innerHTML = galleryHTML;
+
+    // Il faut ré-attacher les écouteurs pour la lightbox après avoir créé les éléments
+    initializeLightbox();
+}
+
+Note : La fonction `initializeLightbox()` devra être appelée à la fin de `initializeRandomGallery()` pour qu'elle puisse s'appliquer aux nouvelles images.

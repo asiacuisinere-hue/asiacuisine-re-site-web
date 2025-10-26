@@ -1,0 +1,841 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #d4af37;
+        }
+
+        .nav-toggle {
+            display: none; /* Caché par défaut sur grand écran */
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 35px;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Floating elements */
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 100px 0;
+            background: #f8f8f8;
+            position: relative;
+            z-index: 2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: #1a1a1a;
+        }
+
+        /* Service Menu with Multi-Page 3D Flip Effect */
+        .book-container {
+            max-width: 1100px;
+            margin: 4rem auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .book {
+            width: 100%;
+            height: 650px;
+            display: flex;
+            position: relative; /* For stacking context */
+        }
+
+        .static-cover {
+            flex: 1;
+            background: white;
+            border-radius: 15px 0 0 15px;
+            box-shadow: inset -5px 0px 15px -5px rgba(0,0,0,0.1);
+            padding: 2.5rem 3rem;
+            /* z-index removed to prevent stacking issues */
+        }
+
+        .book-title {
+            font-size: 2.8rem;
+            color: #d4af37;
+            font-family: 'Georgia', serif;
+        }
+
+        .flippable-pages-container {
+            flex: 1;
+            position: relative;
+            perspective: 2500px;
+            z-index: 2; /* Ensure this container is above the static one */
+        }
+
+        .flippable-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            /* Delay the z-index change to prevent flashes during animation */
+            transition: transform 1s ease-in-out, z-index 0s 0.5s;
+            transform-origin: left center;
+        }
+
+        .flippable-page.is-flipped {
+            transform: rotateY(-180deg);
+        }
+
+        .page-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: white;
+            border-radius: 0 15px 15px 0;
+            padding: 2.5rem 3rem;
+            box-shadow: 5px 0px 25px -5px rgba(0,0,0,0.15);
+            overflow-y: auto;
+            cursor: pointer; /* Indicates the whole page is clickable */
+        }
+
+        .page-back {
+            transform: rotateY(180deg);
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .page-front .page-number {
+            right: 25px;
+        }
+
+        .page-back .page-number {
+            left: 25px;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .service-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .service-features li {
+            padding: 0.5rem 0;
+            color: #555;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .service-features li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #d4af37;
+        }
+
+        /* About Section */
+        .about {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            color: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #d4af37;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .experience-highlights {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .highlight {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 15px;
+            flex: 1;
+        }
+
+        .highlight-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #d4af37;
+            display: block;
+        }
+
+        .about-image {
+            position: relative;
+            text-align: center;
+        }
+
+        .chef-placeholder {
+            width: 300px;
+            height: 400px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #1a1a1a;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Gallery Section */
+        .gallery {
+            padding: 100px 0;
+            background: #f8f8f8;
+        }
+
+        /* Gallery Section - Hybrid Grid/Carousel */
+        /* On desktop, we force the swiper wrapper to be a grid */
+        #galerie .swiper-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .swiper-slide {
+            /* Ensure slides have a consistent height */
+            height: 300px;
+        }
+
+        .gallery-item {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Hide Swiper elements on desktop by default */
+        .swiper-pagination,
+        .swiper-button-prev,
+        .swiper-button-next {
+            display: none;
+        }
+
+        /* Swiper Controls Customization */
+        .swiper-button-next, .swiper-button-prev {
+            color: #d4af37; /* Gold color for arrows */
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #d4af37; /* Gold color for active dot */
+        }
+
+        /* Responsive: On mobile, switch to carousel */
+        @media (max-width: 768px) {
+            #galerie .swiper-wrapper {
+                display: flex; /* Switch to flexbox for carousel */
+            }
+
+            .swiper-pagination,
+            .swiper-button-prev,
+            .swiper-button-next {
+                display: block; /* Show Swiper elements */
+            }
+        }
+
+        .gallery-item {
+            position: relative; /* Needed for the overlay */
+            height: 300px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden; /* Ensures the image respects the border radius */
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.4s ease-in-out;
+            font-weight: 500;
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Scales the image to cover the container */
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1); /* Zoom effect on the image */
+        }
+
+        /* Booking Section */
+        .booking {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #2d1810 0%, #1a1a1a 100%);
+            color: white;
+        }
+
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            display: none; /* Section masquée temporairement */
+            padding: 100px 0;
+            background: #f8f8f8;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .testimonial::before {
+            content: '"';
+            font-size: 4rem;
+            color: #d4af37;
+            position: absolute;
+            top: -10px;
+            left: 20px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+            color: #d4af37;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.8;
+        }
+
+        .footer-section a:hover {
+            color: #d4af37;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            /* This rule is now handled by the more specific one at the end of the file */
+            /* .nav-links {
+                display: none;
+            } */
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .experience-highlights {
+                flex-direction: column;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Datepicker text color fix */
+        .datepicker-picker {
+            background: #fff;
+        }
+        .datepicker .day, .datepicker .dow, .datepicker-header .datepicker-title, .datepicker-header .next-btn, .datepicker-header .prev-btn {
+            color: #333;
+        }
+        .datepicker .day.disabled, .datepicker .day.disabled:hover {
+            color: #999;
+        }
+        .datepicker .day.focused:not(.selected) {
+            background-color: #f0f0f0;
+        }
+        .datepicker .day.selected, .datepicker .day.selected:hover {
+            background-color: #d4af37;
+            color: #fff;
+        }
+
+        /* Hide days from previous/next months in datepicker */
+        .datepicker .day.prev,
+        .datepicker .day.next {
+            visibility: hidden;
+        }
+
+        /* Responsive Design for the Book Menu */
+        @media (max-width: 800px) {
+            /* --- General --- */
+            .section-title {
+                font-size: 2.2rem;
+            }
+
+            /* --- Nav --- */
+            .nav-toggle {
+                display: block;
+                z-index: 1001;
+            }
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: 280px;
+                background: rgba(20, 20, 20, 0.98);
+                backdrop-filter: blur(12px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 3rem;
+                transform: translateX(100%);
+                transition: transform 0.4s ease-in-out;
+                z-index: 1000; /* Make sure it's on top */
+            }
+            .nav-links.active {
+                transform: translateX(0);
+            }
+
+            /* --- Hero --- */
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            /* --- Services Book --- */
+            .book {
+                display: block;
+                height: auto;
+            }
+            .static-cover,
+            .flippable-pages-container {
+                flex: none;
+                width: 100%;
+            }
+            .static-cover {
+                border-radius: 15px;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .flippable-page {
+                position: relative;
+                transform: none !important;
+                margin-bottom: 2rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                border-radius: 15px;
+            }
+            .page-face {
+                position: static;
+                transform: none !important;
+                display: block !important;
+                border-radius: 15px;
+                cursor: default;
+            }
+            .page-back {
+                border-top: 1px dashed #ddd;
+                margin-top: 2rem;
+            }
+
+            /* --- About --- */
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .experience-highlights {
+                flex-direction: column;
+            }
+
+            /* --- Gallery --- */
+            #galerie .swiper-wrapper {
+                display: flex; /* Switch to flexbox for carousel */
+            }
+            .swiper-pagination,
+            .swiper-button-prev,
+            .swiper-button-next {
+                display: block; /* Show Swiper elements */
+            }
+        }
+
+/* Back to Top Button */
+.back-to-top-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(45deg, #d4af37, #ffd700);
+    color: #1a1a1a;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+.back-to-top-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Floating Social Links */
+.floating-social-links {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 999;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: white;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 0 10px 10px 0;
+    transition: all 0.3s ease;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+}
+
+.social-link.facebook {
+    background-color: #1877F2;
+}
+
+.social-link.instagram {
+    background: #d6249f;
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
+}
+
+.social-link:hover {
+    padding-left: 10px;
+    width: 50px;
+}

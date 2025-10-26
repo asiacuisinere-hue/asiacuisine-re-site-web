@@ -1,0 +1,14 @@
+# Fichier de configuration pour Netlify
+
+[build]
+  # Le dossier contenant les fichiers du site à déployer.
+  # Comme index.html est à la racine, on met ".".
+  publish = "."
+
+  # Le dossier où se trouvent les fonctions serverless (API).
+  functions = "api/"
+
+[dev]
+  # Paramètres pour le développement local avec `netlify dev`
+  publish = "."
+  functions = "api/"

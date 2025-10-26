@@ -1,0 +1,98 @@
+{
+  "translation": {
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "about": "About Me",
+      "gallery": "Gallery",
+      "booking": "Booking",
+      "contact": "Contact"
+    },
+    "hero": {
+      "title": "Asiacuisine.re",
+      "subtitle": "From Guangzhou to Réunion Island — an experienced private chef brings you the authentic taste of Asia, right in the comfort of your home.",
+      "cta_button": "Book Your Experience"
+    },
+    "services": {
+      "section_title": "My Services",
+      "cover_title": "My Services",
+      "cover_text": "A journey of flavors and culture — discover my signature services.",
+      "service1_title": "Private Chef at Home",
+      "service1_desc": "Enjoy a fine-dining experience without leaving your home.",
+      "service1_feature1": "Tailor-made menus to suit your taste",
+      "service1_feature2": "Fresh ingredients, cooked on-site",
+      "service1_feature3": "Professional and attentive service",
+      "service2_title": "Asian Cooking Classes",
+      "service2_desc": "Learn authentic techniques from a chef who lived in China for over 10 years.",
+      "service2_feature1": "One-on-one or small group lessons",
+      "service2_feature2": "Traditional techniques and cultural insights",
+      "service2_feature3": "Discover unique ingredients and their stories",
+      "service3_title": "Signature Takeaway Dishes",
+      "service3_desc": "Authentic Asian flavors, freshly prepared and ready to enjoy.",
+      "service3_feature1": "A variety of Asian cuisines to choose from",
+      "service3_feature2": "Flexible, customizable orders",
+      "service3_feature3": "Careful, eco-friendly packaging",
+      "page4_title": "Get in Touch",
+      "page4_desc": "For special requests or to discuss your next culinary event.",
+      "page4_cta": "Send a Request"
+    },
+    "about": {
+      "section_title": "About Me",
+      "p1": "I lived in Guangzhou, China, for ten years, fully immersing myself in authentic Chinese culinary culture.",
+      "p2": "During that time, I worked alongside chefs from across Asia, broadening my skills and appreciation of diverse flavors.",
+      "p3": "Now based in Réunion Island, I combine tradition with creativity to bring you a unique and genuine Asian dining experience.",
+      "highlight1_stat": "10+",
+      "highlight1_text": "Years of Asian culinary experience",
+      "highlight2_stat": "8+",
+      "highlight2_text": "Different Asian cuisines mastered",
+      "highlight3_stat": "50+",
+      "highlight3_text": "Signature dishes created and perfected"
+    },
+    "gallery": {
+      "section_title": "Gallery",
+      "p1": "A glimpse into some of my culinary creations. More professional photos coming soon.",
+      "item1": "Authentic Ramen",
+      "item2": "Homemade Dim Sum",
+      "item3": "Cantonese Fried Rice",
+      "item4": "Thai Curry",
+      "item5": "Japanese Tempura",
+      "item6": "Vietnamese Salad"
+    },
+    "booking": {
+      "section_title": "Booking",
+      "service_label": "Type of Service:",
+      "service_option_default": "Choose a service",
+      "service_option1": "Private Chef at Home",
+      "service_option2": "Asian Cooking Classes",
+      "service_option3": "Signature Takeaway Dishes",
+      "date_label": "Preferred Date:",
+      "date_placeholder": "Click to select a date",
+      "people_label": "Number of Guests:",
+      "people_option_default": "Select",
+      "people_option1": "1-2 guests",
+      "people_option2": "3-4 guests",
+      "people_option3": "5-6 guests",
+      "people_option4": "7 guests or more",
+      "name_label": "Full Name:",
+      "email_label": "Email:",
+      "phone_label": "Phone:",
+      "message_label": "Message (preferences, allergies, special requests):",
+      "message_placeholder": "Describe your preferences, allergies, or any special requests...",
+      "submit_button": "Submit Booking Request"
+    },
+    "footer": {
+      "contact_title": "Contact",
+      "contact_location": "📍 Réunion Island",
+      "social_title": "Follow Me",
+      "social_fb": "Facebook",
+      "social_ig": "Instagram",
+      "services_title": "Services",
+      "schedules_title": "Opening Hours",
+      "schedules_p1": "Monday - Saturday: 9:00 AM - 8:00 PM",
+      "schedules_p2": "Sunday: By appointment",
+      "schedules_p3": "Bookings recommended 48 hours in advance",
+      "copyright": "© 2025 Asiacuisine.re - All Rights Reserved",
+      "legal": "Legal Notice & Privacy Policy"
+    }
+  }
+}

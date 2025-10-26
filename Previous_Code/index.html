@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asiacuisine.re - Chef Privé & Cours de Cuisine Asiatique à La Réunion</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo"><img src="favicon.png" alt="Asiacuisine.re Logo"></a>
+            <ul class="nav-links">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#apropos">À propos</a></li>
+                <li><a href="#galerie">Galerie</a></li>
+                <li><a href="#reservation">Réservation</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="nav-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+        <div class="floating-element">🥢</div>
+        <div class="floating-element">🍜</div>
+        <div class="floating-element">🥟</div>
+        <div class="hero-content">
+            <h1>Asiacuisine.re</h1>
+            <p>Découvrez l'art de la cuisine asiatique authentique avec un chef privé expérimenté. De Guangzhou à La Réunion, une expérience culinaire unique à domicile.</p>
+            <a href="#reservation" class="cta-button">Réserver une expérience</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title fade-in">Mes Services</h2>
+            <div class="book-container">
+                <div class="book">
+                    <!-- Page de Garde (Gauche, Fixe) -->
+                    <div class="book-page static-cover">
+                        <div class="page-content">
+                            <h2 class="book-title">Mes Services</h2>
+                            <p>Une invitation au voyage culinaire. Tournez la page pour découvrir mes prestations.</p>
+                        </div>
+                    </div>
+
+                    <!-- Conteneur pour les pages qui tournent -->
+                    <div class="flippable-pages-container">
+                        <!-- Page 1 (Service 1 & 2) -->
+                        <div class="flippable-page" id="flipper-1">
+                            <div class="page-face page-front">
+                                <div class="page-content">
+                                    <span class="service-icon">👨‍🍳</span>
+                                    <h3>Chef Privé à Domicile</h3>
+                                    <p>Vivez une expérience culinaire exceptionnelle dans le confort de votre foyer...</p>
+                                    <ul class="service-features">
+                                        <li>Menu personnalisé selon vos goûts</li>
+                                        <li>Préparation sur place avec ingrédients frais</li>
+                                        <li>Service professionnel</li>
+                                    </ul>
+                                </div>
+                                <div class="page-number">1 / 4</div>
+                            </div>
+                            <div class="page-face page-back">
+                                <div class="page-content">
+                                    <span class="service-icon">🎓</span>
+                                    <h3>Cours de Cuisine</h3>
+                                    <p>Apprenez les secrets de la cuisine asiatique authentique...</p>
+                                    <ul class="service-features">
+                                        <li>Cours individuels ou en petit groupe</li>
+                                        <li>Techniques traditionnelles authentiques</li>
+                                        <li>Découverte d'ingrédients spéciaux</li>
+                                    </ul>
+                                </div>
+                                <div class="page-number">2 / 4</div>
+                            </div>
+                        </div>
+
+                        <!-- Page 2 (Service 3) -->
+                        <div class="flippable-page" id="flipper-2">
+                            <div class="page-face page-front">
+                                <div class="page-content">
+                                    <span class="service-icon">📦</span>
+                                    <h3>Plats sur Commande</h3>
+                                    <p>Savourez mes créations culinaires asiatiques à emporter ou en livraison...</p>
+                                    <ul class="service-features">
+                                        <li>Large choix de cuisines asiatiques</li>
+                                        <li>Commande personnalisable</li>
+                                        <li>Emballage soigné et écologique</li>
+                                    </ul>
+                                </div>
+                                <div class="page-number">3 / 4</div>
+                            </div>
+                            <div class="page-face page-back">
+                                <div class="page-content">
+                                    <h3>Contactez-moi</h3>
+                                    <p>Pour toute demande sur mesure ou pour discuter de votre prochain événement culinaire.</p>
+                                    <a href="#reservation" class="cta-button">Faire une demande</a>
+                                </div>
+                                <div class="page-number">4 / 4</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="apropos" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text fade-in">
+                    <h2>Mon Parcours Culinaire</h2>
+                    <p>Passionné par la cuisine asiatique authentique, j'ai eu la chance de vivre à <strong>Guangzhou, en Chine</strong>, où j'ai plongé au cœur de la gastronomie traditionnelle chinoise.</p>
+                    
+                    <p>Cette expérience unique m'a permis de travailler aux côtés de cuisiniers talentueux originaires de <strong>différents pays d'Asie</strong>, enrichissant ma maîtrise des techniques culinaires et ma compréhension des saveurs authentiques.</p>
+                    
+                    <p>Aujourd'hui à La Réunion, je partage cette richesse culinaire en proposant des expériences gastronomiques qui allient tradition et créativité, pour vous faire découvrir la véritable essence de la cuisine asiatique.</p>
+                    
+                    <div class="experience-highlights">
+                        <div class="highlight">
+                            <span class="highlight-number">5+</span>
+                            <span>Années d'expérience</span>
+                        </div>
+                        <div class="highlight">
+                            <span class="highlight-number">8+</span>
+                            <span>Cuisines asiatiques</span>
+                        </div>
+                        <div class="highlight">
+                            <span class="highlight-number">50+</span>
+                            <span>Plats testés et approuvés</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image fade-in">
+                    <div class="chef-placeholder">👨‍🍳</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="galerie" class="gallery">
+        <div class="container">
+            <h2 class="section-title fade-in">Galerie Photos</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem; font-style: italic;">
+                Découvrez un aperçu de mes créations culinaires. Photos en cours d'amélioration professionnelle.
+            </p>
+            <!-- Swiper container -->
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide">
+                        <div class="gallery-item">
+                            <img src="assets/images/ramen-authentique.jpg" alt="Ramen Authentique">
+                            <div class="gallery-item-overlay">
+                                <span>🍜 Ramen Authentique</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="gallery-item">
+                            <img src="assets/images/dim-sum-maison.jpg" alt="Dim Sum Maison">
+                            <div class="gallery-item-overlay">
+                                <span>🥟 Dim Sum Maison</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="gallery-item">
+                            <img src="assets/images/riz-cantonais.jpg" alt="Riz Cantonais">
+                            <div class="gallery-item-overlay">
+                                <span>🍛 Riz Cantonais</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="gallery-item">
+                            <img src="assets/images/curry-thai.jpg" alt="Curry Thaï">
+                            <div class="gallery-item-overlay">
+                                <span>🥘 Curry Thaï</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="gallery-item">
+                            <img src="assets/images/tempura-japonais.jpg" alt="Tempura Japonais">
+                            <div class="gallery-item-overlay">
+                                <span>🍤 Tempura Japonais</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="gallery-item">
+                            <img src="assets/images/salade-vietnamienne.jpg" alt="Salade Vietnamienne">
+                            <div class="gallery-item-overlay">
+                                <span>🥗 Salade Vietnamienne</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- Navigation Buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title fade-in">Témoignages Clients</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial fade-in">
+                    <p class="testimonial-text">Une expérience extraordinaire ! Le chef a préparé un menu authentique chinois chez nous. Les saveurs étaient incroyables et le service impeccable.</p>
+                    <p class="testimonial-author">- Marie L., Saint-Denis</p>
+                </div>
+                <div class="testimonial fade-in">
+                    <p class="testimonial-text">Les cours de cuisine m'ont permis d'apprendre les vraies techniques asiatiques. Je recommande vivement cette expérience unique !</p>
+                    <p class="testimonial-author">- Pierre M., Saint-Paul</p>
+                </div>
+                <div class="testimonial fade-in">
+                    <p class="testimonial-text">Commande régulière de plats à emporter. Qualité constante et saveurs authentiques. Un vrai voyage culinaire à chaque repas.</p>
+                    <p class="testimonial-author">- Sophie R., Le Tampon</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="reservation" class="booking">
+        <div class="container">
+            <h2 class="section-title fade-in" style="color: #d4af37;">Réservation</h2>
+            <form class="booking-form fade-in" id="bookingForm">
+                <div class="form-group">
+                    <label for="service">Type de service :</label>
+                    <select id="service" name="service" required>
+                        <option value="">Choisissez un service</option>
+                        <option value="chef-domicile">Chef privé à domicile</option>
+                        <option value="cours-cuisine">Cours de cuisine</option>
+                        <option value="commande">Commande de plats</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Date souhaitée :</label>
+                    <input type="text" id="date" name="date" required autocomplete="off" placeholder="Cliquez pour choisir une date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="personnes">Nombre de personnes :</label>
+                    <select id="personnes" name="personnes" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="1-2">1-2 personnes</option>
+                        <option value="3-4">3-4 personnes</option>
+                        <option value="5-6">5-6 personnes</option>
+                        <option value="7+">7 personnes ou plus</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nom">Nom complet :</label>
+                    <input type="text" id="nom" name="nom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telephone">Téléphone :</label>
+                    <input type="tel" id="telephone" name="telephone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message (préférences, allergies, demandes spéciales) :</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Décrivez vos préférences culinaires, allergies alimentaires ou demandes spéciales..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Envoyer la demande de réservation</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>💬 <a href="https://wa.me/33767644714" target="_blank" rel="noopener noreferrer">WhatsApp</a></p>
+                    <p>✉️ <a href="mailto:contact@asiacuisine.re">contact@asiacuisine.re</a></p>
+                    <p>📍 La Réunion</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Suivez-moi</h3>
+                    <p><a href="https://www.facebook.com/profile.php?id=100090025515349" target="_blank" rel="noopener noreferrer">Facebook</a></p>
+                    <p><a href="https://www.instagram.com/asiacuisine.re/" target="_blank" rel="noopener noreferrer">Instagram</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <p><a href="#services">Chef privé à domicile</a></p>
+                    <p><a href="#services">Cours de cuisine</a></p>
+                    <p><a href="#services">Plats sur commande</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Horaires</h3>
+                    <p>Lundi - Samedi : 9h - 20h</p>
+                    <p>Dimanche : Sur rendez-vous</p>
+                    <p>Réservation recommandée 48h à l'avance</p>
+                </div>
+            </div>
+            <div style="border-top: 1px solid #333; padding-top: 2rem; margin-top: 2rem;">
+                <p>&copy; 2025 Asiacuisine.re - Tous droits réservés</p>
+                <p><a href="legal.html" target="_blank" style="color: #ccc; text-decoration: underline;">Mentions Légales & RGPD</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/locales/fr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="script.js" defer></script>
+
+    <!-- Back to Top Button -->
+    <a href="#accueil" class="back-to-top-btn" id="back-to-top-btn" title="Retour en haut">↑</a>
+
+    <!-- Floating Social Links -->
+    <div class="floating-social-links">
+        <a href="https://www.facebook.com/profile.php?id=100090025515349" target="_blank" rel="noopener noreferrer" class="social-link facebook" title="Facebook">f</a>
+        <a href="https://www.instagram.com/asiacuisine.re/" target="_blank" rel="noopener noreferrer" class="social-link instagram" title="Instagram">i</a>
+    </div>
+</body>
+</html>

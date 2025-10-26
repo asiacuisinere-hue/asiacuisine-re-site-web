@@ -1,0 +1,98 @@
+{
+  "translation": {
+    "nav": {
+      "home": "Accueil",
+      "services": "Services",
+      "about": "À propos",
+      "gallery": "Galerie",
+      "booking": "Réservation",
+      "contact": "Contact"
+    },
+    "hero": {
+      "title": "Asiacuisine.re",
+      "subtitle": "Découvrez l'art de la cuisine asiatique authentique avec un chef privé expérimenté. De Guangzhou à La Réunion, une expérience culinaire unique à domicile.",
+      "cta_button": "Réserver une expérience"
+    },
+    "services": {
+      "section_title": "Mes Services",
+      "cover_title": "Mes Services",
+      "cover_text": "Une invitation au voyage culinaire. Tournez la page pour découvrir mes prestations.",
+      "service1_title": "Chef Privé à Domicile",
+      "service1_desc": "Vivez une expérience culinaire exceptionnelle dans le confort de votre foyer...",
+      "service1_feature1": "Menu personnalisé selon vos goûts",
+      "service1_feature2": "Préparation sur place avec ingrédients frais",
+      "service1_feature3": "Service professionnel",
+      "service2_title": "Cours de Cuisine",
+      "service2_desc": "Apprenez les secrets de la cuisine asiatique authentique...",
+      "service2_feature1": "Cours individuels ou en petit groupe",
+      "service2_feature2": "Techniques traditionnelles authentiques",
+      "service2_feature3": "Découverte d'ingrédients spéciaux",
+      "service3_title": "Plats sur Commande",
+      "service3_desc": "Savourez mes créations culinaires asiatiques à emporter ou en livraison...",
+      "service3_feature1": "Large choix de cuisines asiatiques",
+      "service3_feature2": "Commande personnalisable",
+      "service3_feature3": "Emballage soigné et écologique",
+      "page4_title": "Contactez-moi",
+      "page4_desc": "Pour toute demande sur mesure ou pour discuter de votre prochain événement culinaire.",
+      "page4_cta": "Faire une demande"
+    },
+    "about": {
+      "section_title": "Mon Parcours Culinaire",
+      "p1": "Passionné par la cuisine asiatique authentique, j'ai eu la chance de vivre à <strong>Guangzhou, en Chine</strong>, où j'ai plongé au cœur de la gastronomie traditionnelle chinoise.",
+      "p2": "Cette expérience unique m'a permis de travailler aux côtés de cuisiniers talentueux originaires de <strong>différents pays d'Asie</strong>, enrichissant ma maîtrise des techniques culinaires et ma compréhension des saveurs authentiques.",
+      "p3": "Aujourd'hui à La Réunion, je partage cette richesse culinaire en proposant des expériences gastronomiques qui allient tradition et créativité, pour vous faire découvrir la véritable essence de la cuisine asiatique.",
+      "highlight1_stat": "5+",
+      "highlight1_text": "Années d'expérience",
+      "highlight2_stat": "8+",
+      "highlight2_text": "Cuisines asiatiques",
+      "highlight3_stat": "50+",
+      "highlight3_text": "Plats testés et approuvés"
+    },
+    "gallery": {
+      "section_title": "Galerie Photos",
+      "p1": "Découvrez un aperçu de mes créations culinaires. Photos en cours d'amélioration professionnelle.",
+      "item1": "Ramen Authentique",
+      "item2": "Dim Sum Maison",
+      "item3": "Riz Cantonais",
+      "item4": "Curry Thaï",
+      "item5": "Tempura Japonais",
+      "item6": "Salade Vietnamienne"
+    },
+    "booking": {
+      "section_title": "Réservation",
+      "service_label": "Type de service :",
+      "service_option_default": "Choisissez un service",
+      "service_option1": "Chef privé à domicile",
+      "service_option2": "Cours de cuisine",
+      "service_option3": "Plats sur Commande",
+      "date_label": "Date souhaitée :",
+      "date_placeholder": "Cliquez pour choisir une date",
+      "people_label": "Nombre de personnes :",
+      "people_option_default": "Sélectionnez",
+      "people_option1": "1-2 personnes",
+      "people_option2": "3-4 personnes",
+      "people_option3": "5-6 personnes",
+      "people_option4": "7 personnes ou plus",
+      "name_label": "Nom complet :",
+      "email_label": "Email :",
+      "phone_label": "Téléphone :",
+      "message_label": "Message (préférences, allergies, demandes spéciales) :",
+      "message_placeholder": "Décrivez vos préférences culinaires, allergies alimentaires ou demandes spéciales...",
+      "submit_button": "Envoyer la demande de réservation"
+    },
+    "footer": {
+      "contact_title": "Contact",
+      "contact_location": "📍 La Réunion",
+      "social_title": "Suivez-moi",
+      "social_fb": "Facebook",
+      "social_ig": "Instagram",
+      "services_title": "Services",
+      "schedules_title": "Horaires",
+      "schedules_p1": "Lundi - Samedi : 9h - 20h",
+      "schedules_p2": "Dimanche : Sur rendez-vous",
+      "schedules_p3": "Réservation recommandée 48h à l'avance",
+      "copyright": "&copy; 2025 Asiacuisine.re - Tous droits réservés",
+      "legal": "Mentions Légales & RGPD"
+    }
+  }
+}
