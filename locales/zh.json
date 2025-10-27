@@ -92,7 +92,32 @@
       "schedules_p2": "周日：需提前预约",
       "schedules_p3": "建议提前48小时预订",
       "copyright": "© 2025 Asiacuisine.re - 版权所有",
-      "legal": "法律声明 & 隐私政策"
+      "legal": "[ZH]Mentions Légales & RGPD"
+    },
+    "menu": {
+      "page_title": "[ZH]Menus de la Semaine - Asiacuisine.re",
+      "back_to_home": "[ZH]← Retour à l'accueil",
+      "title": "[ZH]Menus de la semaine – cuisine asiatique maison",
+      "subtitle": "[ZH]Chaque semaine, nous préparons pour vous une sélection de plats asiatiques faits maison, équilibrés et gourmands 🍱<br>Des recettes choisies avec soin selon les produits frais du moment 🌿",
+      "discovery_title": "[ZH]🔹 Formule Découverte",
+      "discovery_desc": "[ZH]3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous",
+      "discovery_note": "[ZH]Parfaite pour découvrir nos saveurs ou se faire un petit plaisir sans cuisiner.",
+      "standard_title": "[ZH]⭐ Formule Standard",
+      "standard_desc": "[ZH]5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone",
+      "standard_note": "[ZH]Le bon équilibre entre variété, confort et prix. Disponible en version classique ou végétarienne.",
+      "comfort_title": "[ZH]💎 Formule Confort",
+      "comfort_desc": "[ZH]5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)",
+      "comfort_note": "[ZH]Pour ceux qui veulent tout simplement se détendre et se régaler sans bouger.",
+      "duo_title": "[ZH]👥 Option Duo",
+      "duo_desc": "[ZH]<strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV",
+      "duo_note": "[ZH]👉 Idéal entre amis, collègues ou en couple. Choisissez votre type de formule (ex: Duo Classique ou Duo Végétarien).",
+      "info_title": "[ZH]Informations pratiques",
+      "info_zones": "[ZH]<strong>📍 Zones concernées :</strong> Sainte-Marie et alentours (livraison incluse). Autres communes : retrait sur point de rendez-vous (parking covoiturage ou lieu indiqué).",
+      "info_orders": "[ZH]<strong>🕐 Commandes :</strong> Avant mercredi – preparation le week-end.",
+      "info_payment": "[ZH]<strong>💳 Paiement :</strong> Avant jeudi 11h (confirmation et lien envoyés après commande).",
+      "to_order_title": "[ZH]📲 Pour commander :",
+      "to_order_desc": "[ZH]Envoyez simplement “Menu de la semaine” en message privé pour recevoir les plats disponibles et réserver votre formule.",
+      "to_order_cta": "[ZH]Commander par message"
     }
   }
 }

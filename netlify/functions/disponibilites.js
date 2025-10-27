@@ -17,7 +17,7 @@ export const handler = async (event, context) => {
 
         const { data: bookings, error } = await supabase
             .from('bookings')
-            .select('booking_date');
+            .select('booking-date');
 
         if (error) {
             throw error;

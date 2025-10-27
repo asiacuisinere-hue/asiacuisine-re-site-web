@@ -23,7 +23,7 @@ export const handler = async (event, context) => {
 
         const { error } = await supabase
             .from('bookings')
-            .insert([{ service, booking_date: date, name: nom, email, phone: telephone, message }]);
+            .insert([{ service, "booking-date": date, name: nom, email, phone: telephone, message }]);
 
         if (error) {
             console.error('Supabase Error:', error);

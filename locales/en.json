@@ -92,7 +92,32 @@
       "schedules_p2": "Sunday: By appointment",
       "schedules_p3": "Bookings recommended 48 hours in advance",
       "copyright": "© 2025 Asiacuisine.re - All Rights Reserved",
-      "legal": "Legal Notice & Privacy Policy"
+      "legal": "[EN]Mentions Légales & RGPD"
+    },
+    "menu": {
+      "page_title": "[EN]Menus de la Semaine - Asiacuisine.re",
+      "back_to_home": "[EN]← Retour à l'accueil",
+      "title": "[EN]Menus de la semaine – cuisine asiatique maison",
+      "subtitle": "[EN]Chaque semaine, nous préparons pour vous une sélection de plats asiatiques faits maison, équilibrés et gourmands 🍱<br>Des recettes choisies avec soin selon les produits frais du moment 🌿",
+      "discovery_title": "[EN]🔹 Formule Découverte",
+      "discovery_desc": "[EN]3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous",
+      "discovery_note": "[EN]Parfaite pour découvrir nos saveurs ou se faire un petit plaisir sans cuisiner.",
+      "standard_title": "[EN]⭐ Formule Standard",
+      "standard_desc": "[EN]5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone",
+      "standard_note": "[EN]Le bon équilibre entre variété, confort et prix. Disponible en version classique ou végétarienne.",
+      "comfort_title": "[EN]💎 Formule Confort",
+      "comfort_desc": "[EN]5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)",
+      "comfort_note": "[EN]Pour ceux qui veulent tout simplement se détendre et se régaler sans bouger.",
+      "duo_title": "[EN]👥 Option Duo",
+      "duo_desc": "[EN]<strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV",
+      "duo_note": "[EN]👉 Idéal entre amis, collègues ou en couple. Choisissez votre type de formule (ex: Duo Classique ou Duo Végétarien).",
+      "info_title": "[EN]Informations pratiques",
+      "info_zones": "[EN]<strong>📍 Zones concernées :</strong> Sainte-Marie et alentours (livraison incluse). Autres communes : retrait sur point de rendez-vous (parking covoiturage ou lieu indiqué).",
+      "info_orders": "[EN]<strong>🕐 Commandes :</strong> Avant mercredi – préparation le week-end.",
+      "info_payment": "[EN]<strong>💳 Paiement :</strong> Avant jeudi 11h (confirmation et lien envoyés après commande).",
+      "to_order_title": "[EN]📲 Pour commander :",
+      "to_order_desc": "[EN]Envoyez simplement “Menu de la semaine” en message privé pour recevoir les plats disponibles et réserver votre formule.",
+      "to_order_cta": "[EN]Commander par message"
     }
   }
 }

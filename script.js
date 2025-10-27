@@ -62,9 +62,16 @@ function createLanguageSwitcher() {
         <span style="color: #666;">|</span>
         <button class="lang-btn" data-lang="en">EN</button>
         <span style="color: #666;">|</span>
-        <button class="lang-btn" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="zh">ZH</button>
     `;
-    navContainer.insertBefore(switcher, document.querySelector('.nav-toggle'));
+
+    // On the main page, insert it before the mobile toggle. On other pages, just append it.
+    const mobileToggle = document.querySelector('.nav-toggle');
+    if (mobileToggle) {
+        navContainer.insertBefore(switcher, mobileToggle);
+    } else {
+        navContainer.appendChild(switcher);
+    }
 
     switcher.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -77,17 +84,23 @@ function createLanguageSwitcher() {
 function initializePageContent() {
     updateContent();
     createLanguageSwitcher();
-    initializeScrollBasedEffects();
-    fetchAndInitializeDatepicker();
-    initializeServiceMenu();
-    initializeMobileMenu();
-    initializeBackToTopButton();
-    initializeLightbox(); // Added for gallery zoom
+    // Run layout-dependent scripts only on the main page
+    if (document.querySelector('#accueil')) {
+        initializeScrollBasedEffects();
+        fetchAndInitializeDatepicker();
+        initializeServiceMenu();
+        initializeMobileMenu();
+        initializeBackToTopButton();
+        initializeLightbox();
+        initializeForm();
+        handleResponsiveLayout();
+        window.addEventListener('resize', handleResponsiveLayout);
+    } else {
+        // Logic for other pages like menu.html or legal.html
+        // For now, we only need the language switcher which is already initialized.
+    }
     initializeCookieConsent();
     initializeWelcomePopup();
-    initializeForm();
-    handleResponsiveLayout();
-    window.addEventListener('resize', handleResponsiveLayout);
 }
 
 function handleResponsiveLayout() {

@@ -1,4 +1,4 @@
-/api/disponibilites:1  Failed to load resource: the server responded with a status of 500 ()
+:8888/api/disponibilites:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
 script.js:155 Failed to fetch availability: Error: Network response was not ok (500)
     at fetchAndInitializeDatepicker (script.js:140:33)
 fetchAndInitializeDatepicker @ script.js:155

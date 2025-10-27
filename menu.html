@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="menu.page_title">Menus de la Semaine - Asiacuisine.re</title>
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            background: #f8f8f8;
+        }
+        .menu-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 120px 2rem 4rem; /* Padding top to be below navbar */
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            margin-top: 4rem;
+            margin-bottom: 4rem;
+        }
+        .menu-container h1, .menu-container h2, .menu-container h3 {
+            color: #1a1a1a;
+            text-align: center;
+        }
+        .menu-container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .menu-container .subtitle {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin-bottom: 3rem;
+        }
+        .formula-card {
+            border: 1px solid #eee;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .formula-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .formula-card h3 {
+            color: #d4af37;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .formula-card .price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+        .info-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px dashed #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo"><img src="favicon.png" alt="Asiacuisine.re Logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html" data-i18n="menu.back_to_home">← Retour à l'accueil</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="menu-container">
+            <h1 data-i18n="menu.title">Menus de la semaine – cuisine asiatique maison</h1>
+            <p class="subtitle" data-i18n="menu.subtitle">Chaque semaine, nous préparons pour vous une sélection de plats asiatiques faits maison, équilibrés et gourmands 🍱<br>Des recettes choisies avec soin selon les produits frais du moment 🌿</p>
+
+            <div class="formula-card">
+                <h3 data-i18n="menu.discovery_title">🔹 Formule Découverte</h3>
+                <p class="price">39 €</p>
+                <p data-i18n="menu.discovery_desc">3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous</p>
+                <p><em data-i18n="menu.discovery_note">Parfaite pour découvrir nos saveurs ou se faire un petit plaisir sans cuisiner.</em></p>
+            </div>
+
+            <div class="formula-card">
+                <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
+                <p class="price">49 €</p>
+                <p data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
+                <p><em data-i18n="menu.standard_note">Le bon équilibre entre variété, confort et prix. Disponible en version classique ou végétarienne.</em></p>
+            </div>
+
+            <div class="formula-card">
+                <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
+                <p class="price">59 €</p>
+                <p data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
+                <p><em data-i18n="menu.comfort_note">Pour ceux qui veulent tout simplement se détendre et se régaler sans bouger.</em></p>
+            </div>
+
+            <div class="formula-card">
+                <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
+                <p class="price">94 € <small style="font-size: 1rem; text-decoration: line-through; color: #888;">98 €</small></p>
+                <p data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV</p>
+                <p><em data-i18n="menu.duo_note">👉 Idéal entre amis, collègues ou en couple. Choisissez votre type de formule (ex: Duo Classique ou Duo Végétarien).</em></p>
+            </div>
+
+            <div class="info-section">
+                <h2 data-i18n="menu.info_title">Informations pratiques</h2>
+                <p data-i18n="menu.info_zones"><strong>📍 Zones concernées :</strong> Sainte-Marie et alentours (livraison incluse). Autres communes : retrait sur point de rendez-vous (parking covoiturage ou lieu indiqué).</p>
+                <p data-i18n="menu.info_orders"><strong>🕐 Commandes :</strong> Avant mercredi – préparation le week-end.</p>
+                <p data-i18n="menu.info_payment"><strong>💳 Paiement :</strong> Avant jeudi 11h (confirmation et lien envoyés après commande).</p>
+            </div>
+
+            <div class="info-section" style="text-align: center;">
+                <h2 data-i18n="menu.to_order_title">📲 Pour commander :</h2>
+                <p data-i18n="menu.to_order_desc">Envoyez simplement “Menu de la semaine” en message privé pour recevoir les plats disponibles et réserver votre formule.</p>
+                <a href="#" class="cta-button" style="margin-top: 1rem;" data-i18n="menu.to_order_cta">Commander par message</a>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
