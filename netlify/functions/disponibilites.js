@@ -1,9 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
-export default async function handler(req, res) {
-    if (req.method !== 'GET') {
-        res.setHeader('Allow', ['GET']);
-        return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+exports.handler = async function(event, context) {
+    if (event.httpMethod !== 'GET') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }),
+            headers: { 'Allow': 'GET' }
+        };
     }
 
     try {
@@ -19,7 +22,6 @@ export default async function handler(req, res) {
 
         const bookedDates = bookings.map(b => b.booking_date);
 
-        // This part for adding weekends remains the same
         const unavailableDates = [...bookedDates];
         const today = new Date();
         for (let i = 0; i < 90; i++) {
@@ -35,10 +37,16 @@ export default async function handler(req, res) {
             }
         }
 
-        return res.status(200).json({ unavailableDates });
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ unavailableDates })
+        };
 
     } catch (error) {
         console.error('API/disponibilites Error:', error);
-        return res.status(500).json({ error: 'Une erreur interne du serveur est survenue.' });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Une erreur interne du serveur est survenue.' })
+        };
     }
-}
+};

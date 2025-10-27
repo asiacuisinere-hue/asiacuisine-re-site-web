@@ -1,45 +1,45 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
-export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
-        return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
-    }
-
-    const { service, date, nom, email, telephone, message } = req.body;
-
-    // Basic validation (can be improved)
-    if (!service || !date || !nom || !email) {
-        return res.status(400).json({ error: "Les champs obligatoires doivent être remplis." });
+exports.handler = async function(event, context) {
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }),
+            headers: { 'Allow': 'POST' }
+        };
     }
 
     try {
+        const { service, date, nom, email, telephone, message } = JSON.parse(event.body);
+
+        if (!service || !date || !nom || !email) {
+            return { statusCode: 400, body: JSON.stringify({ error: "Les champs obligatoires doivent être remplis." }) };
+        }
+
         const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
         const { data, error } = await supabase
             .from('bookings')
-            .insert([{ 
-                service,
-                booking_date: date,
-                name: nom,
-                email,
-                phone: telephone,
-                message 
-            }]);
+            .insert([{ service, booking_date: date, name: nom, email, phone: telephone, message }]);
 
         if (error) {
             console.error('Supabase Error:', error);
-            // Handle unique constraint violation for booking_date
             if (error.code === '23505') {
-                return res.status(409).json({ error: 'Cette date est déjà réservée. Veuillez en choisir une autre.' });
+                return { statusCode: 409, body: JSON.stringify({ error: 'Cette date est déjà réservée.' }) };
             }
             throw error;
         }
 
-        return res.status(200).json({ message: 'Réservation enregistrée avec succès.' });
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Réservation enregistrée avec succès.' })
+        };
 
     } catch (error) {
         console.error('Internal Server Error:', error);
-        return res.status(500).json({ error: 'Une erreur interne du serveur est survenue.' });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Une erreur interne du serveur est survenue.' })
+        };
     }
-}
+};
