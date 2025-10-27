@@ -8,7 +8,12 @@ export const handler = async (event, context) => {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_KEY;
 
+    // Debugging logs
+    console.log('Supabase URL exists:', !!supabaseUrl);
+    console.log('Supabase Key exists:', !!supabaseKey);
+
     if (!supabaseUrl || !supabaseKey) {
+        console.error('Missing Supabase credentials');
         return { statusCode: 500, body: JSON.stringify({ error: 'Configuration Supabase manquante.' }) };
     }
 
@@ -20,10 +25,11 @@ export const handler = async (event, context) => {
             .select('booking-date');
 
         if (error) {
+            console.error('Supabase query error:', error);
             throw error;
         }
 
-        const bookedDates = bookings.map(b => b.booking_date);
+        const bookedDates = bookings.map(b => b['booking-date']);
 
         const unavailableDates = [...bookedDates];
         const today = new Date();
