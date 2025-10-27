@@ -1,14 +1,4 @@
-script.js:139  GET https://asiacuisine.netlify.app/api/disponibilites 500 (Internal Server Error)
-fetchAndInitializeDatepicker @ script.js:139
-initializePageContent @ script.js:81
-(anonymous) @ script.js:4
-Promise.then
-(anonymous) @ script.js:3
+/api/disponibilites:1  Failed to load resource: the server responded with a status of 500 ()
 script.js:155 Failed to fetch availability: Error: Network response was not ok (500)
     at fetchAndInitializeDatepicker (script.js:140:33)
 fetchAndInitializeDatepicker @ script.js:155
-await in fetchAndInitializeDatepicker
-initializePageContent @ script.js:81
-(anonymous) @ script.js:4
-Promise.then
-(anonymous) @ script.js:3
