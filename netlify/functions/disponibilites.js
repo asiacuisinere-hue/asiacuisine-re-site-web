@@ -5,8 +5,15 @@ exports.handler = async function(event, context) {
         return { statusCode: 405, body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }) };
     }
 
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+        return { statusCode: 500, body: JSON.stringify({ error: 'Configuration Supabase manquante.' }) };
+    }
+
     try {
-        const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
         const { data: bookings, error } = await supabase
             .from('bookings')

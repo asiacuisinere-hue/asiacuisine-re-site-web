@@ -5,6 +5,13 @@ exports.handler = async function(event, context) {
         return { statusCode: 405, body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }) };
     }
 
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+        return { statusCode: 500, body: JSON.stringify({ error: 'Configuration Supabase manquante.' }) };
+    }
+
     try {
         const { service, date, nom, email, telephone, message } = JSON.parse(event.body);
 
@@ -12,7 +19,7 @@ exports.handler = async function(event, context) {
             return { statusCode: 400, body: JSON.stringify({ error: "Les champs obligatoires doivent être remplis." }) };
         }
 
-        const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
         const { error } = await supabase
             .from('bookings')
