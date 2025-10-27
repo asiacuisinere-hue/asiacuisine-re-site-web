@@ -35,23 +35,37 @@
             margin-bottom: 3rem;
         }
         .formula-card {
-            border: 1px solid #eee;
+            border: 2px solid #eee;
             border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
         .formula-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-color: #d4af37;
+        }
+        .formula-card.selected {
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        .formula-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            cursor: pointer;
         }
         .formula-card h3 {
             color: #d4af37;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
         }
         .formula-card .price {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: #1a1a1a;
             margin-bottom: 1rem;
@@ -60,6 +74,31 @@
             margin-top: 3rem;
             padding-top: 2rem;
             border-top: 2px dashed #eee;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+        .form-group input {
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -77,52 +116,114 @@
 
     <main>
         <div class="menu-container">
-            <h1 data-i18n="menu.title">Menus de la semaine – cuisine asiatique maison</h1>
-            <p class="subtitle" data-i18n="menu.subtitle">Chaque semaine, nous préparons pour vous une sélection de plats asiatiques faits maison, équilibrés et gourmands 🍱<br>Des recettes choisies avec soin selon les produits frais du moment 🌿</p>
+            <h1 data-i18n="menu.title">Menus de la semaine</h1>
+            <p class="subtitle" data-i18n="menu.subtitle">Choisissez votre formule et remplissez vos informations pour commander.</p>
 
-            <div class="formula-card">
-                <h3 data-i18n="menu.discovery_title">🔹 Formule Découverte</h3>
-                <p class="price">39 €</p>
-                <p data-i18n="menu.discovery_desc">3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous</p>
-                <p><em data-i18n="menu.discovery_note">Parfaite pour découvrir nos saveurs ou se faire un petit plaisir sans cuisiner.</em></p>
-            </div>
+            <form id="whatsapp-order-form">
+                <h2 style="margin-bottom: 1.5rem;">1. Choisissez votre formule</h2>
+                
+                <div class="formula-card" id="card-decouverte">
+                    <input type="radio" name="formule" value="Formule Découverte (39€)" id="formule-decouverte" required>
+                    <h3 data-i18n="menu.discovery_title">🔹 Formule Découverte</h3>
+                    <p class="price">39 €</p>
+                    <p data-i18n="menu.discovery_desc">3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous</p>
+                </div>
 
-            <div class="formula-card">
-                <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
-                <p class="price">49 €</p>
-                <p data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
-                <p><em data-i18n="menu.standard_note">Le bon équilibre entre variété, confort et prix. Disponible en version classique ou végétarienne.</em></p>
-            </div>
+                <div class="formula-card" id="card-standard">
+                    <input type="radio" name="formule" value="Formule Standard (49€)" id="formule-standard">
+                    <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
+                    <p class="price">49 €</p>
+                    <p data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
+                </div>
 
-            <div class="formula-card">
-                <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
-                <p class="price">59 €</p>
-                <p data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
-                <p><em data-i18n="menu.comfort_note">Pour ceux qui veulent tout simplement se détendre et se régaler sans bouger.</em></p>
-            </div>
+                <div class="formula-card" id="card-confort">
+                    <input type="radio" name="formule" value="Formule Confort (59€)" id="formule-confort">
+                    <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
+                    <p class="price">59 €</p>
+                    <p data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
+                </div>
 
-            <div class="formula-card">
-                <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
-                <p class="price">94 € <small style="font-size: 1rem; text-decoration: line-through; color: #888;">98 €</small></p>
-                <p data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV</p>
-                <p><em data-i18n="menu.duo_note">👉 Idéal entre amis, collègues ou en couple. Choisissez votre type de formule (ex: Duo Classique ou Duo Végétarien).</em></p>
-            </div>
+                <div class="formula-card" id="card-duo">
+                    <input type="radio" name="formule" value="Option Duo (94€)" id="formule-duo">
+                    <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
+                    <p class="price">94 €</p>
+                    <p data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV</p>
+                </div>
 
-            <div class="info-section">
-                <h2 data-i18n="menu.info_title">Informations pratiques</h2>
-                <p data-i18n="menu.info_zones"><strong>📍 Zones concernées :</strong> Sainte-Marie et alentours (livraison incluse). Autres communes : retrait sur point de rendez-vous (parking covoiturage ou lieu indiqué).</p>
-                <p data-i18n="menu.info_orders"><strong>🕐 Commandes :</strong> Avant mercredi – préparation le week-end.</p>
-                <p data-i18n="menu.info_payment"><strong>💳 Paiement :</strong> Avant jeudi 11h (confirmation et lien envoyés après commande).</p>
-            </div>
+                <div class="info-section">
+                    <h2 style="margin-bottom: 1.5rem;">2. Vos informations</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nom">Nom</label>
+                            <input type="text" id="nom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom">Prénom</label>
+                            <input type="text" id="prenom" name="prenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telephone">Numéro de téléphone</label>
+                            <input type="tel" id="telephone" name="telephone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="livraison">Lieu de livraison/retrait</label>
+                            <input type="text" id="livraison" name="livraison" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jour">Jour de livraison/retrait</label>
+                            <input type="text" id="jour" name="jour" placeholder="Ex: Samedi 12 Octobre" required>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="info-section" style="text-align: center;">
-                <h2 data-i18n="menu.to_order_title">📲 Pour commander :</h2>
-                <p data-i18n="menu.to_order_desc">Envoyez simplement “Menu de la semaine” en message privé pour recevoir les plats disponibles et réserver votre formule.</p>
-                <a href="#" class="cta-button" style="margin-top: 1rem;" data-i18n="menu.to_order_cta">Commander par message</a>
-            </div>
-
+                <div class="info-section" style="text-align: center;">
+                    <button type="submit" class="cta-button" style="margin-top: 1rem;" data-i18n="menu.to_order_cta">Commander via WhatsApp</button>
+                </div>
+            </form>
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('whatsapp-order-form');
+            const cards = document.querySelectorAll('.formula-card');
+
+            // Handle card selection visual
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    cards.forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    card.querySelector('input[type="radio"]').checked = true;
+                });
+            });
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                if (!data.formule) {
+                    alert('Veuillez choisir une formule.');
+                    return;
+                }
+
+                const message = `
+Bonjour, je souhaite passer une commande :
+
+- Formule : ${data.formule}
+- Nom : ${data.nom} ${data.prenom}
+- Téléphone : ${data.telephone}
+- Livraison/Retrait : ${data.livraison}, le ${data.jour}
+
+Merci !
+                `;
+
+                const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+        });
+    </script>
 
 </body>
 </html>
