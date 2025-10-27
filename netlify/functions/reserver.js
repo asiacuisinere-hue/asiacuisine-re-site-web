@@ -2,11 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async function(event, context) {
     if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }),
-            headers: { 'Allow': 'POST' }
-        };
+        return { statusCode: 405, body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }) };
     }
 
     try {
@@ -18,7 +14,7 @@ exports.handler = async function(event, context) {
 
         const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('bookings')
             .insert([{ service, booking_date: date, name: nom, email, phone: telephone, message }]);
 
@@ -30,16 +26,10 @@ exports.handler = async function(event, context) {
             throw error;
         }
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Réservation enregistrée avec succès.' })
-        };
+        return { statusCode: 200, body: JSON.stringify({ message: 'Réservation enregistrée avec succès.' }) };
 
     } catch (error) {
         console.error('Internal Server Error:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Une erreur interne du serveur est survenue.' })
-        };
+        return { statusCode: 500, body: JSON.stringify({ error: 'Une erreur interne du serveur est survenue.' }) };
     }
 };

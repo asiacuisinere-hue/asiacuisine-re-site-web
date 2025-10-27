@@ -2,11 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async function(event, context) {
     if (event.httpMethod !== 'GET') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }),
-            headers: { 'Allow': 'GET' }
-        };
+        return { statusCode: 405, body: JSON.stringify({ error: `Method ${event.httpMethod} Not Allowed` }) };
     }
 
     try {
@@ -44,9 +40,6 @@ exports.handler = async function(event, context) {
 
     } catch (error) {
         console.error('API/disponibilites Error:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Une erreur interne du serveur est survenue.' })
-        };
+        return { statusCode: 500, body: JSON.stringify({ error: 'Une erreur interne du serveur est survenue.' }) };
     }
 };
