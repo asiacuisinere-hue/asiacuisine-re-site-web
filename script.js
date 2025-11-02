@@ -125,6 +125,25 @@ function initializePageContent() {
     }
 }
 
+function handleResponsiveLayout() {
+    const switcher = document.querySelector('.language-switcher');
+    const navContainer = document.querySelector('.nav-container');
+    const navLinks = document.querySelector('.nav-links');
+    const navToggle = document.querySelector('.nav-toggle');
+
+    if (!switcher || !navContainer || !navLinks || !navToggle) return;
+
+    if (window.innerWidth <= 800) {
+        if (!navLinks.contains(switcher)) {
+            navLinks.appendChild(switcher);
+        }
+    } else {
+        if (!navContainer.contains(switcher)) {
+            navContainer.insertBefore(switcher, navToggle);
+        }
+    }
+}
+
 // --- COMPONENT INITIALIZATION FUNCTIONS ---
 
 function initializeScrollBasedEffects() {
