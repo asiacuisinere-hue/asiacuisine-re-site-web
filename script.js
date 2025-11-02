@@ -153,15 +153,39 @@ async function fetchAndInitializeDatepicker() {
         if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         
         const data = await response.json();
-        const unavailableDates = data.unavailableDates || [];
+        const apiUnavailableDates = data.unavailableDates || []; // Dates from API
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Calculate minDate: 7 days from today
+        const minSelectableDate = new Date(today);
+        minSelectableDate.setDate(today.getDate() + 7);
+
+        // Calculate maxDate: 6 months from today
+        const maxSelectableDate = new Date(today);
+        maxSelectableDate.setMonth(today.getMonth() + 6);
 
         new Datepicker(dateInput, {
             format: 'yyyy-mm-dd',
             language: 'fr',
             autohide: true,
-            datesDisabled: unavailableDates,
-            minDate: new Date(new Date().setDate(new Date().getDate() + 1)),
-            showDaysInNextAndPreviousMonths: false
+            // Disable Sundays (0) and Mondays (1)
+            daysOfWeekDisabled: [0, 1],
+            // Set minDate to 7 days from today
+            minDate: minSelectableDate,
+            // Set maxDate to 6 months from today
+            maxDate: maxSelectableDate,
+            showDaysInNextAndPreviousMonths: false,
+            beforeShowDay: (date) => {
+                const dateString = date.toISOString().split('T')[0];
+                // Check if date is in the API's unavailable list
+                if (apiUnavailableDates.includes(dateString)) {
+                    return { enabled: false };
+                }
+                // All other conditions (past date, day of week, maxDate) are handled by minDate, maxDate, and daysOfWeekDisabled
+                return { enabled: true };
+            }
         });
 
     } catch (error) {

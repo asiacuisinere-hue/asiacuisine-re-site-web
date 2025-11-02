@@ -42,13 +42,25 @@
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
+            opacity: 0.7; /* Par défaut : légèrement estompé */
+            filter: grayscale(50%); /* Par défaut : légèrement désaturé */
         }
         .formula-card:hover {
             border-color: #d4af37;
+            opacity: 0.85; /* Au survol d'une carte non sélectionnée : un peu plus visible */
+            filter: grayscale(25%);
         }
         .formula-card.selected {
             border-color: #d4af37;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            opacity: 1; /* Sélectionné : pleine couleur */
+            filter: grayscale(0%);
+        }
+        .formula-card.selected:hover {
+            /* Garde l'état sélectionné proéminent au survol */
+            opacity: 1;
+            filter: grayscale(0%);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3); /* Ombre légèrement plus prononcée */
         }
         .formula-card input[type="radio"] {
             position: absolute;
@@ -100,6 +112,94 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Calendar styles */
+        .calendar {
+            font-family: Arial, sans-serif;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #fff;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .calendar-header button {
+            background-color: #d4af37;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .calendar-header button:hover {
+            background-color: #c0a030;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+        .calendar-day-header {
+            font-weight: bold;
+            color: #555;
+        }
+        .calendar-day {
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .calendar-day.current-month {
+            color: #333;
+        }
+        .calendar-day.other-month {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        .calendar-day.selected {
+            background-color: #d4af37;
+            color: white;
+        }
+        .calendar-day.available:hover:not(.selected) {
+            background-color: #ffe082;
+        }
+        .calendar-day.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+            background-color: #f0f0f0;
+        }
+        .calendar-day.today {
+            border: 1px solid #d4af37;
+        }
+        /* Style for selected sub-options */
+        .sub-options label input[type="radio"]:checked + span {
+            font-weight: bold;
+            color: #d4af37;
+        }
+        .sub-options label {
+            cursor: pointer;
+            padding: 5px 0;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+        .sub-options label:hover {
+            background-color: #f0f0f0;
+        }
+        .sub-options label input[type="radio"] {
+            margin-right: 8px;
+            position: relative; /* Override absolute positioning from formula-card input */
+            opacity: 1; /* Make radio button visible */
+            width: auto;
+            height: auto;
+            cursor: pointer;
+        }
+        
     </style>
 </head>
 <body>
@@ -134,6 +234,14 @@
                     <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
                     <p class="price">49 €</p>
                     <p data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
+                    <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="radio" name="optionStandard" value="Option A"> Option A
+                        </label>
+                        <label style="display: block;">
+                            <input type="radio" name="optionStandard" value="Option B"> Option B
+                        </label>
+                    </div>
                 </div>
 
                 <div class="formula-card" id="card-confort">
@@ -148,6 +256,14 @@
                     <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
                     <p class="price">94 €</p>
                     <p data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV</p>
+                    <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="radio" name="optionDuo" value="Option A"> Option A
+                        </label>
+                        <label style="display: block;">
+                            <input type="radio" name="optionDuo" value="Option B"> Option B
+                        </label>
+                    </div>
                 </div>
 
                 <div class="info-section">
@@ -166,12 +282,40 @@
                             <input type="tel" id="telephone" name="telephone" required>
                         </div>
                         <div class="form-group">
-                            <label for="livraison">Lieu de livraison/retrait</label>
-                            <input type="text" id="livraison" name="livraison" required>
+                            <label for="livraison">Ville de livraison</label>
+                            <select id="livraison" name="livraison" required>
+                                <option value="">Sélectionnez une ville</option>
+                                <option value="Bras-Panon">Bras-Panon</option>
+                                <option value="Cilaos">Cilaos</option>
+                                <option value="Entre-Deux">Entre-Deux</option>
+                                <option value="L'Étang-Salé">L'Étang-Salé</option>
+                                <option value="La Plaine-des-Palmistes">La Plaine-des-Palmistes</option>
+                                <option value="La Possession">La Possession</option>
+                                <option value="Le Port">Le Port</option>
+                                <option value="Le Tampon">Le Tampon</option>
+                                <option value="Les Avirons">Les Avirons</option>
+                                <option value="Les Trois-Bassins">Les Trois-Bassins</option>
+                                <option value="Petite-Île">Petite-Île</option>
+                                <option value="Saint-André">Saint-André</option>
+                                <option value="Saint-Benoît">Saint-Benoît</option>
+                                <option value="Saint-Denis">Saint-Denis</option>
+                                <option value="Saint-Joseph">Saint-Joseph</option>
+                                <option value="Saint-Leu">Saint-Leu</option>
+                                <option value="Saint-Louis">Saint-Louis</option>
+                                <option value="Saint-Paul">Saint-Paul</option>
+                                <option value="Saint-Philippe">Saint-Philippe</option>
+                                <option value="Saint-Pierre">Saint-Pierre</option>
+                                <option value="Sainte-Marie">Sainte-Marie</option>
+                                <option value="Sainte-Rose">Sainte-Rose</option>
+                                <option value="Sainte-Suzanne">Sainte-Suzanne</option>
+                                <option value="Salazie">Salazie</option>
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="jour">Jour de livraison/retrait</label>
-                            <input type="text" id="jour" name="jour" placeholder="Ex: Samedi 12 Octobre" required>
+                            <label for="selected-date-display">Jour de livraison/retrait</label>
+                            <input type="text" id="selected-date-display" name="selected-date-display" placeholder="Sélectionnez une date" readonly required>
+                            <input type="hidden" id="jour" name="jour">
+                            <div id="calendar-container" style="margin-top: 1rem;"></div>
                         </div>
                     </div>
                 </div>
@@ -187,6 +331,171 @@
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('whatsapp-order-form');
             const cards = document.querySelectorAll('.formula-card');
+            const selectedDateDisplay = document.getElementById('selected-date-display');
+            const jourInput = document.getElementById('jour');
+            const calendarContainer = document.getElementById('calendar-container');
+
+            let unavailableDates = [];
+            let selectedDate = null;
+
+            // Fetch unavailable dates from Netlify function
+            async function fetchUnavailableDates() {
+                try {
+                    const response = await fetch('/.netlify/functions/disponibilites');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    unavailableDates = data.unavailableDates || [];
+                    renderCalendar();
+                } catch (error) {
+                    console.error('Error fetching unavailable dates:', error);
+                    // Fallback: render calendar without unavailable dates if API fails
+                    renderCalendar();
+                }
+            }
+
+            // Calendar rendering logic
+            function renderCalendar(monthOffset = 0) {
+                console.log('Rendering calendar with monthOffset:', monthOffset);
+                calendarContainer.innerHTML = ''; // Clear previous calendar
+
+                const calendarDiv = document.createElement('div');
+                calendarDiv.className = 'calendar';
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const displayDate = new Date();
+                displayDate.setMonth(displayDate.getMonth() + monthOffset);
+                displayDate.setDate(1); // Start from the first day of the month
+
+                const month = displayDate.getMonth();
+                const year = displayDate.getFullYear();
+
+                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+                const dayNames = ["Dim", "Lun", "Mar", "Jeu", "Ven", "Sam"]; // Removed 'Mar' and 'Jeu' as they are not selectable
+
+                // Create calendar header
+                const calendarHeaderDiv = document.createElement('div');
+                calendarHeaderDiv.className = 'calendar-header';
+
+                const prevMonthButton = document.createElement('button');
+                prevMonthButton.id = 'prevMonth';
+                prevMonthButton.innerHTML = '&lt;';
+                prevMonthButton.addEventListener('click', () => renderCalendar(monthOffset - 1));
+
+                const monthYearH2 = document.createElement('h2');
+                monthYearH2.textContent = `${monthNames[month]} ${year}`;
+
+                const nextMonthButton = document.createElement('button');
+                nextMonthButton.id = 'nextMonth';
+                nextMonthButton.innerHTML = '&gt;';
+                nextMonthButton.addEventListener('click', () => renderCalendar(monthOffset + 1));
+
+                calendarHeaderDiv.appendChild(prevMonthButton);
+                calendarHeaderDiv.appendChild(monthYearH2);
+                calendarHeaderDiv.appendChild(nextMonthButton);
+                calendarDiv.appendChild(calendarHeaderDiv);
+
+                const calendarGrid = document.createElement('div');
+                calendarGrid.className = 'calendar-grid';
+
+                // Day headers
+                dayNames.forEach(day => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'calendar-day-header';
+                    dayHeader.textContent = day;
+                    calendarGrid.appendChild(dayHeader);
+                });
+
+                // Fill in days
+                const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 for Sunday, 1 for Monday, etc.
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // Add empty divs for days before the 1st of the month
+                for (let i = 0; i < firstDayOfMonth; i++) {
+                    calendarGrid.appendChild(document.createElement('div'));
+                }
+
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const date = new Date(year, month, i);
+                    date.setHours(0, 0, 0, 0);
+                    const dateString = date.toISOString().split('T')[0];
+                    const dayOfWeek = date.getDay(); // 0-6, 0 is Sunday
+
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day current-month';
+                    dayElement.textContent = i;
+
+                    let isDisabled = false;
+
+                    // Disable past dates
+                    if (date < today) {
+                        isDisabled = true;
+                    }
+
+                    // Disable non-Wednesday, Friday, Saturday
+                    if (dayOfWeek !== 3 && dayOfWeek !== 5 && dayOfWeek !== 6) {
+                        isDisabled = true;
+                    }
+
+                    // Disable dates from API
+                    if (unavailableDates.includes(dateString)) {
+                        isDisabled = true;
+                        console.log(`  - Disabled because in unavailableDates.`);
+                    }
+
+                    // Calculate cut-off time for 48-hour advance booking before 11 AM
+                    const cutOffDate = new Date(date);
+                    cutOffDate.setDate(date.getDate() - 2); // 2 days before delivery date
+                    cutOffDate.setHours(11, 0, 0, 0); // Set to 11 AM
+
+                    const now = new Date();
+
+                    if (now > cutOffDate) {
+                        isDisabled = true;
+                        console.log(`  - Disabled because order must be placed 48h in advance (cut-off: ${cutOffDate.toLocaleString()}).`);
+                    }
+
+                    console.log(`  - Final isDisabled: ${isDisabled}`);
+
+                    if (isDisabled) {
+                        dayElement.classList.add('disabled');
+                    } else {
+                        dayElement.classList.add('available');
+                        dayElement.addEventListener('click', () => {
+                            selectedDate = date;
+                            jourInput.value = dateString;
+                            selectedDateDisplay.value = formatDateForDisplay(date);
+                            // Re-render to update selected state
+                            renderCalendar(monthOffset);
+                        });
+                    }
+
+                    if (selectedDate && dateString === selectedDate.toISOString().split('T')[0]) {
+                        dayElement.classList.add('selected');
+                    }
+
+                    if (dateString === today.toISOString().split('T')[0]) {
+                        dayElement.classList.add('today');
+                    }
+
+                    calendarGrid.appendChild(dayElement);
+                }
+
+                calendarDiv.appendChild(calendarGrid);
+                calendarContainer.appendChild(calendarDiv);
+            }
+
+            function formatDateForDisplay(date) {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                return date.toLocaleDateString('fr-FR', options);
+            }
+
+            // Initial calls
+            console.log('Fetching unavailable dates...');
+            fetchUnavailableDates();
 
             // Handle card selection visual
             cards.forEach(card => {
@@ -208,10 +517,32 @@
                     return;
                 }
 
+                if (!data.jour) {
+                    alert('Veuillez choisir une date de livraison/retrait.');
+                    return;
+                }
+
+                let formuleDetails = data.formule;
+                if (data.formule.includes("Formule Standard")) {
+                    const selectedOptionStandard = document.querySelector('input[name="optionStandard"]:checked');
+                    if (!selectedOptionStandard) {
+                        alert('Veuillez choisir une option (A ou B) pour la Formule Standard.');
+                        return;
+                    }
+                    formuleDetails += ` (${selectedOptionStandard.value})`;
+                } else if (data.formule.includes("Option Duo")) {
+                    const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
+                    if (!selectedOptionDuo) {
+                        alert("Veuillez choisir une option (A ou B) pour l'Option Duo.");
+                        return;
+                    }
+                    formuleDetails += ` (${selectedOptionDuo.value})`;
+                }
+
                 const message = `
 Bonjour, je souhaite passer une commande :
 
-- Formule : ${data.formule}
+- Formule : ${formuleDetails}
 - Nom : ${data.nom} ${data.prenom}
 - Téléphone : ${data.telephone}
 - Livraison/Retrait : ${data.livraison}, le ${data.jour}
@@ -219,7 +550,7 @@ Bonjour, je souhaite passer une commande :
 Merci !
                 `;
 
-                const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message)}`;
+                const whatsappUrl = `https://wa.me/337644714?text=${encodeURIComponent(message)}`;
                 window.open(whatsappUrl, '_blank');
             });
         });

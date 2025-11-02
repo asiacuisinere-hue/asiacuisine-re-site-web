@@ -1,4 +1,2 @@
-/api/disponibilites:1  Failed to load resource: the server responded with a status of 500 ()
-script.js:168 Failed to fetch availability: Error: Network response was not ok (500)
-    at fetchAndInitializeDatepicker (script.js:153:33)
+script.js:168 Failed to fetch availability: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
 fetchAndInitializeDatepicker @ script.js:168
