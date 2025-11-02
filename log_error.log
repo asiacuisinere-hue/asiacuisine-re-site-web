@@ -1,2 +1,3 @@
-script.js:192 Failed to fetch availability: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-fetchAndInitializeDatepicker @ script.js:192
+script.js:33 i18next initialization failed: SyntaxError: Failed to execute 'json' on 'Response': Unexpected non-whitespace character after JSON at position 6548 (line 124 column 3)
+    at initializeI18n (script.js:20:48)
+initializeI18n @ script.js:33
