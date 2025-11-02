@@ -9,6 +9,21 @@
       "booking": "Réservation",
       "contact": "Contact"
     },
+    "menu": {
+      "page_title": "Menus de la Semaine - Asiacuisine.re",
+      "back_to_home": "← Retour à l'accueil",
+      "title": "Menus de la semaine",
+      "subtitle": "Choisissez votre formule et remplissez vos informations pour commander.",
+      "discovery_title": "🔹 Formule Découverte",
+      "discovery_desc": "3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous",
+      "standard_title": "⭐ Formule Standard",
+      "standard_desc": "5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone",
+      "comfort_title": "💎 Formule Confort",
+      "comfort_desc": "5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)",
+      "duo_title": "👥 Option Duo",
+      "duo_desc": "<strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV",
+      "to_order_cta": "Commander via WhatsApp"
+    },
     "hero": {
       "title": "Asiacuisine.re",
       "subtitle": "Découvrez l'art de la cuisine asiatique authentique avec un chef privé expérimenté. De Guangzhou à La Réunion, une expérience culinaire unique à domicile.",
