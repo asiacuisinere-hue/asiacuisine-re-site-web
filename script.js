@@ -20,9 +20,12 @@ async function initializeI18n() {
         const enTranslation = await enResponse.json();
         const zhTranslation = await zhResponse.json();
 
+        // Get saved language from localStorage or default to 'fr'
+        const savedLang = localStorage.getItem('asiacuisine-lang') || 'fr';
+
         await i18next.init({
-            lng: 'fr',
-                        debug: false,
+            lng: savedLang, // Use the saved language
+            debug: false,
             resources: {
                 fr: frTranslation,
                 en: enTranslation,
@@ -33,7 +36,6 @@ async function initializeI18n() {
         console.error('i18next initialization failed:', error);
     }
 }
-
 function updateContent() {
     const elements = document.querySelectorAll('[data-i18n]');
     elements.forEach(el => {
@@ -76,6 +78,7 @@ function createLanguageSwitcher() {
     switcher.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const lang = e.target.dataset.lang;
+            localStorage.setItem('asiacuisine-lang', lang); // Save the selected language
             i18next.changeLanguage(lang, updateContent);
         });
     });
