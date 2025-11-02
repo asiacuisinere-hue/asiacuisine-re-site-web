@@ -20,11 +20,12 @@ async function initializeI18n() {
         const enTranslation = await enResponse.json();
         const zhTranslation = await zhResponse.json();
 
-        // Get saved language from localStorage or default to 'fr'
-        const savedLang = localStorage.getItem('asiacuisine-lang') || 'fr';
+        // Get language from URL parameter or default to 'fr'
+        const urlParams = new URLSearchParams(window.location.search);
+        const lang = urlParams.get('lang') || 'fr';
 
         await i18next.init({
-            lng: savedLang, // Use the saved language
+            lng: lang,
             debug: false,
             resources: {
                 fr: frTranslation,
@@ -51,6 +52,20 @@ function updateContent() {
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active-lang', btn.dataset.lang === i18next.language);
     });
+
+    // Update all links to persist language parameter
+    const currentLang = i18next.language;
+    document.querySelectorAll('a').forEach(link => {
+        try {
+            const url = new URL(link.href);
+            if (link.hostname === window.location.hostname) { // Only modify internal links
+                url.searchParams.set('lang', currentLang);
+                link.href = url.href;
+            }
+        } catch (e) {
+            // Ignore invalid URLs
+        }
+    });
 }
 
 function createLanguageSwitcher() {
@@ -75,14 +90,14 @@ function createLanguageSwitcher() {
         navContainer.appendChild(switcher);
     }
 
-    switcher.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const lang = e.target.dataset.lang;
-            localStorage.setItem('asiacuisine-lang', lang); // Save the selected language
-            i18next.changeLanguage(lang, updateContent);
-        });
-    });
-}
+            switcher.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const lang = e.target.dataset.lang;
+                    const url = new URL(window.location);
+                    url.searchParams.set('lang', lang);
+                    window.location.href = url.href;
+                });
+            });}
 
 function initializePageContent() {
     updateContent();
