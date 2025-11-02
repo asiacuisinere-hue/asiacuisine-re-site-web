@@ -100,9 +100,13 @@ function createLanguageSwitcher() {
             });}
 
 function initializePageContent() {
+    // Functions that should run on ALL pages
     updateContent();
     createLanguageSwitcher();
-    // Run layout-dependent scripts only on the main page
+    initializeCookieConsent();
+    initializeWelcomePopup();
+
+    // Functions that should ONLY run on the main page (index.html)
     if (document.querySelector('#accueil')) {
         initializeScrollBasedEffects();
         fetchAndInitializeDatepicker();
@@ -113,12 +117,7 @@ function initializePageContent() {
         initializeForm();
         handleResponsiveLayout();
         window.addEventListener('resize', handleResponsiveLayout);
-    } else {
-        // Logic for other pages like menu.html or legal.html
-        // For now, we only need the language switcher which is already initialized.
     }
-    initializeCookieConsent();
-    initializeWelcomePopup();
 }
 
 function handleResponsiveLayout() {
