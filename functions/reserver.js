@@ -1,4 +1,5 @@
  import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
     
      export async function onRequest(context) {
          if (context.request.method !== 'POST') {
@@ -38,7 +39,37 @@
                 }
                 throw error;
             }
-   
+
+            // Send email notification with Resend
+            const resendApiKey = context.env.RESEND_API_KEY;
+            if (resendApiKey) {
+                try {
+                    const resend = new Resend(resendApiKey);
+                    await resend.emails.send({
+                        from: 'reservation@asiacuisine.re',
+                        to: 'contact@asiacuisine.re',
+                        subject: `Nouvelle demande de réservation - ${nom}`,
+                        html: `
+                            <h1>Nouvelle demande de réservation</h1>
+                            <p>Une nouvelle demande de réservation a été effectuée sur le site.</p>
+                            <ul>
+                                <li><strong>Service:</strong> ${service}</li>
+                                <li><strong>Date:</strong> ${date}</li>
+                                <li><strong>Nom:</strong> ${nom}</li>
+                                <li><strong>Email:</strong> ${email}</li>
+                                <li><strong>Téléphone:</strong> ${telephone || 'Non fourni'}</li>
+                                <li><strong>Message:</strong> ${message || 'Aucun'}</li>
+                            </ul>
+                        `
+                    });
+                    console.log('Email notification sent successfully.');
+                } catch (emailError) {
+                    console.error('Failed to send email notification:', emailError);
+                }
+            } else {
+                console.warn('RESEND_API_KEY is not set. Skipping email notification.');
+            }
+
             return new Response(JSON.stringify({ message: 'Réservation enregistrée avec succès.' }), { status:
       200 });
    
