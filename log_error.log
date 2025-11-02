@@ -1,54 +1,9 @@
 script.js:3 DOM fully loaded and parsed
 script.js:12 Initializing i18next...
-script.js:28 Language detected from URL: zh
-i18next.min.js:1 i18next: languageChanged zh
-i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
+script.js:40 i18next initialization failed: SyntaxError: Failed to execute 'json' on 'Response': Unexpected non-whitespace character after JSON at position 7422 (line 122 column 1)
+    at initializeI18n (script.js:22:48)
+initializeI18n @ script.js:40
 script.js:5 i18next initialized, now initializing page content.
 script.js:45 Running updateContent()...
 script.js:47 Found 82 elements to translate.
-script.js:63 Updating links to persist language: zh
-
-menu?lang=zh:497 Fetching unavailable dates...
-menu?lang=zh:360 Rendering calendar with monthOffset: 0
-menu?lang=zh:458   - Disabled because order must be placed 48h in advance (cut-off: 30/10/2025 11:00:00).
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:458   - Disabled because order must be placed 48h in advance (cut-off: 31/10/2025 11:00:00).
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:458   - Disabled because order must be placed 48h in advance (cut-off: 01/11/2025 11:00:00).
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:458   - Disabled because order must be placed 48h in advance (cut-off: 02/11/2025 11:00:00).
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:446   - Disabled because in unavailableDates.
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: false
-menu?lang=zh:461   - Final isDisabled: true
+script.js:63 Updating links to persist language: undefined
