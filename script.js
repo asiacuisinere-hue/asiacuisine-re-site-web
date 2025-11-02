@@ -1,12 +1,15 @@
 // --- MAIN INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded and parsed');
     initializeI18n().then(() => {
+        console.log('i18next initialized, now initializing page content.');
         initializePageContent();
     });
 });
 
 // --- I18N (TRANSLATION) LOGIC ---
 async function initializeI18n() {
+    console.log('Initializing i18next...');
     try {
         const frResponse = await fetch('./locales/fr.json');
         const enResponse = await fetch('./locales/en.json');
@@ -20,13 +23,13 @@ async function initializeI18n() {
         const enTranslation = await enResponse.json();
         const zhTranslation = await zhResponse.json();
 
-        // Get language from URL parameter or default to 'fr'
         const urlParams = new URLSearchParams(window.location.search);
         const lang = urlParams.get('lang') || 'fr';
+        console.log(`Language detected from URL: ${lang}`);
 
         await i18next.init({
             lng: lang,
-            debug: false,
+            debug: true, // Enable debug output from i18next
             resources: {
                 fr: frTranslation,
                 en: enTranslation,
@@ -37,8 +40,11 @@ async function initializeI18n() {
         console.error('i18next initialization failed:', error);
     }
 }
+
 function updateContent() {
+    console.log('Running updateContent()...');
     const elements = document.querySelectorAll('[data-i18n]');
+    console.log(`Found ${elements.length} elements to translate.`);
     elements.forEach(el => {
         const key = el.dataset.i18n;
         if (key.startsWith('[placeholder]')) {
@@ -53,12 +59,12 @@ function updateContent() {
         btn.classList.toggle('active-lang', btn.dataset.lang === i18next.language);
     });
 
-    // Update all links to persist language parameter
     const currentLang = i18next.language;
+    console.log(`Updating links to persist language: ${currentLang}`);
     document.querySelectorAll('a').forEach(link => {
         try {
             const url = new URL(link.href);
-            if (link.hostname === window.location.hostname) { // Only modify internal links
+            if (link.hostname === window.location.hostname) {
                 url.searchParams.set('lang', currentLang);
                 link.href = url.href;
             }
