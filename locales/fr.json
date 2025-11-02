@@ -93,7 +93,30 @@
       "schedules_p2": "Dimanche : Sur rendez-vous",
       "schedules_p3": "Réservation recommandée 48h à l'avance",
       "copyright": "&copy; 2025 Asiacuisine.re - Tous droits réservés",
-      "legal": "Mentions Légales & RGPD"
+      "legal": "Mentions Légales & RGPD",
+      "legal_link": "Mentions Légales & RGPD"
+    },
+    "legal": {
+      "page_title": "Mentions Légales - Asiacuisine.re",
+      "back_to_home": "← Retour à l'accueil",
+      "title": "Mentions légales",
+      "effective_date": "En vigueur au 06/09/2025",
+      "intro_p1": "Conformément aux dispositions de la loi n°2004-575 du 21 juin 2004 pour la Confiance en l'économie numérique, il est porté à la connaissance des utilisateurs et visiteurs du site www.asiacuisine.re les présentes mentions légales.",
+      "intro_p2": "La connexion et la navigation sur le Site par l'Utilisateur implique acceptation intégrale et sans réserve des présentes mentions légales.",
+      "editor_title": "EDITION DU SITE",
+      "editor_info": "L'édition et la direction de la publication du Site est assurée par Jean-Marie KISCHENIN, domicilié 284, chemin Rivière du Mât les Hauts, 97440 Saint-André, dont l'adresse email est contact@asiacuisine.re.",
+      "host_title": "HEBERGEUR",
+      "host_info": "L'hébergeur du Site est la société Cloudflare, Inc., dont le siège social est situé au 101 Townsend St, San Francisco, CA 94107, États-Unis.",
+      "access_title": "ACCES AU SITE",
+      "access_info": "Le Site est normalement accessible, à tout moment, à l'Utilisateur. Toutefois, l'Editeur pourra, à tout moment, suspendre, limiter ou interrompre le Site afin de procéder à des mises à jour ou des modifications de son contenu. L'Editeur ne pourra en aucun cas être tenu responsable des conséquences éventuelles de cette indisponibilité.",
+      "data_collection_title": "COLLECTE DES DONNEES",
+      "data_collection_p1": "Le Site assure à l'Utilisateur une collecte et un traitement des données personnelles dans le respect de la vie privée conformément à la loi n°78-17 du 6 janvier 1978 et au règlement (UE) 2016/679 du Parlement européen et du Conseil du 27 avril 2016.",
+      "data_collection_p2": "En vertu de la règlementation, l'Utilisateur dispose d'un droit d'accès, de rectification, de suppression et d'opposition de ses données personnelles. L'Utilisateur peut exercer ce droit :",
+      "data_collection_email": "par mail à l'adresse email contact@asiacuisine.re",
+      "intellectual_property_title": "PROPRIETE INTELLECTUELLE",
+      "intellectual_property_info": "Toute utilisation, reproduction, diffusion, commercialisation, modification de toute ou partie du Site, sans autorisation expresse de l'Editeur est prohibée et pourra entraîner des actions et poursuites judiciaires.",
+      "source": "Rédigé sur http://legalplace.fr"
     }
   }
+}
 }

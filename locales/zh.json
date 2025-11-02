@@ -93,32 +93,29 @@
       "schedules_p2": "周日：需提前预约",
       "schedules_p3": "建议提前48小时预订",
       "copyright": "© 2025 Asiacuisine.re - 版权所有",
-      "legal": "[ZH]Mentions Légales & RGPD"
+      "legal": "[ZH]Mentions Légales & RGPD",
+      "legal_link": "法律声明与隐私政策"
     },
-    "menu": {
-      "page_title": "每周菜单 - Asiacuisine.re",
+    "legal": {
+      "page_title": "法律声明 - Asiacuisine.re",
       "back_to_home": "← 返回首页",
-      "title": "每周菜单 – 家常亚洲美食",
-      "subtitle": "我们每周为您准备精选的家常亚洲菜肴 🍱<br>根据当季新鲜食材精心搭配 🌿，让您吃得健康又满足。",
-      "discovery_title": "🔹 体验套餐",
-      "discovery_desc": "本周菜单中的3道菜<br>📍 在指定地点取餐",
-      "discovery_note": "适合第一次尝试我们的口味，或偶尔想偷个懒的时候享用。",
-      "standard_title": "⭐ 标准套餐",
-      "standard_desc": "本周菜单中的5道菜<br>🚚 根据区域提供配送服务",
-      "standard_note": "兼顾多样、美味与实惠。提供经典款或素食款选择。",
-      "comfort_title": "💎 舒适套餐",
-      "comfort_desc": "本周菜单中的5道菜<br>🏡 限定区域上门配送",
-      "comfort_note": "适合想轻松享受美味、不出门也能吃好的您。",
-      "duo_title": "👥 双人套餐",
-      "duo_desc": "<strong>2份相同标准套餐</strong>（共10道菜）<br>同一地点一起配送",
-      "duo_note": "👉 适合朋友、同事或情侣一起订餐。可选择经典或素食款。",
-      "info_title": "实用信息",
-      "info_zones": "<strong>📍 配送范围：</strong> Sainte-Marie及周边地区（含配送）。其他地区可在指定取餐点领取（拼车停车场或指定地点）。",
-      "info_orders": "<strong>🕐 订餐时间：</strong> 请于周三前下单 – 周末准备。",
-      "info_payment": "<strong>💳 支付时间：</strong> 请于周四上午11点前完成（确认及付款链接将在下单后发送）。",
-      "to_order_title": "📲 如何订餐：",
-      "to_order_desc": "只需发送“每周菜单”私信，即可获取可选菜品并预订您的套餐。",
-      "to_order_cta": "私信订餐"
+      "title": "法律声明",
+      "effective_date": "生效日期：2025年9月6日",
+      "intro_p1": "根据2004年6月21日第2004-575号法律（数字经济信任法）的规定，特此告知www.asiacuisine.re网站的用户和访问者本法律声明。",
+      "intro_p2": "用户连接和浏览本网站即表示完全无保留地接受本法律声明。",
+      "editor_title": "网站编辑",
+      "editor_info": "本网站的编辑和出版由Jean-Marie KISCHENIN负责，地址：284, chemin Rivière du Mât les Hauts, 97440 Saint-André，电子邮箱：contact@asiacuisine.re。",
+      "host_title": "托管服务商",
+      "host_info": "本网站的托管服务商为Cloudflare, Inc.，其注册办事处位于101 Townsend St, San Francisco, CA 94107, 美国。",
+      "access_title": "网站访问",
+      "access_info": "本网站通常在任何时候都可供用户访问。但是，编辑者可能随时暂停、限制或中断对网站的访问，以进行内容更新或修改。编辑者不对因网站不可用而可能造成的任何后果负责。",
+      "data_collection_title": "数据收集",
+      "data_collection_p1": "本网站根据1978年1月6日第78-17号法律以及欧洲议会和理事会2016年4月27日第2016/679号法规，确保在尊重隐私的情况下收集和处理个人数据。",
+      "data_collection_p2": "根据适用的个人数据保护法规，用户有权访问、更正、删除和反对其个人数据。用户可以通过以下方式行使此权利：",
+      "data_collection_email": "发送电子邮件至contact@asiacuisine.re",
+      "intellectual_property_title": "知识产权",
+      "intellectual_property_info": "未经编辑者明确授权，禁止对本网站的全部或部分内容进行任何使用、复制、传播、商业化、修改，否则将根据现行法规采取法律行动和起诉。",
+      "source": "撰写于 http://legalplace.fr"
     }
   }
 }

@@ -93,32 +93,29 @@
       "schedules_p2": "Sunday: By appointment",
       "schedules_p3": "Bookings recommended 48 hours in advance",
       "copyright": "© 2025 Asiacuisine.re - All Rights Reserved",
-      "legal": "[EN]Mentions Légales & RGPD"
+      "legal": "[EN]Mentions Légales & RGPD",
+      "legal_link": "Legal Notice & Privacy Policy (GDPR)"
     },
-    "menu": {
-      "page_title": "Weekly Menus - Asiacuisine.re",
+    "legal": {
+      "page_title": "Legal Notice - Asiacuisine.re",
       "back_to_home": "← Back to Home",
-      "title": "Weekly Menus – Homemade Asian Cuisine",
-      "subtitle": "Every week, we prepare a selection of homemade Asian dishes for you – balanced, tasty, and full of flavor 🍱<br>Recipes carefully chosen according to the freshest ingredients of the moment 🌿",
-      "discovery_title": "🔹 Discovery Plan",
-      "discovery_desc": "3 dishes from this week’s menu<br>📍 Pick-up at meeting point",
-      "discovery_note": "Perfect for discovering our flavors or enjoying a little treat without cooking.",
-      "standard_title": "⭐ Standard Plan",
-      "standard_desc": "5 dishes from this week’s menu<br>🚚 Delivery included depending on your area",
-      "standard_note": "The perfect balance between variety, comfort, and price. Available in Classic or Vegetarian version.",
-      "comfort_title": "💎 Comfort Plan",
-      "comfort_desc": "5 dishes from this week’s menu<br>🏡 Home delivery (limited areas)",
-      "comfort_note": "For those who just want to relax and enjoy great food without moving.",
-      "duo_title": "👥 Duo Option",
-      "duo_desc": "<strong>2 identical Standard Plans</strong> (10 dishes total)<br>Shared delivery to the same meeting point",
-      "duo_note": "👉 Ideal for friends, colleagues, or couples. Choose your type of plan (e.g., Classic Duo or Vegetarian Duo).",
-      "info_title": "Practical Information",
-      "info_zones": "<strong>📍 Areas covered:</strong> Sainte-Marie and surroundings (delivery included). Other towns: pick-up at meeting point (carpool parking or indicated location).",
-      "info_orders": "<strong>🕐 Orders:</strong> Before Wednesday – prepared on weekends.",
-      "info_payment": "<strong>💳 Payment:</strong> Before Thursday 11 a.m. (confirmation and link sent after order).",
-      "to_order_title": "📲 How to order:",
-      "to_order_desc": "Simply send “Weekly Menu” by private message to receive the available dishes and reserve your plan.",
-      "to_order_cta": "Order by message"
+      "title": "Legal Notice",
+      "effective_date": "Effective on 06/09/2025",
+      "intro_p1": "In accordance with the provisions of Law n°2004-575 of June 21, 2004, for confidence in the digital economy, users and visitors of the www.asiacuisine.re website are informed of the present legal notices.",
+      "intro_p2": "Connection and navigation on the Site by the User implies full and unreserved acceptance of these legal notices.",
+      "editor_title": "SITE EDITOR",
+      "editor_info": "The website is published and directed by Jean-Marie KISCHENIN, residing at 284, chemin Rivière du Mât les Hauts, 97440 Saint-André, whose email address is contact@asiacuisine.re.",
+      "host_title": "HOSTING PROVIDER",
+      "host_info": "The Site is hosted by Cloudflare, Inc., whose registered office is located at 101 Townsend St, San Francisco, CA 94107, United States.",
+      "access_title": "SITE ACCESS",
+      "access_info": "The Site is normally accessible to the User at all times. However, the Editor may, at any time, suspend, limit or interrupt access to the Site to carry out updates or modifications to its content. The Editor cannot be held responsible for any consequences of this unavailability on the User's activities.",
+      "data_collection_title": "DATA COLLECTION",
+      "data_collection_p1": "The Site ensures the collection and processing of personal data in compliance with privacy laws, in accordance with Law n°78-17 of January 6, 1978, and Regulation (EU) 2016/679 of the European Parliament and of the Council of April 27, 2016.",
+      "data_collection_p2": "In accordance with applicable regulations concerning the protection of personal data, the User has the right to access, rectify, delete, and oppose their personal data. The User can exercise this right:",
+      "data_collection_email": "by email to contact@asiacuisine.re",
+      "intellectual_property_title": "INTELLECTUAL PROPERTY",
+      "intellectual_property_info": "Any use, reproduction, distribution, commercialization, modification of all or part of the Site, without the express authorization of the Editor, is prohibited and may lead to legal action and prosecution as provided by current regulations.",
+      "source": "Written on http://legalplace.fr"
     }
   }
 }
