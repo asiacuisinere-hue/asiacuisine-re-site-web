@@ -9,6 +9,21 @@
       "booking": "Booking",
       "contact": "Contact"
     },
+    "menu": {
+      "page_title": "Weekly Menus - Asiacuisine.re",
+      "back_to_home": "← Back to Home",
+      "title": "Weekly Menus",
+      "subtitle": "Choose your formula and fill in your information to order.",
+      "discovery_title": "🔹 Discovery Formula",
+      "discovery_desc": "3 dishes from the weekly menu<br>📍 Pickup at a meeting point",
+      "standard_title": "⭐ Standard Formula",
+      "standard_desc": "5 dishes from the weekly menu<br>🚚 Delivery included depending on your area",
+      "comfort_title": "💎 Comfort Formula",
+      "comfort_desc": "5 dishes from the weekly menu<br>🏡 Home delivery (limited areas)",
+      "duo_title": "👥 Duo Option",
+      "duo_desc": "<strong>2 identical Standard Formulas</strong> (10 dishes total)<br>Joint delivery to the same meeting point",
+      "to_order_cta": "Order via WhatsApp"
+    },
     "hero": {
       "title": "Asiacuisine.re",
       "subtitle": "From Guangzhou to Réunion Island — an experienced private chef brings you the authentic taste of Asia, right in the comfort of your home.",
