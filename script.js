@@ -1,4 +1,3 @@
-// --- MAIN INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded and parsed');
     initializeI18n().then(() => {
@@ -88,7 +87,6 @@ function createLanguageSwitcher() {
         <button class="lang-btn" data-lang="zh">ZH</button>
     `;
 
-    // On the main page, insert it before the mobile toggle. On other pages, just append it.
     const mobileToggle = document.querySelector('.nav-toggle');
     if (mobileToggle) {
         navContainer.insertBefore(switcher, mobileToggle);
@@ -96,14 +94,15 @@ function createLanguageSwitcher() {
         navContainer.appendChild(switcher);
     }
 
-            switcher.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const lang = e.target.dataset.lang;
-                    const url = new URL(window.location);
-                    url.searchParams.set('lang', lang);
-                    window.location.href = url.href;
-                });
-            });}
+    switcher.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const lang = e.target.dataset.lang;
+            const url = new URL(window.location);
+            url.searchParams.set('lang', lang);
+            window.location.href = url.href;
+        });
+    });
+}
 
 function initializePageContent() {
     // Functions that should run on ALL pages
@@ -123,25 +122,6 @@ function initializePageContent() {
         initializeForm();
         handleResponsiveLayout();
         window.addEventListener('resize', handleResponsiveLayout);
-    }
-}
-
-function handleResponsiveLayout() {
-    const switcher = document.querySelector('.language-switcher');
-    const navContainer = document.querySelector('.nav-container');
-    const navLinks = document.querySelector('.nav-links');
-    const navToggle = document.querySelector('.nav-toggle');
-
-    if (!switcher || !navContainer || !navLinks || !navToggle) return;
-
-    if (window.innerWidth <= 800) {
-        if (!navLinks.contains(switcher)) {
-            navLinks.appendChild(switcher);
-        }
-    } else {
-        if (!navContainer.contains(switcher)) {
-            navContainer.insertBefore(switcher, navToggle);
-        }
     }
 }
 
@@ -172,43 +152,19 @@ async function fetchAndInitializeDatepicker() {
     if (!dateInput) return;
 
     try {
-        const response = await fetch('/disponibilites');
+        const response = await fetch('/api/disponibilites');
         if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         
         const data = await response.json();
-        const apiUnavailableDates = data.unavailableDates || []; // Dates from API
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // Calculate minDate: 7 days from today
-        const minSelectableDate = new Date(today);
-        minSelectableDate.setDate(today.getDate() + 7);
-
-        // Calculate maxDate: 6 months from today
-        const maxSelectableDate = new Date(today);
-        maxSelectableDate.setMonth(today.getMonth() + 6);
+        const unavailableDates = data.unavailableDates || [];
 
         new Datepicker(dateInput, {
             format: 'yyyy-mm-dd',
             language: 'fr',
             autohide: true,
-            // Disable Sundays (0) and Mondays (1)
-            daysOfWeekDisabled: [0, 1],
-            // Set minDate to 7 days from today
-            minDate: minSelectableDate,
-            // Set maxDate to 6 months from today
-            maxDate: maxSelectableDate,
-            showDaysInNextAndPreviousMonths: false,
-            beforeShowDay: (date) => {
-                const dateString = date.toISOString().split('T')[0];
-                // Check if date is in the API's unavailable list
-                if (apiUnavailableDates.includes(dateString)) {
-                    return { enabled: false };
-                }
-                // All other conditions (past date, day of week, maxDate) are handled by minDate, maxDate, and daysOfWeekDisabled
-                return { enabled: true };
-            }
+            datesDisabled: unavailableDates,
+            minDate: new Date(new Date().setDate(new Date().getDate() + 1)),
+            showDaysInNextAndPreviousMonths: false
         });
 
     } catch (error) {
@@ -270,10 +226,17 @@ function initializeMobileMenu() {
 }
 
 function initializeBackToTopButton() {
-    // Implementation is correct
+    const backToTopBtn = document.getElementById('back-to-top-btn');
+    if (backToTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        }, { passive: true });
+    }
 }
-
-
 
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
@@ -313,7 +276,7 @@ function initializeForm() {
         submitBtn.disabled = true;
 
         try {
-            const response = await fetch('/reserver', {
+            const response = await fetch('/api/reserver', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
