@@ -1,2 +1,2 @@
-script.js:168 Failed to fetch availability: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-fetchAndInitializeDatepicker @ script.js:168
+script.js:192 Failed to fetch availability: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+fetchAndInitializeDatepicker @ script.js:192

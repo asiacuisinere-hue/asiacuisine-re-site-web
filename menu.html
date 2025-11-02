@@ -341,7 +341,7 @@
             // Fetch unavailable dates from Netlify function
             async function fetchUnavailableDates() {
                 try {
-                    const response = await fetch('/.netlify/functions/disponibilites');
+                    const response = await fetch('/disponibilites');
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }

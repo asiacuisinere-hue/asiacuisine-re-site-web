@@ -149,7 +149,7 @@ async function fetchAndInitializeDatepicker() {
     if (!dateInput) return;
 
     try {
-        const response = await fetch('/api/disponibilites');
+        const response = await fetch('/disponibilites');
         if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         
         const data = await response.json();
@@ -290,7 +290,7 @@ function initializeForm() {
         submitBtn.disabled = true;
 
         try {
-            const response = await fetch('/api/reserver', {
+            const response = await fetch('/reserver', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
