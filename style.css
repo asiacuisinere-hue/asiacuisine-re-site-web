@@ -199,13 +199,33 @@ body {
     gap: 1.5rem;
     padding: 1.5rem;
     -webkit-overflow-scrolling: touch;
-    /* Hide scrollbar for a cleaner look */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-color: #ccc #f0f0f0; /* For Firefox */
+    scrollbar-width: thin; /* For Firefox */
 }
 
 .gallery-grid::-webkit-scrollbar {
-    display: none; /* Webkit browsers */
+    height: 8px; /* Visible scrollbar height */
+}
+
+.gallery-grid::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.gallery-grid::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+/* Hide scrollbar on touch devices where it's not needed */
+@media (hover: none) {
+    .gallery-grid {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* IE and Edge */
+    }
+    .gallery-grid::-webkit-scrollbar {
+        display: none; /* Webkit browsers */
+    }
 }
 
 .gallery-item {
