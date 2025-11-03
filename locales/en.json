@@ -67,12 +67,19 @@
     "gallery": {
       "section_title": "Gallery",
       "p1": "A glimpse into some of my culinary creations. More professional photos coming soon.",
-      "item1": "Authentic Ramen",
-      "item2": "Homemade Dim Sum",
-      "item3": "Cantonese Fried Rice",
-      "item4": "Thai Curry",
-      "item5": "Japanese Tempura",
-      "item6": "Vietnamese Salad"
+      "item6": "Vietnamese Salad",
+      "item1": "Japanese-style chicken rice bowl",
+      "item2": "Baked cutlet and vegetables",
+      "item3": "Vietnamese-style sliced beef",
+      "item4": "Malaysian-style breaded fish and Sichuan-style soy sprouts",
+      "item5": "Pork with vegetables and Chinese-style eggplant",
+      "item6": "Sliced pork and sautéed vegetables",
+      "item7": "Sichuan-style sautéed pork",
+      "item8": "Hunan-style pork",
+      "item9": "Spicy and sweet chicken with green vegetables",
+      "item10": "Homemade chicken ramen",
+      "item11": "Sautéed pork with marinated vegetables",
+      "item12": "Tonkatsu"
     },
     "booking": {
       "section_title": "Booking",

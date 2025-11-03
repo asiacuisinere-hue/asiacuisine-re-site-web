@@ -67,12 +67,19 @@
     "gallery": {
       "section_title": "Galerie Photos",
       "p1": "Découvrez un aperçu de mes créations culinaires. Photos en cours d'amélioration professionnelle.",
-      "item1": "Ramen Authentique",
-      "item2": "Dim Sum Maison",
-      "item3": "Riz Cantonais",
-      "item4": "Curry Thaï",
-      "item5": "Tempura Japonais",
-      "item6": "Salade Vietnamienne"
+      "item6": "Salade Vietnamienne",
+      "item1": "Bol de riz au poulet style japonais",
+      "item2": "Cotelette au four et légumes",
+      "item3": "Emincé de boeuf style vietnamien",
+      "item4": "Poisson pané style malaisien et pousse de sojo style Sichuan",
+      "item5": "Porc aux légumes et aubergines à la chinoise",
+      "item6": "Porc émincé et légumes sautés",
+      "item7": "Porc sauté style Sichuan",
+      "item8": "Porc style Hunan",
+      "item9": "Poulet pimenté et sucré et légumes verts",
+      "item10": "Ramen maison au poulet",
+      "item11": "Sauté de porc aux légumes marinés",
+      "item12": "Tonkatsu"
     },
     "booking": {
       "section_title": "Réservation",
