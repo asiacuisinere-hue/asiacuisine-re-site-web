@@ -1,66 +1,66 @@
-menu?lang=en:497 Fetching unavailable dates...
+menu?lang=fr:497 Fetching unavailable dates...
 script.js:2 DOM fully loaded and parsed
 script.js:11 Initializing i18next...
-script.js:27 Language detected from URL: en
-i18next.min.js:1 i18next: languageChanged en
+script.js:27 Language detected from URL: fr
+i18next.min.js:1 i18next: languageChanged fr
 i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
 script.js:4 i18next initialized, now initializing page content.
 script.js:44 Running updateContent()...
 script.js:46 Found 13 elements to translate.
-i18next.min.js:1 i18next::translator: missingKey en translation menu.page_title menu.page_title
-i18next.min.js:1 i18next::translator: missingKey en translation menu.back_to_home menu.back_to_home
-i18next.min.js:1 i18next::translator: missingKey en translation menu.title menu.title
-i18next.min.js:1 i18next::translator: missingKey en translation menu.subtitle menu.subtitle
-i18next.min.js:1 i18next::translator: missingKey en translation menu.discovery_title menu.discovery_title
-i18next.min.js:1 i18next::translator: missingKey en translation menu.discovery_desc menu.discovery_desc
-i18next.min.js:1 i18next::translator: missingKey en translation menu.standard_title menu.standard_title
-i18next.min.js:1 i18next::translator: missingKey en translation menu.standard_desc menu.standard_desc
-i18next.min.js:1 i18next::translator: missingKey en translation menu.comfort_title menu.comfort_title
-i18next.min.js:1 i18next::translator: missingKey en translation menu.comfort_desc menu.comfort_desc
-i18next.min.js:1 i18next::translator: missingKey en translation menu.duo_title menu.duo_title
-i18next.min.js:1 i18next::translator: missingKey en translation menu.duo_desc menu.duo_desc
-i18next.min.js:1 i18next::translator: missingKey en translation menu.to_order_cta menu.to_order_cta
-script.js:62 Updating links to persist language: en
-menu?lang=en:360 Rendering calendar with monthOffset: 0
-menu?lang=en:458   - Disabled because order must be placed 48h in advance (cut-off: 30/10/2025 11:00:00).
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:458   - Disabled because order must be placed 48h in advance (cut-off: 31/10/2025 11:00:00).
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:458   - Disabled because order must be placed 48h in advance (cut-off: 01/11/2025 11:00:00).
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:458   - Disabled because order must be placed 48h in advance (cut-off: 02/11/2025 11:00:00).
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:446   - Disabled because in unavailableDates.
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: false
-menu?lang=en:461   - Final isDisabled: true
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.page_title menu.page_title
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.back_to_home menu.back_to_home
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.title menu.title
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.subtitle menu.subtitle
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.discovery_title menu.discovery_title
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.discovery_desc menu.discovery_desc
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.standard_title menu.standard_title
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.standard_desc menu.standard_desc
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.comfort_title menu.comfort_title
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.comfort_desc menu.comfort_desc
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.duo_title menu.duo_title
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.duo_desc menu.duo_desc
+i18next.min.js:1 i18next::translator: missingKey fr translation menu.to_order_cta menu.to_order_cta
+script.js:62 Updating links to persist language: fr
+menu?lang=fr:360 Rendering calendar with monthOffset: 0
+menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 30/10/2025 11:00:00).
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 31/10/2025 11:00:00).
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 01/11/2025 11:00:00).
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 02/11/2025 11:00:00).
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:446   - Disabled because in unavailableDates.
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: false
+menu?lang=fr:461   - Final isDisabled: true

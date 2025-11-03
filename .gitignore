@@ -1,6 +1,23 @@
-.vercel
-.env*.local
-.env
+# Logs
+*.log
 
-# Local Netlify folder
-.netlify
+# Node dependencies
+node_modules/
+
+# Build artifacts and local development files
+dashboard/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Cloudflare/Vercel/Netlify local dev
+.wrangler/
+.vercel/
+.netlify/
+
+# Environment variables
+.env*
+
+# Ignore images in the root directory
+/*.png
