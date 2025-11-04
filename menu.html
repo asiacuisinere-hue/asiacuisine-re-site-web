@@ -525,13 +525,17 @@
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
 
+                // --- Validation des champs ---
                 if (!data.formule) {
                     alert('Veuillez choisir une formule.');
                     return;
                 }
-
                 if (!data.jour) {
                     alert('Veuillez choisir une date de livraison/retrait.');
+                    return;
+                }
+                if (!data.email) {
+                    alert('Veuillez renseigner votre adresse e-mail.');
                     return;
                 }
 
@@ -552,6 +556,7 @@
                     formulaOption = selectedOptionDuo.value;
                 }
 
+                // --- Préparation des données pour l'API ---
                 const orderData = {
                     type: 'COMMANDE_MENU',
                     formulaName: data.formule,
@@ -567,6 +572,7 @@
                 };
 
                 try {
+                    // 1. Envoyer les données à l'API pour enregistrement
                     const response = await fetch('/create-request/', {
                         method: 'POST',
                         headers: {
@@ -575,16 +581,35 @@
                         body: JSON.stringify(orderData)
                     });
 
-                    if (response.ok) {
-                        alert('Votre demande de commande a été envoyée avec succès !');
-                        form.reset();
-                    } else {
+                    if (!response.ok) {
                         const errorResult = await response.json();
-                        alert(`Erreur lors de l'envoi de la commande : ${errorResult.error}`);
+                        throw new Error(errorResult.error || 'Une erreur serveur est survenue.');
                     }
+
+                    // 2. Si l'enregistrement est réussi, préparer et ouvrir WhatsApp
+                    const formuleDetails = data.formule + (formulaOption ? ` (${formulaOption})` : '');
+                    const message = `
+Bonjour, je souhaite passer une commande :
+
+- Formule : ${formuleDetails}
+- Nom : ${data.nom} ${data.prenom || ''}
+- Téléphone : ${data.telephone}
+- Livraison/Retrait : ${data.livraison}, le ${data.jour}
+
+Merci !
+                    `;
+
+                    const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message.trim())}`;
+                    window.open(whatsappUrl, '_blank');
+
+                    // 3. Réinitialiser le formulaire
+                    form.reset();
+                    // Optionnel : réinitialiser l'état visuel des cartes
+                    cards.forEach(c => c.classList.remove('selected'));
+
                 } catch (error) {
-                    console.error('Erreur de communication avec l\'API:', error);
-                    alert('Une erreur de communication est survenue. Veuillez réessayer.');
+                    console.error('Erreur lors de la soumission:', error);
+                    alert(`Une erreur est survenue : ${error.message}`);
                 }
             });
         });
