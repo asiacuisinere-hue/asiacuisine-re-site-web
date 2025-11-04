@@ -22,11 +22,11 @@ export async function onRequest(context) {
 
         // 3. Initialiser Supabase
         const supabaseUrl = context.env.SUPABASE_URL;
-        const supabaseKey = context.env.SUPABASE_KEY;
-        if (!supabaseUrl || !supabaseKey) {
+        const supabaseServiceKey = context.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (!supabaseUrl || !supabaseServiceKey) {
             return new Response(JSON.stringify({ error: 'Supabase configuration missing' }), { status: 500 });
         }
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
         // 4. Insérer ou mettre à jour le client
         let { data: client, error: clientError } = await supabase
