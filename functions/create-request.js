@@ -1,12 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 
 export async function onRequest(context) {
-    console.log(`[/create-request/] Function invoked with method: ${context.request.method}`);
-
     if (context.request.method !== 'POST') {
-        const errorMessage = `Method ${context.request.method} Not Allowed. Only POST is accepted.`;
-        console.error(errorMessage);
-        return new Response(JSON.stringify({ error: errorMessage }), {
+        return new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), {
             status: 405,
             headers: { 'Allow': 'POST' }
         });
@@ -36,7 +33,7 @@ export async function onRequest(context) {
                 first_name: data.customer.firstName || null,
                 last_name: data.customer.lastName || null,
                 phone: data.customer.phone || null,
-                type: data.customer.type || 'Particulier', // Peut être défini par le formulaire
+                type: data.customer.type || 'Particulier',
                 company_name: data.customer.companyName || null,
                 siret: data.customer.siret || null,
                 address: data.customer.address || null
@@ -44,42 +41,14 @@ export async function onRequest(context) {
             .select()
             .single();
 
-        if (clientError) {
-            console.error('Supabase client upsert error:', clientError);
-            throw clientError;
-        }
+        if (clientError) throw clientError;
 
         // 5. Préparer les détails spécifiques à la demande
         let details = {};
-        let deliveryCity = null;
-
         if (data.type === 'COMMANDE_MENU') {
-            if (!data.formulaName || !data.deliveryCity) {
-                return new Response(JSON.stringify({ error: 'Missing required fields for COMMANDE_MENU' }), { status: 400 });
-            }
-            details = {
-                formulaName: data.formulaName,
-                formulaOption: data.formulaOption || null
-            };
-            deliveryCity = data.deliveryCity;
+            details = { formulaName: data.formulaName, formulaOption: data.formulaOption, deliveryCity: data.deliveryCity };
         } else if (data.type === 'RESERVATION_SERVICE') {
-            if (!data.serviceType || !data.numberOfPeople) {
-                return new Response(JSON.stringify({ error: 'Missing required fields for RESERVATION_SERVICE' }), { status: 400 });
-            }
-            details = {
-                serviceType: data.serviceType,
-                numberOfPeople: data.numberOfPeople,
-                customerMessage: data.customerMessage || null
-            };
-            // Pour les services, la ville de livraison n'est pas directement applicable ici, ou peut être dans le message
-        } else if (data.type === 'DEMANDE_ENTREPRISE') {
-            // TODO: Ajouter la validation et les détails spécifiques pour les demandes d'entreprise
-            details = {
-                // ... champs spécifiques à l'entreprise
-                customerMessage: data.customerMessage || null
-            };
-        } else {
-            return new Response(JSON.stringify({ error: 'Invalid request type' }), { status: 400 });
+            details = { serviceType: data.serviceType, numberOfPeople: data.numberOfPeople, customerMessage: data.customerMessage };
         }
 
         // 6. Insérer la demande
@@ -90,15 +59,38 @@ export async function onRequest(context) {
                 type: data.type,
                 status: 'Nouvelle',
                 request_date: data.requestDate,
-                details_json: details,
-                // Si la ville de livraison est pertinente pour le type de demande, l'ajouter ici
-                // Par exemple, pour COMMANDE_MENU, on pourrait avoir une colonne delivery_city dans demandes
-                // Pour l'instant, elle est dans details_json pour COMMANDE_MENU
+                details_json: details
             });
 
-        if (demandeError) {
-            console.error('Supabase demande insert error:', demandeError);
-            throw demandeError;
+        if (demandeError) throw demandeError;
+
+        // 7. Envoyer l'e-mail de notification
+        const resendApiKey = context.env.RESEND_API_KEY;
+        if (resendApiKey) {
+            try {
+                const resend = new Resend(resendApiKey);
+                await resend.emails.send({
+                    from: 'reservation@asiacuisine.re',
+                    to: 'contact@asiacuisine.re',
+                    subject: `Nouvelle demande - ${data.type}`,
+                    html: `
+                        <h1>Nouvelle demande reçue</h1>
+                        <p>Une nouvelle demande de type <strong>${data.type}</strong> a été soumise.</p>
+                        <h3>Détails du client :</h3>
+                        <ul>
+                            <li><strong>Nom :</strong> ${data.customer.lastName || 'N/A'} ${data.customer.firstName || ''}</li>
+                            <li><strong>Email :</strong> ${data.customer.email}</li>
+                            <li><strong>Téléphone :</strong> ${data.customer.phone || 'N/A'}</li>
+                        </ul>
+                        <h3>Détails de la demande :</h3>
+                        <p>Date souhaitée : ${new Date(data.requestDate).toLocaleDateString('fr-FR')}</p>
+                        <pre>${JSON.stringify(details, null, 2)}</pre>
+                    `
+                });
+            } catch (emailError) {
+                console.error('Failed to send email notification:', emailError);
+                // Ne pas bloquer la réponse au client si l'e-mail échoue
+            }
         }
 
         return new Response(JSON.stringify({ message: 'Request received and processed successfully.' }), { status: 201 });
