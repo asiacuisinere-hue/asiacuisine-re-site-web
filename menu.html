@@ -560,12 +560,10 @@
                         firstName: data.prenom,
                         lastName: data.nom,
                         phone: data.telephone,
-                        email: 'email_a_ajouter@exemple.com' // TODO: Ajouter un champ email au formulaire
+                        email: data.email
                     },
-                    delivery: {
-                        city: data.livraison,
-                        date: data.jour
-                    }
+                    deliveryCity: data.livraison,
+                    requestDate: data.jour
                 };
 
                 try {
