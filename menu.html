@@ -291,6 +291,10 @@
                             <input type="tel" id="telephone" name="telephone" required>
                         </div>
                         <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
                             <label for="livraison">Ville de livraison</label>
                             <select id="livraison" name="livraison" required>
                                 <option value="">Sélectionnez une ville</option>
@@ -515,7 +519,7 @@
                 });
             });
 
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
                 const formData = new FormData(form);
@@ -531,36 +535,59 @@
                     return;
                 }
 
-                let formuleDetails = data.formule;
+                let formulaOption = null;
                 if (data.formule.includes("Formule Standard")) {
                     const selectedOptionStandard = document.querySelector('input[name="optionStandard"]:checked');
                     if (!selectedOptionStandard) {
                         alert('Veuillez choisir une option (A ou B) pour la Formule Standard.');
                         return;
                     }
-                    formuleDetails += ` (${selectedOptionStandard.value})`;
+                    formulaOption = selectedOptionStandard.value;
                 } else if (data.formule.includes("Option Duo")) {
                     const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
                     if (!selectedOptionDuo) {
                         alert("Veuillez choisir une option (A ou B) pour l'Option Duo.");
                         return;
                     }
-                    formuleDetails += ` (${selectedOptionDuo.value})`;
+                    formulaOption = selectedOptionDuo.value;
                 }
 
-                const message = `
-Bonjour, je souhaite passer une commande :
+                const orderData = {
+                    type: 'COMMANDE_MENU',
+                    formulaName: data.formule,
+                    formulaOption: formulaOption,
+                    customer: {
+                        firstName: data.prenom,
+                        lastName: data.nom,
+                        phone: data.telephone,
+                        email: 'email_a_ajouter@exemple.com' // TODO: Ajouter un champ email au formulaire
+                    },
+                    delivery: {
+                        city: data.livraison,
+                        date: data.jour
+                    }
+                };
 
-- Formule : ${formuleDetails}
-- Nom : ${data.nom} ${data.prenom}
-- Téléphone : ${data.telephone}
-- Livraison/Retrait : ${data.livraison}, le ${data.jour}
+                try {
+                    const response = await fetch('/create-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(orderData)
+                    });
 
-Merci !
-                `;
-
-                const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, '_blank');
+                    if (response.ok) {
+                        alert('Votre demande de commande a été envoyée avec succès !');
+                        form.reset();
+                    } else {
+                        const errorResult = await response.json();
+                        alert(`Erreur lors de l'envoi de la commande : ${errorResult.error}`);
+                    }
+                } catch (error) {
+                    console.error('Erreur de communication avec l\'API:', error);
+                    alert('Une erreur de communication est survenue. Veuillez réessayer.');
+                }
             });
         });
     </script>
