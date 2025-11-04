@@ -40,7 +40,7 @@ export async function onRequest(context) {
                 company_name: data.customer.companyName || null,
                 siret: data.customer.siret || null,
                 address: data.customer.address || null
-            })
+            }, { onConflict: 'email' })
             .select()
             .single();
 
