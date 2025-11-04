@@ -309,7 +309,7 @@ function initializeForm() {
         };
 
         try {
-            const response = await fetch('/create-request', {
+            const response = await fetch('/create-request/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
