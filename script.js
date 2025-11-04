@@ -286,7 +286,7 @@ function initializeForm() {
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
 
-        if (!data.service || !data.date || !data.nom || !data.email) {
+        if (!data.service || !data.date || !data.nom || !data.email || !data.telephone || !data.personnes) {
             showNotification('Veuillez remplir tous les champs obligatoires.', 'error');
             return;
         }
@@ -294,11 +294,25 @@ function initializeForm() {
         submitBtn.textContent = 'Envoi en cours...';
         submitBtn.disabled = true;
 
+        const requestPayload = {
+            type: 'RESERVATION_SERVICE',
+            customer: {
+                firstName: null, // Le formulaire n'a pas de champ prénom séparé
+                lastName: data.nom, // Utilise le 'Nom complet' comme nom de famille
+                phone: data.telephone,
+                email: data.email
+            },
+            requestDate: data.date,
+            serviceType: data.service,
+            numberOfPeople: data.personnes,
+            customerMessage: data.message || null
+        };
+
         try {
-            const response = await fetch('/reserver', {
+            const response = await fetch('/create-request', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+                body: JSON.stringify(requestPayload),
             });
             const result = await response.json();
             if (response.ok) {
