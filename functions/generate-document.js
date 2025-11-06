@@ -21,6 +21,14 @@ const generateDocName = (type, position) => {
     return `${prefix}_${year}_${month}_${week}_${day}_${position}_${randomKey}`;
 }
 
+// Prices for menu formulas
+const formulaPrices = {
+    "Formule Découverte (39€)": 39,
+    "Formule Standard (49€)": 49,
+    "Formule Confort (59€)": 59,
+    "Option Duo (94€)": 94
+};
+
 export async function onRequest(context) {
     // Handle preflight requests for CORS
     if (context.request.method === 'OPTIONS') {
@@ -44,7 +52,9 @@ export async function onRequest(context) {
         // 2. Récupérer les données de la demande et du client
         const { data: demande, error } = await supabase
             .from('demandes')
-            .select(`*, clients(*)`)
+            .select(`*,
+                clients(*)
+            `)
             .eq('id', demandeId)
             .single();
 
@@ -58,15 +68,39 @@ export async function onRequest(context) {
         const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
         // --- Contenu du PDF ---
-        page.drawText(`${documentType} - Asiacuisine.re`, { x: 50, y: height - 50, size: 24, font: boldFont });
+        let yPosition = height - 50;
+        page.drawText(`${documentType} - Asiacuisine.re`, { x: 50, y: yPosition, size: 24, font: boldFont });
+        yPosition -= 50;
 
-        page.drawText(`Client: ${demande.clients.last_name} ${demande.clients.first_name || ''}`, { x: 50, y: height - 100, size: 12, font });
-        page.drawText(`Email: ${demande.clients.email}`, { x: 50, y: height - 120, size: 12, font });
+        page.drawText(`Client: ${demande.clients.last_name} ${demande.clients.first_name || ''}`, { x: 50, y: yPosition, size: 12, font });
+        yPosition -= 20;
+        page.drawText(`Email: ${demande.clients.email}`, { x: 50, y: yPosition, size: 12, font });
+        yPosition -= 40;
 
-        page.drawText(`Date de la demande: ${new Date(demande.request_date).toLocaleDateString('fr-FR')}`, { x: 50, y: height - 160, size: 12, font });
-        page.drawText(`Type: ${demande.type}`, { x: 50, y: height - 180, size: 12, font });
+        page.drawText(`Date de la demande: ${new Date(demande.request_date).toLocaleDateString('fr-FR')}`, { x: 50, y: yPosition, size: 12, font });
+        yPosition -= 20;
+        page.drawText(`Type: ${demande.type}`, { x: 50, y: yPosition, size: 12, font });
+        yPosition -= 40;
 
-        // TODO: Ajouter les lignes de produits/services et le total
+        // Lignes de produits/services
+        let totalAmount = 0;
+        if (demande.type === 'COMMANDE_MENU') {
+            const formulaName = demande.details_json.formulaName;
+            const price = formulaPrices[formulaName] || 0;
+            totalAmount = price;
+
+            page.drawText(formulaName, { x: 50, y: yPosition, size: 12, font });
+            page.drawText(`${price.toFixed(2)} €`, { x: width - 150, y: yPosition, size: 12, font });
+            yPosition -= 20;
+        }
+        // TODO: Ajouter la logique pour RESERVATION_SERVICE
+
+        // Total
+        yPosition -= 20;
+        page.drawLine({ start: { x: 50, y: yPosition }, end: { x: width - 50, y: yPosition }, thickness: 1, color: rgb(0.8, 0.8, 0.8) });
+        yPosition -= 20;
+        page.drawText('Total', { x: 50, y: yPosition, size: 14, font: boldFont });
+        page.drawText(`${totalAmount.toFixed(2)} €`, { x: width - 150, y: yPosition, size: 14, font: boldFont });
 
         const pdfBytes = await pdfDoc.save();
 
