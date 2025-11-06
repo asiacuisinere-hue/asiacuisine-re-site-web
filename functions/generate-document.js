@@ -24,7 +24,10 @@ export async function onRequest(context) {
     }
 
     try {
-        const { demandId, documentType } = await context.request.json();
+        const requestBody = await context.request.json();
+        console.log('Request body received:', JSON.stringify(requestBody, null, 2));
+
+        const { demandId, documentType } = requestBody;
 
         if (!demandId || !documentType) {
             let response = new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
