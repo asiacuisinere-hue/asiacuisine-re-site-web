@@ -1,18 +1,34 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
+// Helper function to add CORS headers
+const addCorsHeaders = (response) => {
+    response.headers.set('Access-Control-Allow-Origin', 'https://gestion.asiacuisine.re');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return response;
+};
+
 export async function onRequest(context) {
+    // Handle preflight requests for CORS
+    if (context.request.method === 'OPTIONS') {
+        let response = new Response(null, { status: 204 });
+        return addCorsHeaders(response);
+    }
+
     if (context.request.method !== 'POST') {
-        return new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), {
+        let response = new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), {
             status: 405,
             headers: { 'Allow': 'POST' }
         });
+        return addCorsHeaders(response);
     }
 
     try {
         const { demandId, documentType } = await context.request.json();
 
         if (!demandId || !documentType) {
-            return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+            let response = new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+            return addCorsHeaders(response);
         }
 
         // TODO: Récupérer les données de la demande et du client depuis Supabase
@@ -28,16 +44,18 @@ export async function onRequest(context) {
 
         const pdfBytes = await pdfDoc.save();
 
-        return new Response(pdfBytes, {
+        let response = new Response(pdfBytes, {
             status: 200,
             headers: {
                 'Content-Type': 'application/pdf',
                 'Content-Disposition': `attachment; filename="${documentType}_${demandId}.pdf"`
             }
         });
+        return addCorsHeaders(response);
 
     } catch (error) {
         console.error('Error generating document:', error);
-        return new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), { status: 500 });
+        let response = new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), { status: 500 });
+        return addCorsHeaders(response);
     }
 }
