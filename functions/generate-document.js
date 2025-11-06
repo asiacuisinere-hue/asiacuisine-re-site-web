@@ -24,12 +24,9 @@ export async function onRequest(context) {
     }
 
     try {
-        const requestBody = await context.request.json();
-        console.log('Request body received:', JSON.stringify(requestBody, null, 2));
+        const { demandeId, documentType } = await context.request.json();
 
-        const { demandId, documentType } = requestBody;
-
-        if (!demandId || !documentType) {
+        if (!demandeId || !documentType) {
             let response = new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
             return addCorsHeaders(response);
         }
@@ -42,7 +39,7 @@ export async function onRequest(context) {
         const { width, height } = page.getSize();
         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-        page.drawText(`Ceci est un ${documentType} pour la demande ${demandId}`,
+        page.drawText(`Ceci est un ${documentType} pour la demande ${demandeId}`,
             { x: 50, y: height - 4 * 50, size: 30, font, color: rgb(0, 0.53, 0.71) });
 
         const pdfBytes = await pdfDoc.save();
@@ -51,7 +48,7 @@ export async function onRequest(context) {
             status: 200,
             headers: {
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename="${documentType}_${demandId}.pdf"`
+                'Content-Disposition': `attachment; filename="${documentType}_${demandeId}.pdf"`
             }
         });
         return addCorsHeaders(response);
