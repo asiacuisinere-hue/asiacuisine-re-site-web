@@ -1,6 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
+// Helper function to generate a random 6-character alphanumeric string
+function generateClientId() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
 export async function onRequest(context) {
     if (context.request.method !== 'POST') {
         return new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), {
@@ -12,38 +22,50 @@ export async function onRequest(context) {
     try {
         const data = await context.request.json();
 
-        // 2. Valider les données de base
         if (!data.type || !data.customer || !data.customer.email || !data.requestDate) {
             return new Response(JSON.stringify({ error: 'Missing required base fields (type, customer.email, requestDate)' }), { status: 400 });
         }
 
-        // 3. Initialiser Supabase
-        const supabaseUrl = context.env.SUPABASE_URL;
-        const supabaseServiceKey = context.env.SUPABASE_SERVICE_ROLE_KEY;
-        if (!supabaseUrl || !supabaseServiceKey) {
-            return new Response(JSON.stringify({ error: 'Supabase configuration missing' }), { status: 500 });
-        }
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
-        // 4. Insérer ou mettre à jour le client
-        let { data: client, error: clientError } = await supabase
+        // --- Logique de création/récupération du client modifiée ---
+
+        // 1. Essayer de récupérer le client existant
+        let { data: client, error: fetchError } = await supabase
             .from('clients')
-            .upsert({
-                email: data.customer.email,
-                first_name: data.customer.firstName || null,
-                last_name: data.customer.lastName || null,
-                phone: data.customer.phone || null,
-                type: data.customer.type || 'Particulier',
-                company_name: data.customer.companyName || null,
-                siret: data.customer.siret || null,
-                address: data.customer.address || null
-            }, { onConflict: 'email' })
-            .select()
+            .select('*')
+            .eq('email', data.customer.email)
             .single();
 
-        if (clientError) throw clientError;
+        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows found, ce qui est normal
+            throw fetchError;
+        }
 
-        // 5. Préparer les détails spécifiques à la demande
+        // 2. Si le client n'existe pas, le créer avec un nouvel ID
+        if (!client) {
+            const newId = generateClientId();
+            const { data: newClient, error: insertError } = await supabase
+                .from('clients')
+                .insert({
+                    email: data.customer.email,
+                    first_name: data.customer.firstName || null,
+                    last_name: data.customer.lastName || null,
+                    phone: data.customer.phone || null,
+                    type: data.customer.type || 'Particulier',
+                    company_name: data.customer.companyName || null,
+                    siret: data.customer.siret || null,
+                    address: data.customer.address || null,
+                    client_id: newId // <-- Ajout de l'identifiant unique
+                })
+                .select()
+                .single();
+            
+            if (insertError) throw insertError;
+            client = newClient;
+        }
+
+        // --- Fin de la logique modifiée ---
+
         let details = {};
         if (data.type === 'COMMANDE_MENU') {
             details = { formulaName: data.formulaName, formulaOption: data.formulaOption, deliveryCity: data.deliveryCity };
@@ -51,7 +73,6 @@ export async function onRequest(context) {
             details = { serviceType: data.serviceType, numberOfPeople: data.numberOfPeople, customerMessage: data.customerMessage };
         }
 
-        // 6. Insérer la demande
         const { error: demandeError } = await supabase
             .from('demandes')
             .insert({
@@ -64,7 +85,6 @@ export async function onRequest(context) {
 
         if (demandeError) throw demandeError;
 
-        // 7. Envoyer l'e-mail de notification
         const resendApiKey = context.env.RESEND_API_KEY;
         if (resendApiKey) {
             try {
@@ -81,6 +101,7 @@ export async function onRequest(context) {
                             <li><strong>Nom :</strong> ${data.customer.lastName || 'N/A'} ${data.customer.firstName || ''}</li>
                             <li><strong>Email :</strong> ${data.customer.email}</li>
                             <li><strong>Téléphone :</strong> ${data.customer.phone || 'N/A'}</li>
+                            ${client.client_id ? `<li><strong>ID Client :</strong> ${client.client_id}</li>` : ''}
                         </ul>
                         <h3>Détails de la demande :</h3>
                         <p>Date souhaitée : ${new Date(data.requestDate).toLocaleDateString('fr-FR')}</p>
@@ -89,7 +110,6 @@ export async function onRequest(context) {
                 });
             } catch (emailError) {
                 console.error('Failed to send email notification:', emailError);
-                // Ne pas bloquer la réponse au client si l'e-mail échoue
             }
         }
 
