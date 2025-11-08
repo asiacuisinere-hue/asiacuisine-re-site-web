@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-const { Encoder } = require('@nuintun/qrcode');
 
 // --- Helpers ---
 
@@ -20,7 +19,7 @@ function getWeekNumber(d) {
 }
 
 function getWeeklyColor() {
-    const colors = ['#2c3e50', '#c0392b', '#2980b9', '#27ae60', '#f39c12', '#8e44ad', '#d35400'];
+    const colors = ['2c3e50', 'c0392b', '2980b9', '27ae60', 'f39c12', '8e44ad', 'd35400']; // Couleurs sans le #
     const weekNumber = getWeekNumber(new Date());
     return colors[weekNumber % colors.length];
 }
@@ -28,7 +27,6 @@ function getWeeklyColor() {
 // --- Main Function ---
 
 export async function onRequest(context) {
-    console.log('--- [DEBUG] Invocation de send-qrcode (v2) ---');
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
@@ -38,45 +36,48 @@ export async function onRequest(context) {
 
     try {
         const { demandeId } = await context.request.json();
-        console.log(`[DEBUG] Paramètre reçu: demandeId=${demandeId}`);
+        if (!demandeId) {
+            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing demandeId' }), { status: 400 }));
+        }
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
         const resend = new Resend(context.env.RESEND_API_KEY);
-        console.log('[DEBUG] Clients initialisés.');
 
-        const { data: demande, error } = await supabase.from('demandes').select('id, clients (email, first_name, client_id)').eq('id', demandeId).single();
+        const { data: demande, error } = await supabase
+            .from('demandes')
+            .select('id, clients (email, first_name, client_id)')
+            .eq('id', demandeId)
+            .single();
+
         if (error || !demande) throw new Error(error?.message || 'Demande non trouvée');
         
         const client = demande.clients;
-        if (!client) throw new Error('Client non trouvé pour cette demande.');
-        console.log('[DEBUG] Données client récupérées.');
+        if (!client) throw new Error('Client data not found for this demande.');
 
-        console.log('[DEBUG] Tentative de génération du PNG QR Code...');
-        const qrcode = new Encoder({
-            text: `https://www.asiacuisine.re/suivi?id=${demande.id}`,
-            size: 256,
-            level: 'M',
-            color: { dark: getWeeklyColor(), light: '#ffffff' }
-        });
-        const qrCodeDataUrl = qrcode.toDataURL();
-        console.log('[DEBUG] PNG QR Code généré avec succès.');
-        
-        const qrCodeBase64 = qrCodeDataUrl.split(',')[1];
+        // Construire l'URL de l'API pour générer le QR Code
+        const weeklyColor = getWeeklyColor();
+        const qrData = encodeURIComponent(`https://www.asiacuisine.re/suivi?id=${demande.id}`);
+        const qrCodeApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&color=${weeklyColor}`;
 
-        console.log('[DEBUG] Tentative d\'envoi de l\'e-mail...');
+        // Envoyer l'e-mail avec l'URL de l'image
         await resend.emails.send({
             from: 'contact@asiacuisine.re',
             to: client.email,
             subject: `Votre QR code pour votre commande Asiacuisine.re`,
-            html: `...`, // HTML body omitted for brevity in logging
-            attachments: [{
-                filename: 'qrcode.png',
-                content: qrCodeBase64,
-                encoding: 'base64',
-                cid: 'qrcode.png'
-            }]
+            html: `
+                <div style="font-family: sans-serif; text-align: center;">
+                    <h1>Bonjour ${client.first_name || ''},</h1>
+                    <p>Votre paiement a été confirmé. Merci !</p>
+                    <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
+                    <img src="${qrCodeApiUrl}" alt="QR Code de suivi"/>
+                    <p style="font-size: 1.2em; font-weight: bold; margin-top: 10px;">
+                        ID Client : ${client.client_id || 'N/A'}
+                    </p>
+                    <br>
+                    <p>L'équipe Asiacuisine.re</p>
+                </div>
+            `,
         });
-        console.log('[DEBUG] E-mail envoyé avec succès.');
 
         return addCorsHeaders(new Response(JSON.stringify({ success: true }), {
             status: 200,
@@ -84,7 +85,7 @@ export async function onRequest(context) {
         }));
 
     } catch (error) {
-        console.error('--- [ERREUR] Erreur capturée dans send-qrcode (v2) ---');
+        console.error('--- [ERREUR] Erreur capturée dans send-qrcode ---');
         console.error('Message:', error.message);
         console.error('Stack:', error.stack);
         return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
