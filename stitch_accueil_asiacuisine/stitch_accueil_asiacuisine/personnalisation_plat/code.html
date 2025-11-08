@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Custom Wok Bowl</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ec5b13",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221610",
+              "content-light": "#ffffff",
+              "content-dark": "#2d1d13",
+              "text-light": "#181311",
+              "text-dark": "#f8f6f6",
+              "text-muted-light": "#896f61",
+              "text-muted-dark": "#a18a7d",
+              "border-light": "#f4f2f0",
+              "border-dark": "#3c2a1e",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden pb-40">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-10 flex items-center bg-content-light/80 dark:bg-content-dark/80 p-4 pb-2 backdrop-blur-sm">
+<button class="flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined text-text-light dark:text-text-dark">arrow_back</span>
+</button>
+<h2 class="flex-1 text-center text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Custom Wok Bowl</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex h-12 max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-transparent p-0 text-text-light dark:text-text-dark">
+<span class="material-symbols-outlined">favorite_border</span>
+</button>
+</div>
+</div>
+<!-- Header Image -->
+<div class="@container">
+<div class="@[480px]:px-4 @[480px]:py-3 px-4">
+<div class="flex min-h-80 w-full flex-col justify-end overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat @[480px]:rounded-lg" data-alt="A freshly prepared wok bowl with chicken, broccoli, and noodles in a delicious sauce" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBSdUrpl-2PgvpK2pROZTOXHYQNDpwGoi1CYEbuQMlC8k2CHipZ-SlcIhrb2tp7yZwV_G967sVRLSsa2zKj5EsCFSM5Cz4Uu4J5ksCCAVKVEisk5WoBpi4bWJueUP9NgJfJb7LqKohUKxQY2rfmgWhEMbnggGDGGc15WMygDUubfMb3_QTK9TFvhyyccq00goMYj2A-YuajN6Yoe3OPLor_s2O8wZfSMZoOUwNUETdPpMyWKwpbq62QlThbufOnZiV4lvE8FCXv9H8");'></div>
+</div>
+</div>
+<!-- Body Text -->
+<p class="px-4 pb-3 pt-1 text-base font-normal leading-normal text-text-muted-light dark:text-text-muted-dark">
+            Build your perfect bowl. Select your base, protein, veggies, and sauce to create a meal that's uniquely yours.
+        </p>
+<!-- Accordions for Customization -->
+<div class="flex flex-col gap-3 p-4">
+<details class="group flex flex-col rounded-xl bg-content-light dark:bg-content-dark p-4" open="">
+<summary class="flex list-none cursor-pointer items-center justify-between gap-6">
+<h3 class="text-base font-bold text-text-light dark:text-text-dark">Base</h3>
+<div class="flex items-center gap-2">
+<span class="text-sm text-text-muted-light dark:text-text-muted-dark">Jasmine Rice</span>
+<span class="material-symbols-outlined text-text-light dark:text-text-dark transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</div>
+</summary>
+<div class="mt-4 flex flex-col gap-3">
+<label class="flex items-center justify-between rounded-lg border border-primary bg-primary/10 p-3 dark:border-primary dark:bg-primary/20">
+<span class="font-medium text-text-light dark:text-text-dark">Jasmine Rice</span>
+<input checked="" class="h-5 w-5 border-primary text-primary focus:ring-primary" name="base" type="radio"/>
+</label>
+<label class="flex items-center justify-between rounded-lg border border-border-light bg-content-light p-3 dark:border-border-dark dark:bg-content-dark">
+<span class="font-medium text-text-light dark:text-text-dark">Brown Rice</span>
+<input class="h-5 w-5 border-text-muted-light text-primary focus:ring-primary dark:border-text-muted-dark" name="base" type="radio"/>
+</label>
+<label class="flex items-center justify-between rounded-lg border border-border-light bg-content-light p-3 dark:border-border-dark dark:bg-content-dark">
+<span class="font-medium text-text-light dark:text-text-dark">Udon Noodles</span>
+<input class="h-5 w-5 border-text-muted-light text-primary focus:ring-primary dark:border-text-muted-dark" name="base" type="radio"/>
+</label>
+</div>
+</details>
+<details class="group flex flex-col rounded-xl bg-content-light dark:bg-content-dark p-4">
+<summary class="flex list-none cursor-pointer items-center justify-between gap-6">
+<h3 class="text-base font-bold text-text-light dark:text-text-dark">Protein</h3>
+<span class="material-symbols-outlined text-text-light dark:text-text-dark transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+</details>
+<details class="group flex flex-col rounded-xl bg-content-light dark:bg-content-dark p-4">
+<summary class="flex list-none cursor-pointer items-center justify-between gap-6">
+<h3 class="text-base font-bold text-text-light dark:text-text-dark">Vegetables</h3>
+<span class="material-symbols-outlined text-text-light dark:text-text-dark transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+</details>
+<details class="group flex flex-col rounded-xl bg-content-light dark:bg-content-dark p-4">
+<summary class="flex list-none cursor-pointer items-center justify-between gap-6">
+<h3 class="text-base font-bold text-text-light dark:text-text-dark">Sauce</h3>
+<span class="material-symbols-outlined text-text-light dark:text-text-dark transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+</details>
+<details class="group flex flex-col rounded-xl bg-content-light dark:bg-content-dark p-4">
+<summary class="flex list-none cursor-pointer items-center justify-between gap-6">
+<h3 class="text-base font-bold text-text-light dark:text-text-dark">Toppings &amp; Garnish</h3>
+<span class="material-symbols-outlined text-text-light dark:text-text-dark transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+</details>
+</div>
+<!-- Section Header for Nutritional Goals -->
+<h3 class="px-4 pb-2 pt-4 text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Nutritional Goals</h3>
+<!-- Sliders for Nutritional Goals -->
+<div class="flex flex-col gap-4 px-4">
+<div class="w-full">
+<label class="mb-2 block text-sm font-medium text-text-muted-light dark:text-text-muted-dark" for="protein-slider">Protein</label>
+<div class="flex items-center gap-4">
+<span class="text-xs text-text-muted-light dark:text-text-muted-dark">Low</span>
+<input class="h-2 w-full cursor-pointer appearance-none rounded-full bg-border-light accent-primary dark:bg-border-dark" id="protein-slider" max="100" min="0" type="range" value="75"/>
+<span class="text-xs text-text-muted-light dark:text-text-muted-dark">High</span>
+</div>
+</div>
+<div class="w-full">
+<label class="mb-2 block text-sm font-medium text-text-muted-light dark:text-text-muted-dark" for="calories-slider">Calories</label>
+<div class="flex items-center gap-4">
+<span class="text-xs text-text-muted-light dark:text-text-muted-dark">Low</span>
+<input class="h-2 w-full cursor-pointer appearance-none rounded-full bg-border-light accent-primary dark:bg-border-dark" id="calories-slider" max="100" min="0" type="range" value="25"/>
+<span class="text-xs text-text-muted-light dark:text-text-muted-dark">High</span>
+</div>
+</div>
+</div>
+<!-- Special Instructions -->
+<h3 class="px-4 pb-2 pt-8 text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Special Instructions</h3>
+<div class="px-4">
+<textarea class="w-full rounded-lg border-border-light bg-content-light p-3 text-sm text-text-light placeholder:text-text-muted-light focus:border-primary focus:ring-primary dark:border-border-dark dark:bg-content-dark dark:text-text-dark dark:placeholder:text-text-muted-dark" placeholder="Add any special requests here (e.g., no peanuts, extra spicy)..." rows="3"></textarea>
+</div>
+<!-- Sticky Footer -->
+<div class="fixed bottom-0 left-0 z-10 w-full border-t border-border-light bg-content-light/80 p-4 backdrop-blur-sm dark:border-border-dark dark:bg-content-dark/80">
+<div class="mx-auto max-w-screen-lg">
+<div class="flex items-center justify-between text-center text-xs text-text-muted-light dark:text-text-muted-dark">
+<div class="flex flex-col">
+<span class="font-bold text-text-light dark:text-text-dark">550</span>
+<span>Calories</span>
+</div>
+<div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+<div class="flex flex-col">
+<span class="font-bold text-text-light dark:text-text-dark">45g</span>
+<span>Protein</span>
+</div>
+<div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+<div class="flex flex-col">
+<span class="font-bold text-text-light dark:text-text-dark">52g</span>
+<span>Carbs</span>
+</div>
+<div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+<div class="flex flex-col">
+<span class="font-bold text-text-light dark:text-text-dark">18g</span>
+<span>Fat</span>
+</div>
+</div>
+<div class="mt-4">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-bold text-white">
+                        Add to Cart - $14.50
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html class="light" lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Créez votre plat personnalisé - Asiacuisine.re</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                        "content-light": "#ffffff",
+                        "content-dark": "#2d1d13",
+                        "text-light": "#181311",
+                        "text-dark": "#f8f6f6",
+                        "text-muted-light": "#896f61",
+                        "text-muted-dark": "#a18a7d",
+                        "border-light": "#f4f2f0",
+                        "border-dark": "#3c2a1e",
+                    },
+                    fontFamily: { "display": ["Plus Jakarta Sans"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden pb-40">
+        <!-- Top App Bar -->
+        <div class="sticky top-0 z-10 flex items-center bg-content-light/80 dark:bg-content-dark/80 p-4 pb-2 backdrop-blur-sm">
+            <a href="/index.html" class="flex size-12 shrink-0 items-center justify-start">
+                <span class="material-symbols-outlined text-text-light dark:text-text-dark">arrow_back</span>
+            </a>
+            <h2 class="flex-1 text-center text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Plat sur mesure</h2>
+        </div>
+
+        <!-- Header Image -->
+        <div class="@container">
+            <div class="@[480px]:px-4 @[480px]:py-3 px-4">
+                <div class="flex min-h-80 w-full flex-col justify-end overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat @[480px]:rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBSdUrpl-2PgvpK2pROZTOXHYQNDpwGoi1CYEbuQMlC8k2CHipZ-SlcIhrb2tp7yZwV_G967sVRLSsa2zKj5EsCFSM5Cz4Uu4J5ksCCAVKVEisk5WoBpi4bWJueUP9NgJfJb7LqKohUKxQY2rfmgWhEMbnggGDGGc15WMygDUubfMb3_QTK9TFvhyyccq00goMYj2A-YuajN6Yoe3OPLor_s2O8wZfSMZoOUwNUETdPpMyWKwpbq62QlThbufOnZiV4lvE8FCXv9H8");'></div>
+            </div>
+        </div>
+
+        <!-- Body Text -->
+        <p class="px-4 pb-3 pt-1 text-base font-normal leading-normal text-text-muted-light dark:text-muted-dark">
+            Composez votre plat idéal. Choisissez une recette de base et ajustez-la selon vos objectifs nutritionnels.
+        </p>
+
+        <!-- Accordions for Customization -->
+        <div class="flex flex-col gap-3 p-4">
+            <details class="group flex flex-col rounded-xl bg-content-light dark:bg-content-dark p-4" open>
+                <summary class="flex list-none cursor-pointer items-center justify-between gap-6">
+                    <h3 class="text-base font-bold text-text-light dark:text-text-dark">Recette de base</h3>
+                    <div class="flex items-center gap-2">
+                        <span id="selected-recipe-name" class="text-sm text-text-muted-light dark:text-text-muted-dark">Poulet Teriyaki</span>
+                        <span class="material-symbols-outlined text-text-light dark:text-text-dark transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                    </div>
+                </summary>
+                <div id="recipe-options" class="mt-4 flex flex-col gap-3">
+                    {/* Les options de recettes seront injectées ici par JavaScript */}
+                </div>
+            </details>
+        </div>
+
+        <!-- Section Header for Nutritional Goals -->
+        <h3 class="px-4 pb-2 pt-4 text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Ajustement Nutritionnel</h3>
+        
+        <!-- Sliders for Nutritional Goals -->
+        <div class="flex flex-col gap-4 px-4">
+            <div class="w-full">
+                <label class="mb-2 block text-sm font-medium text-text-muted-light dark:text-text-muted-dark" for="protein-slider">Protéines</label>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs text-text-muted-light dark:text-text-muted-dark">-</span>
+                    <input class="h-2 w-full cursor-pointer appearance-none rounded-full bg-border-light accent-primary dark:bg-border-dark" id="protein-slider" type="range" min="-20" max="20" value="0" step="10" />
+                    <span class="text-xs text-text-muted-light dark:text-text-muted-dark">+</span>
+                </div>
+            </div>
+            <div class="w-full">
+                <label class="mb-2 block text-sm font-medium text-text-muted-light dark:text-text-muted-dark" for="carbs-slider">Glucides</label>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs text-text-muted-light dark:text-text-muted-dark">-</span>
+                    <input class="h-2 w-full cursor-pointer appearance-none rounded-full bg-border-light accent-primary dark:bg-border-dark" id="carbs-slider" type="range" min="-20" max="20" value="0" step="10" />
+                    <span class="text-xs text-text-muted-light dark:text-text-muted-dark">+</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Instructions -->
+        <h3 class="px-4 pb-2 pt-8 text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Instructions spéciales</h3>
+        <div class="px-4">
+            <textarea id="special-instructions" class="w-full rounded-lg border-border-light bg-content-light p-3 text-sm text-text-light placeholder:text-text-muted-light focus:border-primary focus:ring-primary dark:border-border-dark dark:bg-content-dark dark:text-text-dark dark:placeholder:text-text-muted-dark" placeholder="Allergies, préférences..." rows="3"></textarea>
+        </div>
+
+        <!-- Sticky Footer -->
+        <div class="fixed bottom-0 left-0 z-10 w-full border-t border-border-light bg-content-light/80 p-4 backdrop-blur-sm dark:border-border-dark dark:bg-content-dark/80">
+            <div class="mx-auto max-w-screen-lg">
+                <div class="flex items-center justify-between text-center text-xs text-text-muted-light dark:text-text-muted-dark">
+                    <div class="flex flex-col">
+                        <span id="calories-value" class="font-bold text-text-light dark:text-text-dark">0</span>
+                        <span>Calories</span>
+                    </div>
+                    <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+                    <div class="flex flex-col">
+                        <span id="protein-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
+                        <span>Protéines</span>
+                    </div>
+                    <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+                    <div class="flex flex-col">
+                        <span id="carbs-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
+                        <span>Glucides</span>
+                    </div>
+                    <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+                    <div class="flex flex-col">
+                        <span id="fat-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
+                        <span>Lipides</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button id="request-button" class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-bold text-white">
+                        Demander cette configuration - <span id="price-value">0.00</span>€
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="personnalisation.js"></script>
+</body>
+</html>
