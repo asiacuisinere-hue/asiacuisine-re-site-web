@@ -122,41 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     requestButton.addEventListener('click', () => {
-        const recipe = recipes[currentRecipeId];
-        const finalValues = {
-            recipe: recipe.name,
-            calories: caloriesValueEl.textContent,
-            protein: proteinValueEl.textContent,
-            carbs: carbsValueEl.textContent,
-            fat: fatValueEl.textContent,
-            price: priceValueEl.textContent,
-            proteinAdjustment: `${proteinAdjustment > 0 ? '+' : ''}${proteinAdjustment}%`,
-            carbsAdjustment: `${carbsAdjustment > 0 ? '+' : ''}${carbsAdjustment}%`,
-            specialInstructions: specialInstructionsEl.value
-        };
-
-        const subject = `Demande de devis pour un plat personnalisé : ${recipe.name}`;
-        const body = `Bonjour,
-
-Je serais intéressé(e) par un devis pour la configuration de plat suivante :
-
-Recette de base : ${finalValues.recipe}
-Ajustement Protéines : ${finalValues.proteinAdjustment}
-Ajustement Glucides : ${finalValues.carbsAdjustment}
-
---- Valeurs estimées ---
-Calories : ~${finalValues.calories} kcal
-Protéines : ~${finalValues.protein}
-Glucides : ~${finalValues.carbs}
-Lipides : ~${finalValues.fat}
-Prix : ${finalValues.price}€
-
---- Instructions spéciales ---
-${finalValues.specialInstructions || 'Aucune'}
-
-Merci de me recontacter pour finaliser ma demande.
-`;
-        window.location.href = `mailto:contact@asiacuisine.re?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = 'abonnements.html';
     });
 
     // --- Initialisation ---
