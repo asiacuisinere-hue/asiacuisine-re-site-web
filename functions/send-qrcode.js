@@ -64,7 +64,6 @@ export async function onRequest(context) {
             }
         });
 
-        // Encode the SVG string to Base64 for the attachment
         const qrCodeBase64 = btoa(qrCodeSvg);
 
         await resend.emails.send({
@@ -86,8 +85,9 @@ export async function onRequest(context) {
             `,
             attachments: [{
                 filename: 'qrcode.svg',
-                content: qrCodeBase64, // Use the Base64 encoded content
-                encoding: 'base64', // Specify the encoding
+                content: qrCodeBase64,
+                encoding: 'base64',
+                contentType: 'image/svg+xml', // Ajout du type de contenu
                 cid: 'qrcode.svg'
             }]
         });
