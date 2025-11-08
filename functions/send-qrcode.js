@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import QRCode from 'qrcode';
+import { Encoder } from '@nuintun/qrcode';
 
 // --- Helpers ---
 
@@ -55,17 +55,20 @@ export async function onRequest(context) {
         const client = demande.clients;
         if (!client) throw new Error('Client data not found for this demande.');
 
-        const weeklyColor = getWeeklyColor();
-        const qrCodeSvg = await QRCode.toString(`https://www.asiacuisine.re/suivi?id=${demande.id}`, {
-            type: 'svg',
+        // Generate PNG QR Code
+        const qrcode = new Encoder({
+            text: `https://www.asiacuisine.re/suivi?id=${demande.id}`,
+            size: 256,
+            level: 'M',
             color: {
-                dark: weeklyColor,
-                light: '#FFFFFF'
+                dark: getWeeklyColor(),
+                light: '#ffffff'
             }
         });
+        const qrCodeDataUrl = qrcode.toDataURL(); // This is a PNG Data URL
+        const qrCodeBase64 = qrCodeDataUrl.split(',')[1];
 
-        const qrCodeBase64 = btoa(qrCodeSvg);
-
+        // Send email with the PNG as a CID attachment
         await resend.emails.send({
             from: 'contact@asiacuisine.re',
             to: client.email,
@@ -75,7 +78,7 @@ export async function onRequest(context) {
                     <h1>Bonjour ${client.first_name || ''},</h1>
                     <p>Votre paiement a été confirmé. Merci !</p>
                     <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
-                    <img src="cid:qrcode.svg" alt="QR Code de suivi" width="200" height="200"/>
+                    <img src="cid:qrcode.png" alt="QR Code de suivi"/>
                     <p style="font-size: 1.2em; font-weight: bold; margin-top: 10px;">
                         ID Client : ${client.client_id || 'N/A'}
                     </p>
@@ -84,11 +87,10 @@ export async function onRequest(context) {
                 </div>
             `,
             attachments: [{
-                filename: 'qrcode.svg',
+                filename: 'qrcode.png',
                 content: qrCodeBase64,
                 encoding: 'base64',
-                contentType: 'image/svg+xml', // Ajout du type de contenu
-                cid: 'qrcode.svg'
+                cid: 'qrcode.png'
             }]
         });
 
