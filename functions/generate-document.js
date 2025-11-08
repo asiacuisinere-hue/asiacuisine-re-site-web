@@ -1,5 +1,6 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 
 // Helper function to add CORS headers
 const addCorsHeaders = (response) => {
@@ -30,7 +31,6 @@ const formulaPrices = {
 };
 
 export async function onRequest(context) {
-    // Handle preflight requests for CORS
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
@@ -40,62 +40,50 @@ export async function onRequest(context) {
     }
 
     try {
-        const { demandeId, documentType } = await context.request.json();
+        const { demandeId, documentType, sendEmail } = await context.request.json();
 
         if (!demandeId || !documentType) {
             return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 }));
         }
 
-        // 1. Initialiser Supabase
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
-        // 2. Récupérer les données de la demande et du client
         const { data: demande, error } = await supabase
             .from('demandes')
-            .select(`*,
-                clients(*)
-            `)
+            .select(`*, clients(*)`)
             .eq('id', demandeId)
             .single();
 
         if (error) throw error;
 
-        // 3. Créer le document PDF
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage();
         const { width, height } = page.getSize();
         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-        // --- Contenu du PDF ---
         let yPosition = height - 50;
         page.drawText(`${documentType} - Asiacuisine.re`, { x: 50, y: yPosition, size: 24, font: boldFont });
         yPosition -= 50;
-
         page.drawText(`Client: ${demande.clients.last_name} ${demande.clients.first_name || ''}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 20;
         page.drawText(`Email: ${demande.clients.email}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 40;
-
         page.drawText(`Date de la demande: ${new Date(demande.request_date).toLocaleDateString('fr-FR')}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 20;
         page.drawText(`Type: ${demande.type}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 40;
 
-        // Lignes de produits/services
         let totalAmount = 0;
         if (demande.type === 'COMMANDE_MENU') {
             const formulaName = demande.details_json.formulaName;
             const price = formulaPrices[formulaName] || 0;
             totalAmount = price;
-
             page.drawText(formulaName, { x: 50, y: yPosition, size: 12, font });
             page.drawText(`${price.toFixed(2)} €`, { x: width - 150, y: yPosition, size: 12, font });
             yPosition -= 20;
         }
-        // TODO: Ajouter la logique pour RESERVATION_SERVICE
 
-        // Total
         yPosition -= 20;
         page.drawLine({ start: { x: 50, y: yPosition }, end: { x: width - 50, y: yPosition }, thickness: 1, color: rgb(0.8, 0.8, 0.8) });
         yPosition -= 20;
@@ -103,11 +91,22 @@ export async function onRequest(context) {
         page.drawText(`${totalAmount.toFixed(2)} €`, { x: width - 150, y: yPosition, size: 14, font: boldFont });
 
         const pdfBytes = await pdfDoc.save();
+        const docName = generateDocName(documentType, 1);
 
-        // 4. Générer le nom du document
-        const docName = generateDocName(documentType, 1); // Position est à 1 pour l'instant
-
-        // TODO: 5. Sauvegarder le PDF dans Supabase Storage et l'entrée dans la table 'documents'
+        // Envoyer l'e-mail si sendEmail est true
+        if (sendEmail) {
+            const resend = new Resend(context.env.RESEND_API_KEY);
+            await resend.emails.send({
+                from: 'contact@asiacuisine.re',
+                to: demande.clients.email,
+                subject: `Votre ${documentType} de Asiacuisine.re`,
+                html: `Bonjour ${demande.clients.first_name || ''},<br><br>Veuillez trouver ci-joint votre ${documentType.toLowerCase()}.<br><br>Cordialement,<br>L'équipe Asiacuisine.re`,
+                attachments: [{
+                    filename: `${docName}.pdf`,
+                    content: Buffer.from(pdfBytes),
+                }],
+            });
+        }
 
         let response = new Response(pdfBytes, {
             status: 200,
