@@ -2,16 +2,28 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import QRCode from 'qrcode';
 
+// Helper function to add CORS headers
+const addCorsHeaders = (response) => {
+    response.headers.set('Access-Control-Allow-Origin', 'https://gestion.asiacuisine.re');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return response;
+};
+
 export async function onRequest(context) {
-    // Seules les requêtes POST sont autorisées
+    // Handle preflight requests for CORS
+    if (context.request.method === 'OPTIONS') {
+        return addCorsHeaders(new Response(null, { status: 204 }));
+    }
+
     if (context.request.method !== 'POST') {
-        return new Response('Method Not Allowed', { status: 405 });
+        return addCorsHeaders(new Response('Method Not Allowed', { status: 405 }));
     }
 
     try {
         const { demandeId } = await context.request.json();
         if (!demandeId) {
-            return new Response(JSON.stringify({ error: 'Missing demandeId' }), { status: 400 });
+            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing demandeId' }), { status: 400, headers: { 'Content-Type': 'application/json' } }));
         }
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
@@ -53,16 +65,16 @@ export async function onRequest(context) {
             ],
         });
 
-        return new Response(JSON.stringify({ success: true }), {
+        return addCorsHeaders(new Response(JSON.stringify({ success: true }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
-        });
+        }));
 
     } catch (error) {
         console.error('Error sending QR code email:', error);
-        return new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
+        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
-        });
+        }));
     }
 }
