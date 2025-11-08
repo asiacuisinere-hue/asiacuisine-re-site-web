@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import QRCode from 'qrcode';
+import qrcode from 'qrcode-generator';
 
 // Helper function to add CORS headers
 const addCorsHeaders = (response) => {
@@ -11,8 +11,6 @@ const addCorsHeaders = (response) => {
 };
 
 export async function onRequest(context) {
-    console.log('--- [DEBUG] Invocation de send-qrcode ---');
-
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
@@ -23,25 +21,26 @@ export async function onRequest(context) {
 
     try {
         const { demandeId } = await context.request.json();
-        console.log(`[DEBUG] send-qrcode: Paramètre reçu: demandeId=${demandeId}`);
+        if (!demandeId) {
+            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing demandeId' }), { status: 400, headers: { 'Content-Type': 'application/json' } }));
+        }
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
         const resend = new Resend(context.env.RESEND_API_KEY);
-        console.log('[DEBUG] send-qrcode: Clients Supabase et Resend initialisés.');
 
         const { data: demande, error } = await supabase.from('demandes').select('id, clients (email, first_name)').eq('id', demandeId).single();
         if (error || !demande) {
-            throw new Error(error?.message || 'Demande non trouvée dans send-qrcode');
+            throw new Error(error?.message || 'Demande non trouvée');
         }
-        console.log('[DEBUG] send-qrcode: Données récupérées pour le client:', demande.clients.email);
 
-        console.log('[DEBUG] send-qrcode: Tentative de génération du QR code...');
-        const qrCodeDataUrl = await QRCode.toDataURL(`https://www.asiacuisine.re/suivi?id=${demande.id}`);
-        console.log('[DEBUG] send-qrcode: QR code généré avec succès.');
-        
+        // Générer le QR code avec la nouvelle librairie
+        const qr = qrcode(0, 'M');
+        qr.addData(`https://www.asiacuisine.re/suivi?id=${demande.id}`);
+        qr.make();
+        const qrCodeDataUrl = qr.createDataURL(4); // 4 = cell size
         const qrCodeBase64 = qrCodeDataUrl.split(',')[1];
 
-        console.log('[DEBUG] send-qrcode: Tentative d\'envoi de l\'e-mail...');
+        // Envoyer l'e-mail
         await resend.emails.send({
             from: 'contact@asiacuisine.re',
             to: demande.clients.email,
@@ -61,7 +60,6 @@ export async function onRequest(context) {
                 }
             ],
         });
-        console.log('[DEBUG] send-qrcode: E-mail envoyé avec succès.');
 
         return addCorsHeaders(new Response(JSON.stringify({ success: true }), {
             status: 200,
