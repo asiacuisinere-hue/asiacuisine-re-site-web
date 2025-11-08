@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const priceValueEl = document.getElementById('price-value');
 
     const requestButton = document.getElementById('request-button');
-    const specialInstructionsEl = document.getElementById('special-instructions');
 
     // --- Fonctions ---
 
