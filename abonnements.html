@@ -14,10 +14,19 @@
         .card {
             background-color: #ffffff;
             color: #181311;
+            height: 100%; /* Pour que les cartes aient la même hauteur */
+            display: flex;
+            flex-direction: column;
+        }
+        .card-content {
+            flex-grow: 1;
         }
         .card-highlight {
             background-color: #ec5b13;
             color: #ffffff;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         .card-highlight .choose-button {
             background-color: #ffffff;
@@ -34,55 +43,68 @@
     <div class="container mx-auto p-8">
         <a href="/index.html" class="text-yellow-500 hover:text-yellow-400 mb-8 inline-block">&larr; Retour à l'accueil</a>
         <h1 class="text-4xl font-bold text-center mb-4">Nos Formules d’Abonnement</h1>
-        <p class="text-center text-gray-300 mb-4 max-w-3xl mx-auto">Un service de repas personnalisés à La Réunion, conçu selon vos besoins nutritionnels. Goût, équilibre et transparence — sans avoir à calculer chaque jour, je le fais pour vous.</p>
-        <p class="text-center text-gray-400 mb-12 max-w-3xl mx-auto">🧩 Ces abonnements sont pensés pour ceux qui souhaitent aller plus loin : que votre objectif soit la forme, la performance ou simplement le plaisir de manger mieux.</p>
+        <div class="text-center text-gray-300 mb-12 max-w-3xl mx-auto space-y-4">
+            <p>Vous souhaitez aller plus loin que les menus hebdomadaires ? Ces formules sont faites pour vous.</p>
+            <p>Je prépare chaque plat en tenant compte de vos besoins réels : calories, macronutriments, goûts et objectifs personnels.</p>
+            <p>Goût, équilibre et transparence — sans avoir à calculer chaque jour, je le fais pour vous.</p>
+        </div>
 
         <div class="flex flex-col items-center gap-8">
             <!-- Carte du haut (Performance) -->
             <div class="w-full md:w-2/3 lg:w-1/2">
                 <div class="card-highlight rounded-lg shadow-2xl p-8 text-center transform hover:scale-105 transition-transform duration-300">
-                    <h2 class="text-3xl font-bold mb-2">🔥 Formule Performance</h2>
-                    <p class="opacity-90 mb-4">4 plats personnalisés / semaine + Suivi</p>
-                    <p class="text-5xl font-extrabold">130€<span class="text-xl font-medium">/mois</span></p>
-                    <p class="opacity-80 mb-6 text-sm">(soit environ 32 €/semaine)</p>
-                    <ul class="text-left mb-8 space-y-2">
-                        <li>✔️ Tout ce qui est inclus dans la formule Équilibre</li>
-                        <li>✔️ Calcul détaillé des calories et macronutriments</li>
-                        <li>✔️ Ajustement bi-mensuel selon vos objectifs</li>
-                    </ul>
-                    <p class="italic mb-6">💪 Pour celles et ceux qui veulent des résultats visibles et mesurables.</p>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Performance" class="choose-button font-bold py-3 px-6 rounded-full w-full inline-block text-lg">Choisir cette formule</a>
+                    <div class="card-content">
+                        <h2 class="text-3xl font-bold mb-2">🔥 Formule Performance</h2>
+                        <p class="opacity-90 mb-4">5 plats personnalisés / semaine + suivi bimensuel</p>
+                        <p class="text-5xl font-extrabold">à partir de 280€<span class="text-xl font-medium">/mois</span></p>
+                        <p class="opacity-80 mb-6 text-sm">(soit environ 70 €/semaine)</p>
+                        <ul class="text-left mb-8 space-y-2">
+                            <li>✔️ Tout ce qui est inclus dans la formule Équilibre</li>
+                            <li>✔️ Ajustement bi-mensuel selon vos objectifs</li>
+                            <li>✔️ Suivi simple par message ou email</li>
+                            <li>✔️ Adaptée à la perte de poids ou à la prise de muscle</li>
+                        </ul>
+                        <p class="italic mb-6">💪 Pour celles et ceux qui veulent des résultats visibles et mesurables.</p>
+                    </div>
+                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Performance" class="choose-button font-bold py-3 px-6 rounded-full w-full inline-block text-lg mt-auto">Choisir cette formule</a>
                 </div>
             </div>
 
             <!-- Cartes du bas (Équilibre et Premium) -->
             <div class="w-full grid md:grid-cols-2 gap-8">
                 <div class="card rounded-lg shadow-lg p-6 text-center">
-                    <h2 class="text-2xl font-bold mb-2">🌿 Formule Équilibre</h2>
-                    <p class="text-gray-500 mb-4">4 plats personnalisés / semaine</p>
-                    <p class="text-4xl font-extrabold">95€<span class="text-lg font-medium">/mois</span></p>
-                    <p class="text-gray-400 mb-4 text-sm">(soit environ 24 €/semaine)</p>
-                    <ul class="text-left mb-6 space-y-2">
-                        <li>✔️ 16 plats personnalisés par mois</li>
-                        <li>✔️ Accès au calculateur nutritionnel</li>
-                        <li>✔️ Idéal pour un rééquilibrage alimentaire simple et progressif</li>
-                    </ul>
-                    <p class="italic text-gray-600 mb-6">🥗 Pour apprendre à mieux manger sans se priver.</p>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Équilibre" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block">Choisir cette formule</a>
+                    <div class="card-content">
+                        <h2 class="text-2xl font-bold mb-2">🌿 Formule Équilibre</h2>
+                        <p class="text-gray-500 mb-4">4 plats personnalisés / semaine</p>
+                        <p class="text-4xl font-extrabold">à partir de 180€<span class="text-lg font-medium">/mois</span></p>
+                        <p class="text-gray-400 mb-4 text-sm">(soit environ 45 €/semaine)</p>
+                        <ul class="text-left mb-6 space-y-2">
+                            <li>✔️ 16 plats personnalisés par mois</li>
+                            <li>✔️ Calcul précis des calories et macronutriments</li>
+                            <li>✔️ Accès à notre calculateur nutritionnel</li>
+                            <li>✔️ Idéal pour un rééquilibrage simple et durable</li>
+                        </ul>
+                        <p class="italic text-gray-600 mb-6">🥗 Pour apprendre à mieux manger sans se priver.</p>
+                    </div>
+                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Équilibre" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto">Choisir cette formule</a>
                 </div>
 
                 <div class="card rounded-lg shadow-lg p-6 text-center">
-                    <h2 class="text-2xl font-bold mb-2">✨ Formule Sur Mesure Premium</h2>
-                    <p class="text-gray-500 mb-4">Menu 100 % individualisé</p>
-                    <p class="text-4xl font-extrabold">180€<span class="text-lg font-medium">/mois</span></p>
-                    <p class="text-gray-400 mb-4 text-sm">(soit environ 45 €/semaine)</p>
-                    <ul class="text-left mb-6 space-y-2">
-                        <li>✔️ Tout ce qui est inclus dans la formule Performance</li>
-                        <li>✔️ Recettes entièrement adaptées à vos goûts et besoins</li>
-                        <li>✔️ Suivi hebdomadaire (poids, progression, objectifs)</li>
-                    </ul>
-                    <p class="italic text-gray-600 mb-6">👨‍🍳 Le confort d’un chef personnel, à votre service.</p>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Sur mesure Premium" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block">Choisir cette formule</a>
+                    <div class="card-content">
+                        <h2 class="text-2xl font-bold mb-2">✨ Formule Premium</h2>
+                        <p class="text-gray-500 mb-4">5 plats personnalisés / semaine + suivi complet</p>
+                        <p class="text-4xl font-extrabold">à partir de 360€<span class="text-lg font-medium">/mois</span></p>
+                        <p class="text-gray-400 mb-4 text-sm">(soit environ 90 €/semaine)</p>
+                        <ul class="text-left mb-6 space-y-2">
+                            <li>✔️ Tout ce qui est inclus dans la formule Performance</li>
+                            <li>✔️ Recettes entièrement adaptées à vos goûts</li>
+                            <li>✔️ Ajustement hebdomadaire des portions</li>
+                            <li>✔️ Livraison incluse</li>
+                            <li>✔️ Conseils repas et collations personnalisés</li>
+                        </ul>
+                        <p class="italic text-gray-600 mb-6">👨‍🍳 L’expérience d’un chef personnel, à votre écoute.</p>
+                    </div>
+                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Premium" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto">Choisir cette formule</a>
                 </div>
             </div>
         </div>
