@@ -1,0 +1,16 @@
+- une barre latérale comprenant : tableau de bord, Particuliers, Entreprises, Devis, Factures, Paramètres
+- Tableau de bord : affichage des nouvelles demandes, demandes en cours, KPI
+- Particuliers: informations sur les clients, commandes en cours, commandes confirmées, devis et factures (création, envoi, vue)
+- Entreprises : identique à Particuliers
+- Devis et Factures : Création et Envoi
+- Paramètres :- modification du calendrier par défaut (jours fériés, congés)
+              - modification des photos
+	      - modification du message popup	
+              - modification des prix des formules 
+
+Pour la forme : un affichage sous forme de carte cliquable
+Par exemple, une carte client permet d'afficher les informations du clients, de voir les devis et factures, un résumé de ses commandes
+
+Il faut des champs de recherches pour les différentes sections
+
+Quand il y a des demandes en attente, il faudrait pouvoir les regrouper par ville

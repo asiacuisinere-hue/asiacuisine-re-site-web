@@ -1,85 +1,70 @@
-# Plan de Développement : Web App de Gestion Unifiée Asiacuisine.re
+# WebApp Development Plan - Asiacuisine.re
 
-Ce document décrit les étapes de développement pour la création d'une application de gestion centralisée sur un sous-domaine (ex: `gestion.asiacuisine.re`). Cette application gérera les **commandes de menus**, les **réservations de services pour particuliers**, et les **demandes pour entreprises**.
+## Phase 1: Initial Setup & Environment Configuration (Completed)
+*   [x] Setup GitHub repository for the dashboard.
+*   [x] Choose and configure the hosting platform (Cloudflare Pages).
+*   [x] Setup local development environment with Node.js and npm.
+*   [x] Create initial React application structure using `create-react-app`.
 
----
+## Phase 2: Database & Authentication (Completed)
+*   [x] Setup Supabase project.
+*   [x] Design database schema: `clients`, `demandes`, `abonnements`.
+*   [x] Implement authentication for the admin dashboard using Supabase Auth.
+*   [x] Create a secure login page.
 
-### Phase 1 : Socle Technique et Authentification (Inchangé)
+## Phase 3: API Serverless Functions (Completed)
+*   [x] Create a serverless function to retrieve new `demandes` from Supabase.
+*   [x] Create a function to update the status of a `demande`.
+*   [x] Create functions to manage `clients` (CRUD).
+*   [x] Secure all API endpoints.
 
-*   [ ] **1.1. Initialisation du projet**
-*   [ ] **1.2. Configuration du sous-domaine**
-*   [ ] **1.3. Mise en place de l'authentification administrateur**
+## Phase 4: Dashboard - Core Features (Completed)
+*   [x] Create the main dashboard layout with a sidebar for navigation.
+*   [x] Implement a view to display new `demandes` in a table or list.
+*   [x] Allow the admin to view details of a `demande` in a modal or separate page.
+*   [x] Allow the admin to change the status of a `demande` (e.g., "En cours", "Terminée").
 
----
+## Phase 5: Client Management Interface (Completed)
+*   [x] Create a page to list all clients (`particuliers` and `entreprises`).
+*   [x] Implement functionality to add, view, edit, and delete clients.
+*   [x] Display the history of `demandes` for each client.
 
-### Phase 2 : Modélisation des Données Unifiées
+## Phase 6: Invoicing and Quotes (Partially Completed)
+*   [x] **6.1. Database Table for Documents:**
+    *   [x] Create a `documents` table in Supabase to store invoices and quotes (id, demande_id, type, file_url, created_at).
+*   [x] **6.2. PDF Generation Function:**
+    *   [x] Create a serverless function (`generate-document`) that generates a PDF for a given `demande`.
+    *   [x] The function should fetch client and demand details from Supabase.
+    *   [x] The PDF should be professional and include all relevant details (client info, demand details, price, etc.).
+*   [ ] **6.3. Invoicing Interface:**
+    *   [x] In the `DemandeDetail` view, add "Create Quote" and "Create Invoice" buttons.
+    *   [x] Clicking a button calls the `generate-document` function and allows the admin to download the PDF.
+    *   [ ] Save the generated document to Supabase Storage and create an entry in the `documents` table.
+    *   [ ] Add a feature to send the document directly to the client via email.
 
-*   [ ] **2.1. Création de la table `clients` :**
-    *   [ ] Définir et créer la table `clients` dans Supabase.
-    *   [ ] Inclure un champ `type` ("Particulier" ou "Entreprise").
-    *   [ ] Prévoir des champs conditionnels (SIRET, nom de l'entreprise) pour le type "Entreprise".
+## Phase 7: Advanced Features & Tracking (In Progress)
+*   [x] **7.1. QR Code Tracking (for Menu Orders):**
+    *   [x] Generate a unique QR code for each menu order.
+    *   [x] The QR code should link to a public tracking page (e.g., `asiacuisine.re/suivi?id=DEMANDE_ID`).
+    *   [x] Create the simple public page that displays the order status.
+    *   [x] Implement a QR code scanner in the dashboard to quickly find an order and update its status to "Delivered".
+*   [ ] **7.2. Nutritional Calculator (on the main website):**
+    *   [x] Create a new page `calculateur.html` on the main website.
+    *   [ ] Integrate an interactive tool for calculating daily calorie needs.
+    *   [ ] Add a link/CTA to the subscription plans.
+*   [ ] **7.3. Subscription Management:**
+    *   [ ] Create an interface to manage client subscriptions (`abonnements`).
+    *   [ ] Allow admins to view, pause, or cancel a subscription.
+    *   [ ] Automatically generate recurring weekly `demandes` for active subscriptions.
 
-*   [ ] **2.2. Création de la table `demandes` :**
-    *   [ ] Définir et créer une table `demandes` unifiée, liée à la table `clients`.
-    *   [ ] Inclure un champ `type` pour distinguer les demandes : `COMMANDE_MENU`, `RESERVATION_PARTICULIER`, `DEMANDE_ENTREPRISE`.
-    *   [ ] Inclure des champs communs : `date_demande`, `statut` (Nouvelle, Devis envoyé, Confirmée, Terminée, Annulée), `montant_total`.
-    *   [ ] Inclure des champs spécifiques (qui peuvent être `null`) pour les détails de la demande.
+## Phase 8: Settings & Configuration
+*   [ ] Create a settings page in the dashboard.
+*   [ ] Allow the admin to manage service availability (e.g., holidays, unavailable dates).
+*   [ ] Manage email notification templates.
+*   [ ] Allow the admin to change their password.
 
----
-
-### Phase 3 : API Centralisée et Migration des Formulaires
-
-*   [ ] **3.1. Création de l'API de réception :**
-    *   [ ] Créer une nouvelle fonction Cloudflare (`/api/create-request`) qui reçoit les données de tous les formulaires.
-    *   [ ] Sécuriser l'endpoint avec une clé API.
-    *   [ ] Implémenter la logique pour insérer les données dans les tables `clients` et `demandes` en fonction du type de demande.
-
-*   [ ] **3.2. Mise à jour du formulaire de la page `menu.html` :**
-    *   [ ] Modifier le JavaScript pour qu'il envoie les données à la nouvelle API.
-
-*   [ ] **3.3. Mise à jour du formulaire de la page `index.html` :**
-    *   [ ] Modifier le JavaScript pour qu'il envoie les données à la nouvelle API.
-
-*   [ ] **3.4. (Futur) Création d'un formulaire pour les entreprises :**
-    *   [ ] Créer une nouvelle page ou section sur le site vitrine dédiée aux services pour entreprises, avec un formulaire de contact/devis détaillé.
-
----
-
-### Phase 4 : Interface de Gestion Unifiée
-
-*   [ ] **4.1. Interface de gestion des demandes :**
-    *   [ ] Créer une page `/demandes` pour lister toutes les demandes.
-    *   [ ] Ajouter des filtres pour voir par type (`COMMANDE_MENU`, `RESERVATION_PARTICULIER`, `DEMANDE_ENTREPRISE`), par statut ou par date.
-    *   [ ] Afficher les demandes sous forme de tableau ou de cartes (type Kanban).
-
-*   [ ] **4.2. Interface de gestion des clients :**
-    *   [ ] Créer une page `/clients` pour lister tous les clients (particuliers et entreprises).
-    *   [ ] Afficher l'historique des demandes pour chaque client.
-
----
-
-### Phase 5 : Devis et Facturation Centralisés
-
-*   [ ] **5.1. Création de la table `documents` :**
-    *   [ ] Définir et créer une table `documents` (liée à la table `demandes`) pour stocker les devis et factures.
-
-*   [ ] **5.2. Génération de PDF :**
-    *   [ ] Créer une fonction Cloudflare (`/api/generate-document`) qui génère un devis ou une facture en PDF.
-
-*   [ ] **5.3. Interface de facturation :**
-    *   [ ] Sur la page de détail d'une demande, ajouter des boutons "Générer devis" et "Générer facture".
-    *   [ ] Permettre le téléchargement et l'envoi par e-mail des documents.
-
----
-
-### Phase 6 : Fonctionnalités Avancées et Suivi (Inchangé)
-
-*   [ ] **6.1. Suivi par QR Code (pour les commandes)**
-*   [ ] **6.2. Tableau de bord (KPI)**
-
----
-
-### Phase 7 : Finalisation et Déploiement (Inchangé)
-
-*   [ ] **7.1. Tests et débogage**
-*   [ ] **7.2. Déploiement final**
+## Phase 9: Finalization & Deployment
+*   [ ] Thoroughly test all features.
+*   [ ] Ensure the dashboard is fully responsive and works well on mobile devices.
+*   [ ] Write documentation for setup and usage.
+*   [ ] Final deployment and go-live.

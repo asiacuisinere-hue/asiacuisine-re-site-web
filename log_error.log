@@ -1,66 +1,116 @@
-menu?lang=fr:497 Fetching unavailable dates...
-script.js:2 DOM fully loaded and parsed
-script.js:11 Initializing i18next...
-script.js:27 Language detected from URL: fr
-i18next.min.js:1 i18next: languageChanged fr
-i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
-script.js:4 i18next initialized, now initializing page content.
-script.js:44 Running updateContent()...
-script.js:46 Found 13 elements to translate.
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.page_title menu.page_title
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.back_to_home menu.back_to_home
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.title menu.title
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.subtitle menu.subtitle
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.discovery_title menu.discovery_title
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.discovery_desc menu.discovery_desc
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.standard_title menu.standard_title
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.standard_desc menu.standard_desc
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.comfort_title menu.comfort_title
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.comfort_desc menu.comfort_desc
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.duo_title menu.duo_title
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.duo_desc menu.duo_desc
-i18next.min.js:1 i18next::translator: missingKey fr translation menu.to_order_cta menu.to_order_cta
-script.js:62 Updating links to persist language: fr
-menu?lang=fr:360 Rendering calendar with monthOffset: 0
-menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 30/10/2025 11:00:00).
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 31/10/2025 11:00:00).
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 01/11/2025 11:00:00).
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:458   - Disabled because order must be placed 48h in advance (cut-off: 02/11/2025 11:00:00).
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:446   - Disabled because in unavailableDates.
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: false
-menu?lang=fr:461   - Final isDisabled: true
+supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
+supabaseClient.js:7 Has API Key: true
+fetch.ts:15  GET https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/demandes?select=*%2Cclients%28id%2Cfirst_name%2Clast_name%2Cemail%2Cphone%2Ccompany_name%2Csiret%2Caddress%29&id=eq.b4b467ce-1412-41cb-a197-d3e1c9a5878e 406 (Not Acceptable)
+(anonymous) @ fetch.ts:15
+(anonymous) @ fetch.ts:46
+await in (anonymous)
+then @ PostgrestBuilder.ts:113
+ClientDetail.js:23 Supabase error: {code: 'PGRST116', details: 'The result contains 0 rows', hint: null, message: 'Cannot coerce the result to a single JSON object'}
+(anonymous) @ ClientDetail.js:23
+await in (anonymous)
+(anonymous) @ ClientDetail.js:34
+gl @ react-dom-client.production.js:8583
+eu @ react-dom-client.production.js:10126
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10137
+_c @ react-dom-client.production.js:11763
+wc @ react-dom-client.production.js:11739
+yc @ react-dom-client.production.js:11718
+mc @ react-dom-client.production.js:11521
+Qu @ react-dom-client.production.js:10920
+Gu @ react-dom-client.production.js:10826
+Bc @ react-dom-client.production.js:12086
+Dc @ react-dom-client.production.js:11956
+Uc @ react-dom-client.production.js:11990
+(anonymous) @ react-dom-client.production.js:12095
+ClientDetail.js:24 Error details: {
+  "code": "PGRST116",
+  "details": "The result contains 0 rows",
+  "hint": null,
+  "message": "Cannot coerce the result to a single JSON object"
+}
+(anonymous) @ ClientDetail.js:24
+await in (anonymous)
+(anonymous) @ ClientDetail.js:34
+gl @ react-dom-client.production.js:8583
+eu @ react-dom-client.production.js:10126
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10120
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10241
+Zl @ react-dom-client.production.js:10101
+eu @ react-dom-client.production.js:10137
+_c @ react-dom-client.production.js:11763
+wc @ react-dom-client.production.js:11739
+yc @ react-dom-client.production.js:11718
+mc @ react-dom-client.production.js:11521
+Qu @ react-dom-client.production.js:10920
+Gu @ react-dom-client.production.js:10826
+Bc @ react-dom-client.production.js:12086
+Dc @ react-dom-client.production.js:11956
+Uc @ react-dom-client.production.js:11990
+(anonymous) @ react-dom-client.production.js:12095

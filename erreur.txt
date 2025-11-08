@@ -1,0 +1,24 @@
+supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
+supabaseClient.js:7 Has API Key: true
+chunk-UIGDSWPH.mjs:188 Uncaught Error: You cannot render a <Router> inside another <Router>. You should never have more than one in your app.
+    at w (chunk-UIGDSWPH.mjs:188:11)
+    at De (chunk-UIGDSWPH.mjs:6411:3)
+    at ta (react-dom-client.production.js:4351:21)
+    at Ws (react-dom-client.production.js:6497:15)
+    at al (react-dom-client.production.js:7473:14)
+    at uu (react-dom-client.production.js:11305:14)
+    at lu (react-dom-client.production.js:11182:37)
+    at su (react-dom-client.production.js:11163:7)
+    at Kc (react-dom-client.production.js:10728:40)
+    at Uu (react-dom-client.production.js:12078:3)
+w @ chunk-UIGDSWPH.mjs:188
+De @ chunk-UIGDSWPH.mjs:6411
+ta @ react-dom-client.production.js:4351
+Ws @ react-dom-client.production.js:6497
+al @ react-dom-client.production.js:7473
+uu @ react-dom-client.production.js:11305
+lu @ react-dom-client.production.js:11182
+su @ react-dom-client.production.js:11163
+Kc @ react-dom-client.production.js:10728
+Uu @ react-dom-client.production.js:12078
+N @ scheduler.production.js:151
