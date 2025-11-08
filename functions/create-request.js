@@ -90,17 +90,37 @@ export async function onRequest(context) {
 
         if (demandeError) throw demandeError;
 
+        // --- Préparation de l'e-mail ---
         const resendApiKey = context.env.RESEND_API_KEY;
         if (resendApiKey) {
+            // Formatter les détails pour l'e-mail
+            let detailsHtml = '<ul>';
+            for (const [key, value] of Object.entries(details)) {
+                if (value) {
+                    // Traduire les clés en français pour l'e-mail
+                    const keyMap = {
+                        customerType: 'Type de client',
+                        serviceType: 'Type de service',
+                        numberOfPeople: 'Nombre de personnes',
+                        customerMessage: 'Message du client',
+                        formulaName: 'Formule',
+                        formulaOption: 'Option de la formule',
+                        deliveryCity: 'Ville de livraison'
+                    };
+                    detailsHtml += `<li><strong>${keyMap[key] || key}:</strong> ${value}</li>`;
+                }
+            }
+            detailsHtml += '</ul>';
+
             try {
                 const resend = new Resend(resendApiKey);
                 await resend.emails.send({
                     from: 'reservation@asiacuisine.re',
                     to: 'contact@asiacuisine.re',
-                    subject: `Nouvelle demande (${data.customerType || 'N/A'}) - ${data.type}`,
+                    subject: `Nouvelle demande (${details.customerType || data.type})`,
                     html: `
                         <h1>Nouvelle demande reçue</h1>
-                        <p>Une nouvelle demande de type <strong>${data.type}</strong> a été soumise par un <strong>${data.customerType || 'Non précisé'}</strong>.</p>
+                        <p>Une nouvelle demande de type <strong>${data.type}</strong> a été soumise par un <strong>${details.customerType || 'Non précisé'}</strong>.</p>
                         <h3>Détails du client :</h3>
                         <ul>
                             <li><strong>Nom :</strong> ${data.customer.lastName || 'N/A'} ${data.customer.firstName || ''}</li>
@@ -109,8 +129,8 @@ export async function onRequest(context) {
                             ${client.client_id ? `<li><strong>ID Client :</strong> ${client.client_id}</li>` : ''}
                         </ul>
                         <h3>Détails de la demande :</h3>
-                        <p>Date souhaitée : ${new Date(data.requestDate).toLocaleDateString('fr-FR')}</p>
-                        <pre>${JSON.stringify(details, null, 2)}</pre>
+                        <p><strong>Date souhaitée :</strong> ${new Date(data.requestDate).toLocaleDateString('fr-FR')}</p>
+                        ${detailsHtml}
                     `
                 });
             } catch (emailError) {
