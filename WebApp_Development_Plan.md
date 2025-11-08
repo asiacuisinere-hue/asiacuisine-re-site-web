@@ -53,15 +53,39 @@
     *   [ ] Integrate an interactive tool for calculating daily calorie needs.
     *   [ ] Add a link/CTA to the subscription plans.
 *   [ ] **7.3. Subscription Management:**
-    *   [ ] Create an interface to manage client subscriptions (`abonnements`).
-    *   [ ] Allow admins to view, pause, or cancel a subscription.
-    *   [ ] Automatically generate recurring weekly `demandes` for active subscriptions.
+    *   **Objectif:** Mettre en place un système complet pour gérer les abonnements, de la souscription à la gestion dans le dashboard.
+    *   **7.3.1. Création de la table `abonnements` dans Supabase:**
+        *   [ ] Définir une table pour stocker les informations des abonnés (`id`, `client_id`, `formule`, `status`, `date_debut`).
+    *   **7.3.2. Formulaire de souscription:**
+        *   [ ] Remplacer les liens `mailto:` de la page `abonnements.html` par un bouton ouvrant un formulaire de souscription.
+    *   **7.3.3. Fonction serveur `create-subscription`:**
+        *   [ ] Créer une fonction qui enregistre la demande dans Supabase et notifie l'administrateur par e-mail.
+    *   **7.3.4. Intégration au Dashboard React:**
+        *   [ ] Créer une page "Abonnements" listant tous les abonnés et leur statut.
+        *   [ ] Permettre la gestion basique des abonnements (voir les détails, contacter, changer le statut).
+        *   [ ] (Plus tard) Automatiser la génération des commandes hebdomadaires pour les abonnés actifs.
 
-## Phase 8: Settings & Configuration
-*   [ ] Create a settings page in the dashboard.
-*   [ ] Allow the admin to manage service availability (e.g., holidays, unavailable dates).
-*   [ ] Manage email notification templates.
-*   [ ] Allow the admin to change their password.
+## Phase 8: Paramètres Avancés et Contenu Dynamique
+*Objectif : Rendre le site administrable depuis le dashboard pour réduire le besoin de redéploiements.*
+
+*   [ ] **8.1. Gestion du Calendrier :**
+    *   [ ] Créer une table `indisponibilites` dans Supabase pour stocker les dates bloquées.
+    *   [ ] Dans le dashboard, créer une page "Paramètres > Calendrier" avec une interface visuelle pour sélectionner/désélectionner des dates.
+    *   [ ] Permettre de bloquer des jours de la semaine de manière récurrente (ex: tous les dimanches et lundis).
+    *   [ ] Mettre à jour la fonction `/functions/disponibilites` pour qu'elle lise cette table et retourne la liste complète des jours non disponibles.
+
+*   [ ] **8.2. Gestion des Menus Hebdomadaires :**
+    *   [ ] Créer une table `menus_semaine` dans Supabase pour stocker les détails des formules (nom, prix, description, plats inclus).
+    *   [ ] Dans le dashboard, créer une page "Paramètres > Menus" pour éditer ces formules.
+    *   [ ] Modifier la page `menu.html` pour qu'elle charge dynamiquement les informations des formules depuis une nouvelle fonction serveur, au lieu d'être statique.
+
+*   [ ] **8.3. Gestion du Popup d'Accueil :**
+    *   [ ] Créer une table `contenu_dynamique` (ou utiliser une table de configuration générale) pour stocker le titre et le message du popup.
+    *   [ ] Dans le dashboard, créer une section "Paramètres > Page d'accueil" avec des champs pour modifier le contenu du popup.
+    *   [ ] Modifier le `script.js` du site principal pour récupérer ce contenu via une fonction serveur et l'afficher dans le popup.
+
+*   [ ] **8.4. Gestion du Compte Administrateur :**
+    *   [ ] Permettre à l'administrateur de changer son mot de passe directement depuis le dashboard.
 
 ## Phase 9: Finalization & Deployment
 *   [ ] Thoroughly test all features.

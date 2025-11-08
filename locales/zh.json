@@ -112,7 +112,10 @@
       "phone_label": "电话：",
       "message_label": "留言（口味偏好、过敏、特殊需求）：",
       "message_placeholder": "请描述您的饮食偏好、过敏情况或特殊需求...",
-      "submit_button": "提交预约请求"
+      "submit_button": "发送预订请求",
+      "customer_type_label": "您是：",
+      "customer_type_individual": "个人",
+      "customer_type_company": "公司"
     },
     "footer": {
       "contact_title": "联系方式",

@@ -299,6 +299,19 @@
             <h2 class="section-title fade-in" data-i18n="booking.section_title">Réservation</h2>
             <form class="booking-form fade-in" id="bookingForm">
                 <div class="form-group">
+                    <label data-i18n="booking.customer_type_label">Vous êtes :</label>
+                    <div class="radio-group" style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="radio" name="customer_type" value="Particulier" checked>
+                            <span data-i18n="booking.customer_type_individual">Particulier</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="radio" name="customer_type" value="Entreprise">
+                            <span data-i18n="booking.customer_type_company">Entreprise</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label for="service" data-i18n="booking.service_label">Type de service :</label>
                     <select id="service" name="service" required>
                         <option value="" data-i18n="booking.service_option_default">Choisissez un service</option>

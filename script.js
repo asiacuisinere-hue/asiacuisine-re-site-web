@@ -296,6 +296,7 @@ function initializeForm() {
 
         const requestPayload = {
             type: 'RESERVATION_SERVICE',
+            customerType: data.customer_type, // Ajout du type de client
             customer: {
                 firstName: null, // Le formulaire n'a pas de champ prénom séparé
                 lastName: data.nom, // Utilise le 'Nom complet' comme nom de famille

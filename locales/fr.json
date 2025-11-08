@@ -102,7 +102,10 @@
       "phone_label": "Téléphone :",
       "message_label": "Message (préférences, allergies, demandes spéciales) :",
       "message_placeholder": "Décrivez vos préférences culinaires, allergies alimentaires ou demandes spéciales...",
-      "submit_button": "Envoyer la demande de réservation"
+      "submit_button": "Envoyer la demande de réservation",
+      "customer_type_label": "Vous êtes :",
+      "customer_type_individual": "Particulier",
+      "customer_type_company": "Entreprise"
     },
     "footer": {
       "contact_title": "Contact",

@@ -70,7 +70,12 @@ export async function onRequest(context) {
         if (data.type === 'COMMANDE_MENU') {
             details = { formulaName: data.formulaName, formulaOption: data.formulaOption, deliveryCity: data.deliveryCity };
         } else if (data.type === 'RESERVATION_SERVICE') {
-            details = { serviceType: data.serviceType, numberOfPeople: data.numberOfPeople, customerMessage: data.customerMessage };
+            details = { 
+                customerType: data.customerType, // Ajout du type de client
+                serviceType: data.serviceType, 
+                numberOfPeople: data.numberOfPeople, 
+                customerMessage: data.customerMessage 
+            };
         }
 
         const { error: demandeError } = await supabase
@@ -92,10 +97,10 @@ export async function onRequest(context) {
                 await resend.emails.send({
                     from: 'reservation@asiacuisine.re',
                     to: 'contact@asiacuisine.re',
-                    subject: `Nouvelle demande - ${data.type}`,
+                    subject: `Nouvelle demande (${data.customerType || 'N/A'}) - ${data.type}`,
                     html: `
                         <h1>Nouvelle demande reçue</h1>
-                        <p>Une nouvelle demande de type <strong>${data.type}</strong> a été soumise.</p>
+                        <p>Une nouvelle demande de type <strong>${data.type}</strong> a été soumise par un <strong>${data.customerType || 'Non précisé'}</strong>.</p>
                         <h3>Détails du client :</h3>
                         <ul>
                             <li><strong>Nom :</strong> ${data.customer.lastName || 'N/A'} ${data.customer.firstName || ''}</li>

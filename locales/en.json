@@ -102,7 +102,10 @@
       "phone_label": "Phone:",
       "message_label": "Message (preferences, allergies, special requests):",
       "message_placeholder": "Describe your preferences, allergies, or any special requests...",
-      "submit_button": "Submit Booking Request"
+      "submit_button": "Send Booking Request",
+      "customer_type_label": "You are:",
+      "customer_type_individual": "An Individual",
+      "customer_type_company": "A Company"
     },
     "footer": {
       "contact_title": "Contact",
