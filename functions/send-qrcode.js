@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { Encoder } from '@nuintun/qrcode';
+const { Encoder } = require('@nuintun/qrcode');
 
 // --- Helpers ---
 
