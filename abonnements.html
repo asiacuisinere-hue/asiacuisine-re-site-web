@@ -7,23 +7,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Ajout d'un style pour le fond et la couleur du texte principale */
         body {
-            background-color: #2d1d13; /* Couleur marron foncé de votre thème */
-            color: #f8f6f6; /* Couleur de texte claire */
+            background-color: #2d1d13;
+            color: #f8f6f6;
         }
-        /* Assurer que les cartes restent lisibles */
         .card {
             background-color: #ffffff;
             color: #181311;
         }
         .card-highlight {
-            background-color: #ec5b13; /* Couleur primaire orange */
+            background-color: #ec5b13;
             color: #ffffff;
         }
         .card-highlight .choose-button {
             background-color: #ffffff;
             color: #ec5b13;
+        }
+        .card .choose-button {
+            background-color: #f4f2f0; /* Beige clair/crème */
+            color: #181311;
         }
     </style>
 </head>
@@ -31,21 +33,24 @@
 
     <div class="container mx-auto p-8">
         <a href="/index.html" class="text-yellow-500 hover:text-yellow-400 mb-8 inline-block">&larr; Retour à l'accueil</a>
-        <h1 class="text-4xl font-bold text-center mb-4">Nos Formules d'Abonnement</h1>
-        <p class="text-center text-gray-300 mb-12 max-w-3xl mx-auto">Un service de repas personnalisés à La Réunion, conçus selon vos besoins nutritionnels. Goût, équilibre et transparence — sans calculer chaque jour, je le fais pour vous.</p>
+        <h1 class="text-4xl font-bold text-center mb-4">Nos Formules d’Abonnement</h1>
+        <p class="text-center text-gray-300 mb-4 max-w-3xl mx-auto">Un service de repas personnalisés à La Réunion, conçu selon vos besoins nutritionnels. Goût, équilibre et transparence — sans avoir à calculer chaque jour, je le fais pour vous.</p>
+        <p class="text-center text-gray-400 mb-12 max-w-3xl mx-auto">🧩 Ces abonnements sont pensés pour ceux qui souhaitent aller plus loin : que votre objectif soit la forme, la performance ou simplement le plaisir de manger mieux.</p>
 
         <div class="flex flex-col items-center gap-8">
             <!-- Carte du haut (Performance) -->
             <div class="w-full md:w-2/3 lg:w-1/2">
                 <div class="card-highlight rounded-lg shadow-2xl p-8 text-center transform hover:scale-105 transition-transform duration-300">
-                    <h2 class="text-3xl font-bold mb-2">Performance</h2>
-                    <p class="opacity-90 mb-4">4 plats / semaine + Suivi</p>
-                    <p class="text-5xl font-extrabold mb-6">130€<span class="text-xl font-medium">/mois</span></p>
+                    <h2 class="text-3xl font-bold mb-2">🔥 Formule Performance</h2>
+                    <p class="opacity-90 mb-4">4 plats personnalisés / semaine + Suivi</p>
+                    <p class="text-5xl font-extrabold">130€<span class="text-xl font-medium">/mois</span></p>
+                    <p class="opacity-80 mb-6 text-sm">(soit environ 32 €/semaine)</p>
                     <ul class="text-left mb-8 space-y-2">
-                        <li>✓ Tout de la formule Équilibre</li>
-                        <li>✓ Calcul détaillé des calories & macros</li>
-                        <li>✓ Ajustement bi-mensuel selon vos objectifs</li>
+                        <li>✔️ Tout ce qui est inclus dans la formule Équilibre</li>
+                        <li>✔️ Calcul détaillé des calories et macronutriments</li>
+                        <li>✔️ Ajustement bi-mensuel selon vos objectifs</li>
                     </ul>
+                    <p class="italic mb-6">💪 Pour celles et ceux qui veulent des résultats visibles et mesurables.</p>
                     <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Performance" class="choose-button font-bold py-3 px-6 rounded-full w-full inline-block text-lg">Choisir cette formule</a>
                 </div>
             </div>
@@ -53,27 +58,31 @@
             <!-- Cartes du bas (Équilibre et Premium) -->
             <div class="w-full grid md:grid-cols-2 gap-8">
                 <div class="card rounded-lg shadow-lg p-6 text-center">
-                    <h2 class="text-2xl font-bold mb-2">Équilibre</h2>
-                    <p class="text-gray-500 mb-4">4 plats / semaine</p>
-                    <p class="text-4xl font-extrabold mb-4">95€<span class="text-lg font-medium">/mois</span></p>
+                    <h2 class="text-2xl font-bold mb-2">🌿 Formule Équilibre</h2>
+                    <p class="text-gray-500 mb-4">4 plats personnalisés / semaine</p>
+                    <p class="text-4xl font-extrabold">95€<span class="text-lg font-medium">/mois</span></p>
+                    <p class="text-gray-400 mb-4 text-sm">(soit environ 24 €/semaine)</p>
                     <ul class="text-left mb-6 space-y-2">
-                        <li>✓ 16 plats personnalisés par mois</li>
-                        <li>✓ Accès à notre calculateur</li>
-                        <li>✓ Idéal pour un rééquilibrage alimentaire</li>
+                        <li>✔️ 16 plats personnalisés par mois</li>
+                        <li>✔️ Accès au calculateur nutritionnel</li>
+                        <li>✔️ Idéal pour un rééquilibrage alimentaire simple et progressif</li>
                     </ul>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Équilibre" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-full w-full inline-block">Choisir cette formule</a>
+                    <p class="italic text-gray-600 mb-6">🥗 Pour apprendre à mieux manger sans se priver.</p>
+                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Équilibre" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block">Choisir cette formule</a>
                 </div>
 
                 <div class="card rounded-lg shadow-lg p-6 text-center">
-                    <h2 class="text-2xl font-bold mb-2">Sur mesure Premium</h2>
-                    <p class="text-gray-500 mb-4">Menu 100% individualisé</p>
-                    <p class="text-4xl font-extrabold mb-4">180€<span class="text-lg font-medium">/mois</span></p>
+                    <h2 class="text-2xl font-bold mb-2">✨ Formule Sur Mesure Premium</h2>
+                    <p class="text-gray-500 mb-4">Menu 100 % individualisé</p>
+                    <p class="text-4xl font-extrabold">180€<span class="text-lg font-medium">/mois</span></p>
+                    <p class="text-gray-400 mb-4 text-sm">(soit environ 45 €/semaine)</p>
                     <ul class="text-left mb-6 space-y-2">
-                        <li>✓ Tout de la formule Performance</li>
-                        <li>✓ Recettes entièrement adaptées</li>
-                        <li>✓ Suivi hebdomadaire (poids, objectifs)</li>
+                        <li>✔️ Tout ce qui est inclus dans la formule Performance</li>
+                        <li>✔️ Recettes entièrement adaptées à vos goûts et besoins</li>
+                        <li>✔️ Suivi hebdomadaire (poids, progression, objectifs)</li>
                     </ul>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Sur mesure Premium" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded-full w-full inline-block">Choisir cette formule</a>
+                    <p class="italic text-gray-600 mb-6">👨‍🍳 Le confort d’un chef personnel, à votre service.</p>
+                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Sur mesure Premium" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block">Choisir cette formule</a>
                 </div>
             </div>
         </div>
@@ -84,26 +93,26 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Contact</h3>
+                    <h3 data-i18n="footer.contact_title">Contact</h3>
                     <p><a href="https://wa.me/33767644714" target="_blank" rel="noopener noreferrer" class="contact-link-with-icon"><img src="assets/images/logos/Digital_Glyph_Green.svg" alt="WhatsApp Logo" class="contact-icon"><span>WhatsApp</span></a></p>
                     <p>✉️ <a href="mailto:contact@asiacuisine.re">contact@asiacuisine.re</a></p>
-                    <p>📍 La Réunion</p>
+                    <p data-i18n="footer.contact_location">📍 La Réunion</p>
                 </div>
                 <div class="footer-section">
-                    <h3>Suivez-moi</h3>
+                    <h3 data-i18n="footer.social_title">Suivez-moi</h3>
                     <div class="footer-social-links">
                         <a href="https://www.facebook.com/profile.php?id=100090025515349" target="_blank" rel="noopener noreferrer"><img src="assets/images/logos/Facebook_Logo_Primary.png" alt="Facebook Logo" class="footer-social-icon"></a>
                         <a href="https://www.instagram.com/asiacuisine.re/" target="_blank" rel="noopener noreferrer"><img src="assets/images/logos/Instagram_Glyph_Gradient.svg" alt="Instagram Logo" class="footer-social-icon"></a>
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h3>Services</h3>
+                    <h3 data-i18n="footer.services_title">Services</h3>
                     <p><a href="/index.html#services">Chef privé à domicile</a></p>
                     <p><a href="/index.html#services">Cours de cuisine</a></p>
                     <p><a href="/index.html#services">Plats sur commande</a></p>
                 </div>
                 <div class="footer-section">
-                    <h3>Horaires</h3>
+                    <h3 data-i18n="footer.schedules_title">Horaires</h3>
                     <p>Lundi - Samedi : 9h - 20h</p>
                     <p>Dimanche : Sur rendez-vous</p>
                     <p>Réservation recommandée 48h à l'avance</p>

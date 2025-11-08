@@ -465,3 +465,110 @@ Quand ton site aura un peu de trafic, tu pourras :
 
 Souhaites-tu que je t’aide à définir **une structure d’abonnement complète** (contenu, prix, avantages, texte de présentation et mise en page adaptée à ton site Asiacuisine.re) ?
 Cela te permettrait d’avoir un **modèle prêt à intégrer** à ta page “Formules personnalisées” ou “Abonnements”.
+
+
+
+--------------------------------
+
+
+Nouveaux éléments:
+
+Merci pour la capture d’écran 🙏
+Franchement, ta présentation est **déjà très propre visuellement** : la hiérarchie des formules est claire, les couleurs attirent bien l’œil (le orange central pour la formule “Performance” fonctionne très bien), et le texte est lisible.
+
+Voici une **analyse complète et des suggestions d’ajustement** pour améliorer à la fois la **perception de valeur** et la **cohérence tarifaire** avec tes formules hebdomadaires 👇
+
+---
+
+## 💰 1. Cohérence des prix
+
+Actuellement :
+
+* **Équilibre** → 95 €/mois ≈ 23,75 €/semaine → 5,9 €/plat (si 4 plats/semaine)
+* **Performance** → 130 €/mois ≈ 32,5 €/semaine → 8,1 €/plat
+* **Sur mesure Premium** → 180 €/mois ≈ 45 €/semaine → 11,3 €/plat
+
+Ces tarifs sont **parfaitement cohérents** avec ta gamme actuelle :
+
+* Ils restent **accessibles** tout en marquant une **montée en gamme justifiée** par le suivi et la personnalisation.
+* Tu restes bien en dessous du coût d’un suivi diététique classique (souvent > 200 €/mois).
+* Le prix/plat reste crédible et lisible pour ton public.
+
+✅ **Conclusion :**
+Les prix sont bien positionnés. Je te conseille juste d’ajouter la **mention du coût hebdomadaire** dans un coin (“soit environ XX €/semaine”) pour rendre le tarif plus concret.
+
+---
+
+## ✍️ 2. Texte de présentation — ajustements suggérés
+
+Tes descriptions sont claires, mais un petit raffinement du ton permettrait de renforcer l’émotion et la valeur perçue.
+Voici des versions légèrement réécrites pour un rendu plus fluide et engageant 👇
+
+---
+
+### 🌿 Formule Équilibre
+
+> **4 plats personnalisés / semaine**
+> 95 €/mois *(soit environ 24 €/semaine)*
+>
+> ✔️ 16 plats personnalisés par mois
+> ✔️ Accès au calculateur nutritionnel
+> ✔️ Idéal pour un rééquilibrage alimentaire simple et progressif
+>
+> 🥗 *Pour apprendre à mieux manger sans se priver.*
+
+---
+
+### 🔥 Formule Performance
+
+> **4 plats personnalisés / semaine + Suivi**
+> 130 €/mois *(soit environ 32 €/semaine)*
+>
+> ✔️ Tout ce qui est inclus dans la formule Équilibre
+> ✔️ Calcul détaillé des calories et macronutriments
+> ✔️ Ajustement bi-mensuel selon vos objectifs
+>
+> 💪 *Pour celles et ceux qui veulent des résultats visibles et mesurables.*
+
+---
+
+### ✨ Formule Sur Mesure Premium
+
+> **Menu 100 % individualisé**
+> 180 €/mois *(soit environ 45 €/semaine)*
+>
+> ✔️ Tout ce qui est inclus dans la formule Performance
+> ✔️ Recettes entièrement adaptées à vos goûts et besoins
+> ✔️ Suivi hebdomadaire (poids, progression, objectifs)
+>
+> 👨‍🍳 *Le confort d’un chef personnel, à votre service.*
+
+---
+
+## 🎯 3. Appel à l’action (CTA)
+
+Tes boutons “Choisir cette formule” sont bien placés.
+Je te conseille juste une petite **variation de couleur** :
+
+* Pour la formule “Performance” (au centre), le bouton blanc sur fond orange est parfait.
+* Pour les autres, le jaune pourrait être remplacé par un **beige clair** ou un **ton crème** pour plus d’harmonie visuelle et un aspect plus “premium”.
+
+---
+
+## 🧠 4. Suggestion pour le haut de page (intro)
+
+Tu pourrais étoffer légèrement ton texte d’intro pour mieux contextualiser ces abonnements par rapport à ton offre hebdomadaire. Par exemple :
+
+> ### 🍱 Nos Formules d’Abonnement
+>
+> Un service de repas personnalisés à La Réunion, conçu selon vos besoins nutritionnels.
+> Goût, équilibre et transparence — sans avoir à calculer chaque jour, je le fais pour vous.
+>
+> 🧩 Ces abonnements sont pensés pour ceux qui souhaitent aller plus loin :
+> que votre objectif soit la forme, la performance ou simplement le plaisir de manger mieux.
+
+---
+
+Souhaites-tu que je t’envoie une **version HTML prête à intégrer** avec ce texte et une mise en page adaptée à ton style actuel (mêmes classes, responsive, etc.) ?
+Tu pourrais la coller directement dans ton fichier `/abonnements.html`.
+
