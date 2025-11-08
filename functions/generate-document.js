@@ -105,7 +105,7 @@ export async function onRequest(context) {
                 to: demande.clients.email,
                 subject: `Votre ${documentType} de Asiacuisine.re`,
                 html: `Bonjour ${demande.clients.first_name || ''},<br><br>Veuillez trouver ci-joint votre ${documentType.toLowerCase()}.<br><br>Cordialement,<br>L'équipe Asiacuisine.re`,
-                attachments: [{ filename: `${docName}.pdf`, content: Buffer.from(pdfBytes) }],
+                attachments: [{ filename: `${docName}.pdf`, content: pdfBytes }],
             });
             console.log('[DEBUG] E-mail envoyé avec succès.');
         } else {
