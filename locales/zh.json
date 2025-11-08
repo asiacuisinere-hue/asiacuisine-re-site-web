@@ -42,7 +42,8 @@
     "services": {
       "section_title": "我的服务",
       "cover_title": "我的服务",
-      "cover_text": "一次味蕾与心灵的旅行。欢迎了解我的特色服务。",
+      "cover_text": "翻页了解我的服务项目。",
+      "cover_text_mobile": "探索不同的服务，做出满足您味蕾的选择。",
       "service1_title": "上门私人厨师",
       "service1_desc": "在家中即可享受星级餐厅般的用餐体验。",
       "service1_feature1": "根据您的口味定制菜单",

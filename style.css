@@ -575,10 +575,21 @@ body {
 .social-link img { width: 100%; height: auto; }
 .social-link:hover { padding-left: 10px; width: 50px; }
 
+.service-text-mobile {
+    display: none;
+}
+
 /* ========================================================================= */
 /*                      Responsive Design (Consolidated)                   */
 /* ========================================================================= */
 @media (max-width: 800px) {
+    .service-text-desktop {
+        display: none;
+    }
+    .service-text-mobile {
+        display: block;
+    }
+
     /* --- General --- */
     .section-title { font-size: 2.2rem; }
 
