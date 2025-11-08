@@ -11,7 +11,6 @@ const addCorsHeaders = (response) => {
     return response;
 };
 
-// Get the week number for a date
 function getWeekNumber(d) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
@@ -20,7 +19,6 @@ function getWeekNumber(d) {
     return weekNo;
 }
 
-// Get a deterministic color for the week
 function getWeeklyColor() {
     const colors = ['#2c3e50', '#c0392b', '#2980b9', '#27ae60', '#f39c12', '#8e44ad', '#d35400'];
     const weekNumber = getWeekNumber(new Date());
@@ -46,36 +44,28 @@ export async function onRequest(context) {
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
         const resend = new Resend(context.env.RESEND_API_KEY);
 
-        // Fetch client data including the new client_id
         const { data: demande, error } = await supabase
             .from('demandes')
             .select('id, clients (email, first_name, client_id)')
             .eq('id', demandeId)
             .single();
 
-        if (error || !demande) {
-            throw new Error(error?.message || 'Demande non trouvée');
-        }
-
+        if (error || !demande) throw new Error(error?.message || 'Demande non trouvée');
+        
         const client = demande.clients;
-        if (!client) {
-            throw new Error('Client data not found for this demande.');
-        }
+        if (!client) throw new Error('Client data not found for this demande.');
 
-        // Generate colored SVG QR Code
+        // Generate colored SVG QR Code as a string
         const weeklyColor = getWeeklyColor();
         const qrCodeSvg = await QRCode.toString(`https://www.asiacuisine.re/suivi?id=${demande.id}`, {
             type: 'svg',
             color: {
-                dark: weeklyColor, // Color of the QR code modules
-                light: '#FFFFFF'   // Color of the background
+                dark: weeklyColor,
+                light: '#FFFFFF'
             }
         });
 
-        // Convert SVG to Base64 to embed in the email
-        const qrCodeBase64 = btoa(qrCodeSvg);
-
-        // Send email
+        // Send email with the SVG as a CID attachment
         await resend.emails.send({
             from: 'contact@asiacuisine.re',
             to: client.email,
@@ -85,7 +75,7 @@ export async function onRequest(context) {
                     <h1>Bonjour ${client.first_name || ''},</h1>
                     <p>Votre paiement a été confirmé. Merci !</p>
                     <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
-                    <img src="data:image/svg+xml;base64,${qrCodeBase64}" alt="QR Code de suivi" width="200" height="200"/>
+                    <img src="cid:qrcode.svg" alt="QR Code de suivi" width="200" height="200"/>
                     <p style="font-size: 1.2em; font-weight: bold; margin-top: 10px;">
                         ID Client : ${client.client_id || 'N/A'}
                     </p>
@@ -93,6 +83,11 @@ export async function onRequest(context) {
                     <p>L'équipe Asiacuisine.re</p>
                 </div>
             `,
+            attachments: [{
+                filename: 'qrcode.svg',
+                content: qrCodeSvg,
+                cid: 'qrcode.svg'
+            }]
         });
 
         return addCorsHeaders(new Response(JSON.stringify({ success: true }), {
