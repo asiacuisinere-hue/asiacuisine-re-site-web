@@ -55,7 +55,6 @@ export async function onRequest(context) {
         const client = demande.clients;
         if (!client) throw new Error('Client data not found for this demande.');
 
-        // Generate colored SVG QR Code as a string
         const weeklyColor = getWeeklyColor();
         const qrCodeSvg = await QRCode.toString(`https://www.asiacuisine.re/suivi?id=${demande.id}`, {
             type: 'svg',
@@ -65,7 +64,9 @@ export async function onRequest(context) {
             }
         });
 
-        // Send email with the SVG as a CID attachment
+        // Encode the SVG string to Base64 for the attachment
+        const qrCodeBase64 = btoa(qrCodeSvg);
+
         await resend.emails.send({
             from: 'contact@asiacuisine.re',
             to: client.email,
@@ -85,7 +86,8 @@ export async function onRequest(context) {
             `,
             attachments: [{
                 filename: 'qrcode.svg',
-                content: qrCodeSvg,
+                content: qrCodeBase64, // Use the Base64 encoded content
+                encoding: 'base64', // Specify the encoding
                 cid: 'qrcode.svg'
             }]
         });
