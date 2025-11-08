@@ -59,7 +59,7 @@
 
             <!-- Body Text -->
             <p class="px-4 pb-3 pt-1 text-base font-normal leading-normal text-text-muted-light dark:text-muted-dark">
-                Composez votre plat idéal. Choisissez une recette et ajustez votre objectif calorique pour obtenir une estimation nutritionnelle et tarifaire.
+                Composez votre plat idéal. Choisissez une recette et ajustez les macros pour voir l'impact sur les valeurs nutritionnelles et le prix.
             </p>
 
             <!-- Accordions for Customization -->
@@ -79,16 +79,25 @@
             </div>
 
             <!-- Section Header for Nutritional Goals -->
-            <h3 class="px-4 pb-2 pt-4 text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Objectif Calorique</h3>
+            <h3 class="px-4 pb-2 pt-4 text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Ajustement des Macros</h3>
             
-            <!-- Calorie Slider -->
+            <!-- Sliders for Nutritional Goals -->
             <div class="flex flex-col gap-4 px-4">
                 <div class="w-full">
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="block text-sm font-medium text-text-muted-light dark:text-text-muted-dark" for="calorie-input">Calories (kcal)</label>
-                        <input type="number" id="calorie-input" class="w-24 rounded-md border-border-light text-right" min="300" max="1200" step="10">
+                    <label class="mb-2 block text-sm font-medium text-text-muted-light dark:text-text-muted-dark" for="protein-slider">Protéines</label>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-text-muted-light dark:text-text-muted-dark">-</span>
+                        <input class="h-2 w-full cursor-pointer appearance-none rounded-full bg-border-light accent-primary dark:bg-border-dark" id="protein-slider" type="range" min="-20" max="20" value="0" step="10" />
+                        <span class="text-xs text-text-muted-light dark:text-text-muted-dark">+</span>
                     </div>
-                    <input class="h-2 w-full cursor-pointer appearance-none rounded-full bg-border-light accent-primary dark:bg-border-dark" id="calorie-slider" type="range" min="300" max="1200" step="10" />
+                </div>
+                <div class="w-full">
+                    <label class="mb-2 block text-sm font-medium text-text-muted-light dark:text-text-muted-dark" for="carbs-slider">Glucides</label>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-text-muted-light dark:text-text-muted-dark">-</span>
+                        <input class="h-2 w-full cursor-pointer appearance-none rounded-full bg-border-light accent-primary dark:bg-border-dark" id="carbs-slider" type="range" min="-20" max="20" value="0" step="10" />
+                        <span class="text-xs text-text-muted-light dark:text-text-muted-dark">+</span>
+                    </div>
                 </div>
             </div>
 
@@ -115,7 +124,6 @@
                 </div>
             </div>
 
-
             <!-- Sticky Footer -->
             <div class="fixed bottom-0 left-0 z-10 w-full border-t border-border-light bg-content-light/80 p-4 backdrop-blur-sm dark:border-border-dark dark:bg-content-dark/80">
                 <div class="mx-auto max-w-lg">
@@ -126,13 +134,18 @@
                         </div>
                         <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
                         <div class="flex flex-col">
-                            <span id="weight-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
-                            <span>Poids (est.)</span>
+                            <span id="protein-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
+                            <span>Protéines (est.)</span>
                         </div>
                         <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
                         <div class="flex flex-col">
-                            <span id="protein-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
-                            <span>Protéines (est.)</span>
+                            <span id="carbs-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
+                            <span>Glucides (est.)</span>
+                        </div>
+                        <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+                        <div class="flex flex-col">
+                            <span id="fat-value" class="font-bold text-text-light dark:text-text-dark">0g</span>
+                            <span>Lipides (est.)</span>
                         </div>
                     </div>
                     <div class="mt-4">

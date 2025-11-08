@@ -1,52 +1,52 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Base de données des recettes (valeurs pour 100g) ---
+    // --- Base de données des recettes ---
     const recipes = {
         'poulet-teriyaki': {
             name: 'Poulet Teriyaki',
-            kcalPer100g: 150,
-            proteinPer100g: 18,
-            carbsPer100g: 8,
-            fatPer100g: 5,
-            pricePer100g: 2.50,
+            baseCalories: 550,
+            baseProtein: 45,
+            baseCarbs: 52,
+            baseFat: 18,
+            basePrice: 14.50,
             image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSdUrpl-2PgvpK2pROZTOXHYQNDpwGoi1CYEbuQMlC8k2CHipZ-SlcIhrb2tp7yZwV_G967sVRLSsa2zKj5EsCFSM5Cz4Uu4J5ksCCAVKVEisk5WoBpi4bWJueUP9NgJfJb7LqKohUKxQY2rfmgWhEMbnggGDGGc15WMygDUubfMb3_QTK9TFvhyyccq00goMYj2A-YuajN6Yoe3OPLor_s2O8wZfSMZoOUwNUETdPpMyWKwpbq62QlThbufOnZiV4lvE8FCXv9H8'
         },
         'boeuf-loc-lac': {
             name: 'Boeuf Loc Lac',
-            kcalPer100g: 180,
-            proteinPer100g: 22,
-            carbsPer100g: 7,
-            fatPer100g: 8,
-            pricePer100g: 3.00,
+            baseCalories: 620,
+            baseProtein: 50,
+            baseCarbs: 55,
+            baseFat: 22,
+            basePrice: 16.00,
             image: 'URL_IMAGE_BOEUF' // À remplacer
         },
         'crevettes-satay': {
             name: 'Crevettes Satay',
-            kcalPer100g: 130,
-            proteinPer100g: 15,
-            carbsPer100g: 6,
-            fatPer100g: 5,
-            pricePer100g: 2.80,
+            baseCalories: 480,
+            baseProtein: 40,
+            baseCarbs: 45,
+            baseFat: 15,
+            basePrice: 15.50,
             image: 'URL_IMAGE_CREVETTES' // À remplacer
         }
     };
 
     // --- État de l'application ---
     let currentRecipeId = 'poulet-teriyaki';
-    let targetCalories = 550; // Valeur par défaut
+    let proteinAdjustment = 0;
+    let carbsAdjustment = 0;
 
     // --- Éléments du DOM ---
     const recipeOptionsContainer = document.getElementById('recipe-options');
     const selectedRecipeNameEl = document.getElementById('selected-recipe-name');
-    const calorieSlider = document.getElementById('calorie-slider');
-    const calorieInput = document.getElementById('calorie-input');
+    const proteinSlider = document.getElementById('protein-slider');
+    const carbsSlider = document.getElementById('carbs-slider');
     
     const caloriesValueEl = document.getElementById('calories-value');
     const proteinValueEl = document.getElementById('protein-value');
     const carbsValueEl = document.getElementById('carbs-value');
     const fatValueEl = document.getElementById('fat-value');
     const priceValueEl = document.getElementById('price-value');
-    const weightValueEl = document.getElementById('weight-value'); // Nouvel élément pour le poids
 
     const requestButton = document.getElementById('request-button');
     const specialInstructionsEl = document.getElementById('special-instructions');
@@ -57,23 +57,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const recipe = recipes[currentRecipeId];
         if (!recipe) return;
 
-        // Calculer le poids nécessaire pour atteindre l'objectif de calories
-        const requiredWeight = (targetCalories / recipe.kcalPer100g) * 100;
-        const ratio = requiredWeight / 100;
+        const proteinModifier = 1 + (proteinAdjustment / 100);
+        const carbsModifier = 1 + (carbsAdjustment / 100);
 
-        const finalProtein = Math.round(recipe.proteinPer100g * ratio);
-        const finalCarbs = Math.round(recipe.carbsPer100g * ratio);
-        const finalFat = Math.round(recipe.fatPer100g * ratio);
-        const finalPrice = (recipe.pricePer100g * ratio).toFixed(2);
+        // Estimer l'impact des ajustements sur les calories
+        const calorieAdjustment = (recipe.baseProtein * 4 * (proteinAdjustment / 100)) + (recipe.baseCarbs * 4 * (carbsAdjustment / 100));
+        const finalCalories = Math.round(recipe.baseCalories + calorieAdjustment);
+
+        const finalProtein = Math.round(recipe.baseProtein * proteinModifier);
+        const finalCarbs = Math.round(recipe.baseCarbs * carbsModifier);
+        const finalFat = Math.round(recipe.baseFat * proteinModifier); // Simplification
+        const finalPrice = (recipe.basePrice * proteinModifier * carbsModifier).toFixed(2);
 
         // Mettre à jour l'interface
         selectedRecipeNameEl.textContent = recipe.name;
-        caloriesValueEl.textContent = targetCalories;
+        caloriesValueEl.textContent = finalCalories;
         proteinValueEl.textContent = `${finalProtein}g`;
         carbsValueEl.textContent = `${finalCarbs}g`;
         fatValueEl.textContent = `${finalFat}g`;
         priceValueEl.textContent = finalPrice;
-        weightValueEl.textContent = `${Math.round(requiredWeight)}g`;
     }
 
     function renderRecipeOptions() {
@@ -97,6 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('input[name="base-recipe"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 currentRecipeId = e.target.value;
+                proteinSlider.value = 0;
+                carbsSlider.value = 0;
+                proteinAdjustment = 0;
+                carbsAdjustment = 0;
                 updateDisplay();
                 renderRecipeOptions();
             });
@@ -105,19 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Écouteurs d'événements ---
 
-    calorieSlider.addEventListener('input', (e) => {
-        targetCalories = parseInt(e.target.value, 10);
-        calorieInput.value = targetCalories;
+    proteinSlider.addEventListener('input', (e) => {
+        proteinAdjustment = parseInt(e.target.value, 10);
         updateDisplay();
     });
 
-    calorieInput.addEventListener('input', (e) => {
-        const value = parseInt(e.target.value, 10);
-        if (!isNaN(value)) {
-            targetCalories = value;
-            calorieSlider.value = value;
-            updateDisplay();
-        }
+    carbsSlider.addEventListener('input', (e) => {
+        carbsAdjustment = parseInt(e.target.value, 10);
+        updateDisplay();
     });
 
     requestButton.addEventListener('click', () => {
@@ -129,7 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
             carbs: carbsValueEl.textContent,
             fat: fatValueEl.textContent,
             price: priceValueEl.textContent,
-            weight: weightValueEl.textContent,
+            proteinAdjustment: `${proteinAdjustment > 0 ? '+' : ''}${proteinAdjustment}%`,
+            carbsAdjustment: `${carbsAdjustment > 0 ? '+' : ''}${carbsAdjustment}%`,
             specialInstructions: specialInstructionsEl.value
         };
 
@@ -139,10 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
 Je serais intéressé(e) par un devis pour la configuration de plat suivante :
 
 Recette de base : ${finalValues.recipe}
-Objectif calorique : ~${finalValues.calories} kcal
+Ajustement Protéines : ${finalValues.proteinAdjustment}
+Ajustement Glucides : ${finalValues.carbsAdjustment}
 
 --- Valeurs estimées ---
-Poids : ~${finalValues.weight}
+Calories : ~${finalValues.calories} kcal
 Protéines : ~${finalValues.protein}
 Glucides : ~${finalValues.carbs}
 Lipides : ~${finalValues.fat}
@@ -157,8 +160,6 @@ Merci de me recontacter pour finaliser ma demande.
     });
 
     // --- Initialisation ---
-    calorieInput.value = targetCalories;
-    calorieSlider.value = targetCalories;
     renderRecipeOptions();
     updateDisplay();
 });
