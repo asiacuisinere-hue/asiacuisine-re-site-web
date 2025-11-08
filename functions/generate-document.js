@@ -18,7 +18,7 @@ const generateDocName = (type, position) => {
     const day = now.getDate();
     const week = Math.ceil(day / 7);
     const randomKey = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const prefix = type === 'Devis' ? 'D' : 'F';
+    const prefix = type === 'Devis' ? 'DC' : 'FC';
     return `${prefix}_${year}_${month}_${week}_${day}_${position}_${randomKey}`;
 }
 
