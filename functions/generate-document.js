@@ -31,6 +31,8 @@ const formulaPrices = {
 };
 
 export async function onRequest(context) {
+    console.log('--- [DEBUG] Invocation de generate-document ---');
+
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
@@ -41,20 +43,14 @@ export async function onRequest(context) {
 
     try {
         const { demandeId, documentType, sendEmail } = await context.request.json();
-
-        if (!demandeId || !documentType) {
-            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 }));
-        }
+        console.log(`[DEBUG] Paramètres reçus: demandeId=${demandeId}, documentType=${documentType}, sendEmail=${sendEmail}`);
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
+        console.log('[DEBUG] Client Supabase initialisé.');
 
-        const { data: demande, error } = await supabase
-            .from('demandes')
-            .select(`*, clients(*)`)
-            .eq('id', demandeId)
-            .single();
-
+        const { data: demande, error } = await supabase.from('demandes').select(`*, clients(*)`).eq('id', demandeId).single();
         if (error) throw error;
+        console.log('[DEBUG] Données de la demande récupérées pour le client:', demande.clients.email);
 
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage();
@@ -69,7 +65,7 @@ export async function onRequest(context) {
         yPosition -= 20;
         page.drawText(`Email: ${demande.clients.email}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 40;
-        page.drawText(`Date de la demande: ${new Date(demande.request_date).toLocaleDateString('fr-FR')}`, { x: 50, y: yPosition, size: 12, font });
+        page.drawText(`Date: ${new Date(demande.request_date).toLocaleDateString('fr-FR')}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 20;
         page.drawText(`Type: ${demande.type}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 40;
@@ -92,33 +88,40 @@ export async function onRequest(context) {
 
         const pdfBytes = await pdfDoc.save();
         const docName = generateDocName(documentType, 1);
+        console.log('[DEBUG] PDF généré avec succès.');
 
-        // Envoyer l'e-mail si sendEmail est true
         if (sendEmail) {
-            const resend = new Resend(context.env.RESEND_API_KEY);
+            console.log('[DEBUG] Début du bloc d\'envoi d\'e-mail.');
+            const resendApiKey = context.env.RESEND_API_KEY;
+            if (!resendApiKey) {
+                console.error('[ERREUR] La variable d\'environnement RESEND_API_KEY est manquante !');
+                throw new Error('RESEND_API_KEY is not configured on the server.');
+            }
+            console.log('[DEBUG] Clé API Resend trouvée.');
+            
+            const resend = new Resend(resendApiKey);
             await resend.emails.send({
                 from: 'contact@asiacuisine.re',
                 to: demande.clients.email,
                 subject: `Votre ${documentType} de Asiacuisine.re`,
                 html: `Bonjour ${demande.clients.first_name || ''},<br><br>Veuillez trouver ci-joint votre ${documentType.toLowerCase()}.<br><br>Cordialement,<br>L'équipe Asiacuisine.re`,
-                attachments: [{
-                    filename: `${docName}.pdf`,
-                    content: Buffer.from(pdfBytes),
-                }],
+                attachments: [{ filename: `${docName}.pdf`, content: Buffer.from(pdfBytes) }],
             });
+            console.log('[DEBUG] E-mail envoyé avec succès.');
+        } else {
+            console.log('[DEBUG] L\'envoi d\'e-mail a été ignoré (sendEmail=false).');
         }
 
         let response = new Response(pdfBytes, {
             status: 200,
-            headers: {
-                'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename="${docName}.pdf"`
-            }
+            headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${docName}.pdf"` }
         });
         return addCorsHeaders(response);
 
     } catch (error) {
-        console.error('Error generating document:', error);
+        console.error('--- [ERREUR] Erreur capturée dans generate-document ---');
+        console.error('Message:', error.message);
+        console.error('Stack:', error.stack);
         return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), { status: 500 }));
     }
 }
