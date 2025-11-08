@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import qrcode from 'qrcode-generator';
+const qrcode = require('qrcode-generator');
 
 // Helper function to add CORS headers
 const addCorsHeaders = (response) => {
