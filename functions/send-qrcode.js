@@ -45,7 +45,7 @@ export async function onRequest(context) {
 
         const { data: demande, error } = await supabase
             .from('demandes')
-            .select('id, clients (email, first_name, client_id)')
+            .select('id, request_date, clients (email, first_name, client_id)')
             .eq('id', demandeId)
             .single();
 
@@ -54,27 +54,43 @@ export async function onRequest(context) {
         const client = demande.clients;
         if (!client) throw new Error('Client data not found for this demande.');
 
+        // Formatage de la date en DD/MM/YY pour l'affichage
+        const displayDate = new Date(demande.request_date).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        });
+        // Formatage de la date en YYYY-MM-DD pour l'URL
+        const urlDate = new Date(demande.request_date).toISOString().split('T')[0];
+
         // Construire l'URL de l'API pour générer le QR Code
         const weeklyColor = getWeeklyColor();
-        const qrData = encodeURIComponent(`https://www.asiacuisine.re/suivi?id=${demande.id}`);
+        const qrData = encodeURIComponent(`https://www.asiacuisine.re/suivi?id=${demande.id}&date=${urlDate}`);
         const qrCodeApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&color=${weeklyColor}`;
 
         // Envoyer l'e-mail avec l'URL de l'image
         await resend.emails.send({
             from: 'contact@asiacuisine.re',
             to: client.email,
-            subject: `Votre QR code pour votre commande Asiacuisine.re`,
+            subject: `Votre QR code pour votre commande Asiacuisine.re du ${displayDate}`,
             html: `
-                <div style="font-family: sans-serif; text-align: center;">
-                    <h1>Bonjour ${client.first_name || ''},</h1>
-                    <p>Votre paiement a été confirmé. Merci !</p>
-                    <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
-                    <img src="${qrCodeApiUrl}" alt="QR Code de suivi"/>
-                    <p style="font-size: 1.2em; font-weight: bold; margin-top: 10px;">
-                        ID Client : ${client.client_id || 'N/A'}
-                    </p>
-                    <br>
-                    <p>L'équipe Asiacuisine.re</p>
+                <div style="font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
+                    <div style="max-width: 400px; margin: auto; background-color: #ffffff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="background-color: #${weeklyColor}; color: white; padding: 15px;">
+                            <h1 style="margin: 0; font-size: 20px;">Commande du ${displayDate}</h1>
+                        </div>
+                        <div style="padding: 30px 20px;">
+                            <p>Bonjour ${client.first_name || ''},</p>
+                            <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
+                            <img src="${qrCodeApiUrl}" alt="QR Code de suivi" style="width: 200px; height: 200px; margin: 20px auto; display: block;"/>
+                            <p style="font-size: 1.4em; font-weight: bold; margin-top: 10px; letter-spacing: 2px;">
+                                ${client.client_id || 'N/A'}
+                            </p>
+                        </div>
+                        <div style="background-color: #f9f9f9; padding: 15px; font-size: 12px; color: #666;">
+                            L'équipe Asiacuisine.re
+                        </div>
+                    </div>
                 </div>
             `,
         });

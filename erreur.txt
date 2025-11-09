@@ -1,24 +1,42 @@
-supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
-supabaseClient.js:7 Has API Key: true
-chunk-UIGDSWPH.mjs:188 Uncaught Error: You cannot render a <Router> inside another <Router>. You should never have more than one in your app.
-    at w (chunk-UIGDSWPH.mjs:188:11)
-    at De (chunk-UIGDSWPH.mjs:6411:3)
-    at ta (react-dom-client.production.js:4351:21)
-    at Ws (react-dom-client.production.js:6497:15)
-    at al (react-dom-client.production.js:7473:14)
-    at uu (react-dom-client.production.js:11305:14)
-    at lu (react-dom-client.production.js:11182:37)
-    at su (react-dom-client.production.js:11163:7)
-    at Kc (react-dom-client.production.js:10728:40)
-    at Uu (react-dom-client.production.js:12078:3)
-w @ chunk-UIGDSWPH.mjs:188
-De @ chunk-UIGDSWPH.mjs:6411
-ta @ react-dom-client.production.js:4351
-Ws @ react-dom-client.production.js:6497
-al @ react-dom-client.production.js:7473
-uu @ react-dom-client.production.js:11305
-lu @ react-dom-client.production.js:11182
-su @ react-dom-client.production.js:11163
-Kc @ react-dom-client.production.js:10728
-Uu @ react-dom-client.production.js:12078
-N @ scheduler.production.js:151
+2025-11-08T13:17:44.139418738Z	Cloning repository...
+2025-11-08T13:17:44.746466444Z	From https://github.com/asiacuisinere-hue/dashboard
+2025-11-08T13:17:44.746699074Z	 * branch            552a3736912726bc632e19cebae095910e995855 -> FETCH_HEAD
+2025-11-08T13:17:44.746893359Z	
+2025-11-08T13:17:44.775956145Z	HEAD is now at 552a373 Feat: amélioration de l'affichage dans la modale détails demande
+2025-11-08T13:17:44.776328571Z	
+2025-11-08T13:17:44.852700917Z	
+2025-11-08T13:17:44.853340941Z	Using v2 root directory strategy
+2025-11-08T13:17:44.874982227Z	Success: Finished cloning repository files
+2025-11-08T13:17:46.900375319Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-08T13:17:46.900732564Z	
+2025-11-08T13:17:48.041191864Z	No wrangler.toml file found. Continuing.
+2025-11-08T13:17:48.107080898Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2025-11-08T13:17:48.107450475Z	Installing project dependencies: npm clean-install --progress=false
+2025-11-08T13:17:51.570771215Z	npm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
+2025-11-08T13:17:52.015226323Z	npm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+2025-11-08T13:17:52.037412533Z	npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+2025-11-08T13:17:52.168293443Z	npm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
+2025-11-08T13:17:52.193277302Z	npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-11-08T13:17:52.251112281Z	npm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
+2025-11-08T13:17:52.392014966Z	npm warn deprecated q@1.5.1: You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+2025-11-08T13:17:52.39245152Z	npm warn deprecated
+2025-11-08T13:17:52.392478053Z	npm warn deprecated (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+2025-11-08T13:17:52.694029021Z	npm warn deprecated workbox-google-analytics@6.6.0: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
+2025-11-08T13:17:53.448213249Z	npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-11-08T13:17:53.613356913Z	npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-11-08T13:17:54.025131789Z	npm warn deprecated svgo@1.3.2: This SVGO version is no longer supported. Upgrade to v2.x.x.
+2025-11-08T13:17:54.091503868Z	npm warn deprecated domexception@2.0.1: Use your platform's native DOMException instead
+2025-11-08T13:17:54.648846645Z	npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
+2025-11-08T13:17:55.186640466Z	npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+2025-11-08T13:17:55.187246406Z	npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+2025-11-08T13:17:55.644682315Z	npm warn deprecated @babel/plugin-proposal-optional-chaining@7.21.0: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
+2025-11-08T13:17:55.657394075Z	npm warn deprecated @babel/plugin-proposal-nullish-coalescing-operator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-nullish-coalescing-operator instead.
+2025-11-08T13:17:55.671981982Z	npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+2025-11-08T13:17:55.672301333Z	npm warn deprecated @babel/plugin-proposal-numeric-separator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-numeric-separator instead.
+2025-11-08T13:17:55.672444171Z	npm warn deprecated @babel/plugin-proposal-private-methods@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-methods instead.
+2025-11-08T13:17:56.357463534Z	npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
+2025-11-08T13:17:56.593516232Z	npm warn deprecated @babel/plugin-proposal-private-property-in-object@7.21.11: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-property-in-object instead.
+2025-11-08T13:18:00.100852343Z	
+2025-11-08T13:18:00.101199513Z	added 1358 packages, and audited 1359 packages in 12s
+2025-11-08T13:18:16.375383874Z	
+2025-11-08T13:18:17.97392Z	Failed: error occurred while running build command
