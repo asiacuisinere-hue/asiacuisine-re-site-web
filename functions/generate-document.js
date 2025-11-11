@@ -31,11 +31,13 @@ const formulaPrices = {
 };
 
 export async function onRequest(context) {
-    if (context.request.method === 'OPTIONS') {
+    const requestMethod = context.request.method.toUpperCase();
+
+    if (requestMethod === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
 
-    if (context.request.method !== 'POST') {
+    if (requestMethod !== 'POST') {
         return addCorsHeaders(new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), { status: 405, headers: { 'Allow': 'POST' } }));
     }
 
