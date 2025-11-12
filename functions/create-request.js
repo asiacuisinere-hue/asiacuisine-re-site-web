@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 // Helper function to generate a random 6-character alphanumeric string
+// Trigger comment for redeployment
 function generateClientId() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';

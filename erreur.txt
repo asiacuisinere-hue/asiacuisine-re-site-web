@@ -1,12 +1,278 @@
-script.js:2 DOM fully loaded and parsed
-script.js:11 Initializing i18next...
-script.js:27 Language detected from URL: fr
-i18next.min.js:1 i18next: languageChanged fr
-i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
-script.js:4 i18next initialized, now initializing page content.
-script.js:44 Running updateContent()...
-script.js:46 Found 98 elements to translate.
-script.js:62 Updating links to persist language: fr
-asiacuisine.re/favicon.png:1  GET https://asiacuisine.re/favicon.png net::ERR_CONNECTION_REFUSED
-script.js:359  POST https://www.asiacuisine.re/create-request/ 500 (Internal Server Error)
-(anonymous) @ script.js:359
+{
+  "wallTime": 607,
+  "cpuTime": 7,
+  "truncated": false,
+  "executionModel": "stateless",
+  "outcome": "ok",
+  "scriptVersion": {
+    "id": "2eca44e1-9103-4100-8a7b-effe600fa148"
+  },
+  "scriptName": "pages-worker--8843313-production",
+  "diagnosticsChannelEvents": [],
+  "exceptions": [],
+  "logs": [
+    {
+      "message": [
+        "--- [DEBUG] Received data:",
+        "{\n  \"type\": \"RESERVATION_SERVICE\",\n  \"customerType\": \"Entreprise\",\n  \"customer\": {\n    \"companyName\": \"Test entreprise\",\n    \"siret\": \"123456789\",\n    \"contactName\": \"jean kischenin\",\n    \"contactEmail\": \"heixinlong@gmail.com\",\n    \"contactPhone\": \"123\"\n  },\n  \"requestDate\": \"2025-11-15\",\n  \"serviceType\": \"chef-domicile\",\n  \"numberOfPeople\": \"1-2\",\n  \"customerMessage\": \"test\"\n}"
+      ],
+      "level": "log",
+      "timestamp": 1762929372869
+    },
+    {
+      "message": [
+        "--- [DEBUG] Customer Type: Entreprise"
+      ],
+      "level": "log",
+      "timestamp": 1762929372869
+    },
+    {
+      "message": [
+        "--- [DEBUG] Looking for company with contact email: heixinlong@gmail.com"
+      ],
+      "level": "log",
+      "timestamp": 1762929372869
+    },
+    {
+      "message": [
+        "--- [DEBUG] Entreprise fetch result:",
+        "Entreprise not found"
+      ],
+      "level": "log",
+      "timestamp": 1762929373180
+    },
+    {
+      "message": [
+        "--- [DEBUG] Creating new entreprise"
+      ],
+      "level": "log",
+      "timestamp": 1762929373180
+    },
+    {
+      "message": [
+        "--- [FATAL ERROR] Error processing request:",
+        {
+          "code": "PGRST204",
+          "details": null,
+          "hint": null,
+          "message": "Could not find the 'nom_entreprise' column of 'entreprises' in the schema cache"
+        }
+      ],
+      "level": "error",
+      "timestamp": 1762929373471
+    }
+  ],
+  "eventTimestamp": 1762929372868,
+  "event": {
+    "request": {
+      "url": "https://www.asiacuisine.re/create-request/",
+      "method": "POST",
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, br",
+        "accept-language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "cf-connecting-ip": "92.130.208.48",
+        "cf-ipcountry": "RE",
+        "cf-ray": "99d4038459b09863",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "connection": "Keep-Alive",
+        "content-length": "318",
+        "content-type": "application/json",
+        "host": "www.asiacuisine.re",
+        "origin": "https://www.asiacuisine.re",
+        "priority": "u=1, i",
+        "referer": "https://www.asiacuisine.re/",
+        "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "x-forwarded-proto": "https",
+        "x-real-ip": "92.130.208.48"
+      },
+      "cf": {
+        "httpProtocol": "HTTP/3",
+        "clientAcceptEncoding": "gzip, deflate, br",
+        "requestPriority": "",
+        "edgeRequestKeepAliveStatus": 1,
+        "requestHeaderNames": {},
+        "clientTcpRtt": 0,
+        "colo": "JNB",
+        "asn": 3215,
+        "asOrganization": "POP REU",
+        "country": "RE",
+        "isEUCountry": "1",
+        "city": "Saint-Denis",
+        "continent": "AF",
+        "region": "Réunion",
+        "regionCode": "",
+        "timezone": "Indian/Reunion",
+        "longitude": "55.4504",
+        "latitude": "-20.88231",
+        "postalCode": "97400",
+        "tlsVersion": "TLSv1.3",
+        "tlsCipher": "AEAD-AES128-GCM-SHA256",
+        "tlsClientRandom": "aQXdXIyrc8uOAZox9AGWkggfJNL8F+hKw4+u4QU7M1Q=",
+        "tlsClientCiphersSha1": "3HTt3+R/6BL3zeALJDSq0pR1yOQ=",
+        "tlsClientExtensionsSha1": "Hjz0rmbhV7ez2jTd4jP31DWlyVQ=",
+        "tlsClientExtensionsSha1Le": "j1590YKHWyrqOHxpeVGY4MFY+yw=",
+        "tlsExportedAuthenticator": {
+          "clientHandshake": "2adebec0c3767f22734cd0f3bea394ab81fb3fc3911079b7c6a8f62b1f8f35d9",
+          "serverHandshake": "ab4d17c4b9006945e2aa73c61e532575cbbf982d47040c34c4e4f2a31e5b2e55",
+          "clientFinished": "f4889158c021b59ddfda423a95f62f2eef806a0c9fe737d568a254b1d7610fed",
+          "serverFinished": "d6d7d7bdaa20b0a207042b8c0c2d41b5ffad8c025e6961eb68dbfc4f6918d620"
+        },
+        "tlsClientHelloLength": "1752",
+        "tlsClientAuth": {
+          "certPresented": "0",
+          "certVerified": "NONE",
+          "certRevoked": "0",
+          "certIssuerDN": "",
+          "certSubjectDN": "",
+          "certIssuerDNRFC2253": "",
+          "certSubjectDNRFC2253": "",
+          "certIssuerDNLegacy": "",
+          "certSubjectDNLegacy": "",
+          "certSerial": "",
+          "certIssuerSerial": "",
+          "certSKI": "",
+          "certIssuerSKI": "",
+          "certFingerprintSHA1": "",
+          "certFingerprintSHA256": "",
+          "certNotBefore": "",
+          "certNotAfter": ""
+        },
+        "verifiedBotCategory": "",
+        "pagesHostName": "asiacuisine-re-site-web.pages.dev",
+        "botManagement": {
+          "corporateProxy": false,
+          "verifiedBot": false,
+          "jsDetection": {
+            "passed": false
+          },
+          "staticResource": false,
+          "detectionIds": {},
+          "score": 99
+        }
+      }
+    },
+    "response": {
+      "status": 500
+    }
+  },
+  "id": 1
+}
+{
+  "wallTime": 276,
+  "cpuTime": 5,
+  "truncated": false,
+  "executionModel": "stateless",
+  "outcome": "ok",
+  "scriptVersion": {
+    "id": "2eca44e1-9103-4100-8a7b-effe600fa148"
+  },
+  "scriptName": "pages-worker--8843313-production",
+  "diagnosticsChannelEvents": [],
+  "exceptions": [],
+  "logs": [],
+  "eventTimestamp": 1762929342787,
+  "event": {
+    "request": {
+      "url": "https://www.asiacuisine.re/disponibilites",
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, br",
+        "accept-language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "cf-connecting-ip": "92.130.208.48",
+        "cf-ipcountry": "RE",
+        "cf-ray": "99d402c8698b73ec",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "connection": "Keep-Alive",
+        "host": "www.asiacuisine.re",
+        "priority": "u=1, i",
+        "referer": "https://www.asiacuisine.re/",
+        "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "x-forwarded-proto": "https",
+        "x-real-ip": "92.130.208.48"
+      },
+      "cf": {
+        "httpProtocol": "HTTP/3",
+        "clientAcceptEncoding": "gzip, deflate, br",
+        "requestPriority": "",
+        "edgeRequestKeepAliveStatus": 1,
+        "requestHeaderNames": {},
+        "clientTcpRtt": 0,
+        "colo": "JNB",
+        "asn": 3215,
+        "asOrganization": "POP REU",
+        "country": "RE",
+        "isEUCountry": "1",
+        "city": "Saint-Denis",
+        "continent": "AF",
+        "region": "Réunion",
+        "regionCode": "",
+        "timezone": "Indian/Reunion",
+        "longitude": "55.4504",
+        "latitude": "-20.88231",
+        "postalCode": "97400",
+        "tlsVersion": "TLSv1.3",
+        "tlsCipher": "AEAD-AES128-GCM-SHA256",
+        "tlsClientRandom": "s2XFDQ4F/0tUWaN4cfBJK57A49FcdM8ABaU3/92KYlc=",
+        "tlsClientCiphersSha1": "3HTt3+R/6BL3zeALJDSq0pR1yOQ=",
+        "tlsClientExtensionsSha1": "FTjv3AoHEwLDSJ62cqe2SgT4+nw=",
+        "tlsClientExtensionsSha1Le": "Pc2bh+DqfOnmqczCCa6Kh7CL850=",
+        "tlsExportedAuthenticator": {
+          "clientHandshake": "a36710c8a2f5efbae23dcd38a81997b407cf279214b690493a163053eef0d931",
+          "serverHandshake": "5dcfc0b9d7f8f268d7b21e094addd7b820878854218eb98fabbb172697439a7c",
+          "clientFinished": "a354efe09bce848c2cbce2979b95719731c8075c9a13bcdfd8aa1f60aec0a6e1",
+          "serverFinished": "8efcd8cd7f0a8d1627d973242f0673ff515d2d02b34ce490ff40ef1bcac1b81b"
+        },
+        "tlsClientHelloLength": "1758",
+        "tlsClientAuth": {
+          "certPresented": "0",
+          "certVerified": "NONE",
+          "certRevoked": "0",
+          "certIssuerDN": "",
+          "certSubjectDN": "",
+          "certIssuerDNRFC2253": "",
+          "certSubjectDNRFC2253": "",
+          "certIssuerDNLegacy": "",
+          "certSubjectDNLegacy": "",
+          "certSerial": "",
+          "certIssuerSerial": "",
+          "certSKI": "",
+          "certIssuerSKI": "",
+          "certFingerprintSHA1": "",
+          "certFingerprintSHA256": "",
+          "certNotBefore": "",
+          "certNotAfter": ""
+        },
+        "verifiedBotCategory": "",
+        "pagesHostName": "asiacuisine-re-site-web.pages.dev",
+        "botManagement": {
+          "corporateProxy": false,
+          "verifiedBot": false,
+          "jsDetection": {
+            "passed": false
+          },
+          "staticResource": false,
+          "detectionIds": {},
+          "score": 99
+        }
+      }
+    },
+    "response": {
+      "status": 200
+    }
+  },
+  "id": 0
+}
