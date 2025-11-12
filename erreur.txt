@@ -7,6 +7,6 @@ script.js:4 i18next initialized, now initializing page content.
 script.js:44 Running updateContent()...
 script.js:46 Found 98 elements to translate.
 script.js:62 Updating links to persist language: fr
-asiacuisine.re/favicon.png:1  GET https://asiacuisine.re/favicon.png net::ERR_CONNECTION_RESET
+asiacuisine.re/favicon.png:1  GET https://asiacuisine.re/favicon.png net::ERR_CONNECTION_REFUSED
 script.js:359  POST https://www.asiacuisine.re/create-request/ 500 (Internal Server Error)
 (anonymous) @ script.js:359
