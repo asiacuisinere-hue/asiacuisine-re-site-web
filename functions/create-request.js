@@ -82,7 +82,7 @@ export async function onRequest(context) {
             let { data: entreprise, error: fetchError } = await supabase
                 .from('entreprises')
                 .select('*')
-                .eq('siret', data.customer.siret) // Assuming SIRET is unique for lookup
+                .eq('contact_email', data.customer.contactEmail) // Use email for lookup
                 .single();
 
             if (fetchError && fetchError.code !== 'PGRST116') {
