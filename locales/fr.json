@@ -105,7 +105,12 @@
       "submit_button": "Envoyer la demande de réservation",
       "customer_type_label": "Vous êtes :",
       "customer_type_individual": "Particulier",
-      "customer_type_company": "Entreprise"
+      "customer_type_company": "Entreprise",
+      "company_name_label": "Nom de l'entreprise :",
+      "siret_label": "Numéro SIRET :",
+      "contact_name_label": "Nom du contact :",
+      "contact_email_label": "Email du contact :",
+      "contact_phone_label": "Téléphone du contact :"
     },
     "footer": {
       "contact_title": "Contact",

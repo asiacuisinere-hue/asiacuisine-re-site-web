@@ -50,8 +50,8 @@
     *   [x] Implement a QR code scanner in the dashboard to quickly find an order and update its status to "Delivered".
 *   [ ] **7.2. Nutritional Calculator (on the main website):**
     *   [x] Create a new page `calculateur.html` on the main website.
-    *   [ ] Integrate an interactive tool for calculating daily calorie needs.
-    *   [ ] Add a link/CTA to the subscription plans.
+    *   [x] Integrate an interactive tool for calculating daily calorie needs.
+    *   [x] Add a link/CTA to the subscription plans.
 *   [ ] **7.3. Subscription Management:**
     *   **Objectif:** Mettre en place un système complet pour gérer les abonnements, de la souscription à la gestion dans le dashboard.
     *   **7.3.1. Création de la table `abonnements` dans Supabase:**

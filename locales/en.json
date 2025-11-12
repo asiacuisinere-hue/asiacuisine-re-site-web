@@ -105,7 +105,12 @@
       "submit_button": "Send Booking Request",
       "customer_type_label": "You are:",
       "customer_type_individual": "An Individual",
-      "customer_type_company": "A Company"
+      "customer_type_company": "A Company",
+      "company_name_label": "Company Name:",
+      "siret_label": "SIRET Number:",
+      "contact_name_label": "Contact Name:",
+      "contact_email_label": "Contact Email:",
+      "contact_phone_label": "Contact Phone:"
     },
     "footer": {
       "contact_title": "Contact",

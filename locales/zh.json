@@ -115,7 +115,12 @@
       "submit_button": "发送预订请求",
       "customer_type_label": "您是：",
       "customer_type_individual": "个人",
-      "customer_type_company": "公司"
+      "customer_type_company": "公司",
+      "company_name_label": "公司名称：",
+      "siret_label": "SIRET号码：",
+      "contact_name_label": "联系人姓名：",
+      "contact_email_label": "联系人邮箱：",
+      "contact_phone_label": "联系人电话："
     },
     "footer": {
       "contact_title": "联系方式",

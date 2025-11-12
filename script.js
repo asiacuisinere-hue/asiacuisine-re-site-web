@@ -279,6 +279,36 @@ function initializeForm() {
     const bookingForm = document.getElementById('bookingForm');
     if (!bookingForm) return;
 
+    const individualFieldsDiv = document.getElementById('particulier-fields');
+    const companyFieldsDiv = document.getElementById('entreprise-fields');
+    const individualRadio = document.getElementById('customer_type_individual');
+    const companyRadio = document.getElementById('customer_type_company');
+
+    // Function to toggle field visibility and required attributes
+    const toggleCustomerFields = () => {
+        if (individualRadio.checked) {
+            individualFieldsDiv.style.display = 'block';
+            companyFieldsDiv.style.display = 'none';
+            // Set required for individual fields, remove for company fields
+            individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = true);
+            companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = false);
+        } else {
+            individualFieldsDiv.style.display = 'none';
+            companyFieldsDiv.style.display = 'block';
+            // Set required for company fields, remove for individual fields
+            individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = true);
+            companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = false);
+        }
+    };
+
+    // Initial call to set correct visibility and required attributes
+    toggleCustomerFields();
+
+    // Add event listeners to radio buttons
+    individualRadio.addEventListener('change', toggleCustomerFields);
+    companyRadio.addEventListener('change', toggleCustomerFields);
+
+
     bookingForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const submitBtn = this.querySelector('.submit-btn');
@@ -286,7 +316,33 @@ function initializeForm() {
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
 
-        if (!data.service || !data.date || !data.nom || !data.email || !data.telephone || !data.personnes) {
+        let customerData = {};
+        let requiredFieldsValid = true;
+
+        if (data.customer_type === 'Particulier') {
+            customerData = {
+                firstName: null, // Assuming no separate first name field for now
+                lastName: data.nom_particulier,
+                email: data.email_particulier,
+                phone: data.telephone_particulier
+            };
+            if (!data.nom_particulier || !data.email_particulier || !data.telephone_particulier) {
+                requiredFieldsValid = false;
+            }
+        } else { // Entreprise
+            customerData = {
+                companyName: data.nom_entreprise,
+                siret: data.siret,
+                contactName: data.nom_contact_entreprise,
+                contactEmail: data.email_contact_entreprise,
+                contactPhone: data.telephone_contact_entreprise
+            };
+            if (!data.nom_entreprise || !data.siret || !data.nom_contact_entreprise || !data.email_contact_entreprise || !data.telephone_contact_entreprise) {
+                requiredFieldsValid = false;
+            }
+        }
+
+        if (!data.service || !data.date || !data.personnes || !requiredFieldsValid) {
             showNotification('Veuillez remplir tous les champs obligatoires.', 'error');
             return;
         }
@@ -296,13 +352,8 @@ function initializeForm() {
 
         const requestPayload = {
             type: 'RESERVATION_SERVICE',
-            customerType: data.customer_type, // Ajout du type de client
-            customer: {
-                firstName: null, // Le formulaire n'a pas de champ prénom séparé
-                lastName: data.nom, // Utilise le 'Nom complet' comme nom de famille
-                phone: data.telephone,
-                email: data.email
-            },
+            customerType: data.customer_type,
+            customer: customerData, // Use the dynamically built customerData
             requestDate: data.date,
             serviceType: data.service,
             numberOfPeople: data.personnes,
