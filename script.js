@@ -286,19 +286,14 @@ function initializeForm() {
 
     // Function to toggle field visibility and required attributes
     const toggleCustomerFields = () => {
-        if (individualRadio.checked) {
-            individualFieldsDiv.style.display = 'block';
-            companyFieldsDiv.style.display = 'none';
-            // Set required for individual fields, remove for company fields
-            individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = true);
-            companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = false);
-        } else {
-            individualFieldsDiv.style.display = 'none';
-            companyFieldsDiv.style.display = 'block';
-            // Set required for company fields, remove for individual fields
-            individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = true);
-            companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = false);
-        }
+        const isIndividual = individualRadio.checked;
+
+        individualFieldsDiv.style.display = isIndividual ? 'block' : 'none';
+        companyFieldsDiv.style.display = isIndividual ? 'none' : 'block';
+
+        // Set required attribute based on visibility
+        individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = isIndividual);
+        companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = !isIndividual);
     };
 
     // Initial call to set correct visibility and required attributes
