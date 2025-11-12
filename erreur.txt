@@ -1,3 +1,53 @@
 supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
 supabaseClient.js:7 Has API Key: true
-DemandesEnCours.js:42 --- [DEBUG] Demandes en cours reçues: (17) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: client_id: "7b58e72f-52a7-4ed1-b044-9ce60a92b8c2"clients: address: nullclient_id: "9UCBOH"company_name: nullcreated_at: "2025-11-08T05:33:15.935514+00:00"email: "heixinlong@gmail.com"first_name: "jean"id: "7b58e72f-52a7-4ed1-b044-9ce60a92b8c2"last_name: "kischenin"notes: nullphone: "122333"siret: nulltype: "Particulier"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()created_at: "2025-11-11T13:46:06.189747+00:00"details_json: customerMessage: "test entreprise"customerType: "Entreprise"numberOfPeople: "5-6"serviceType: "commande"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()entreprise_id: nullentreprises: nullid: "88996513-56a4-4fc7-bbe4-187408464f83"notes: nullrequest_date: "2025-11-13"status: "En attente de préparation"total_amount: nulltype: "RESERVATION_SERVICE"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()1: client_id: "7b58e72f-52a7-4ed1-b044-9ce60a92b8c2"clients: {id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'Particulier', email: 'heixinlong@gmail.com', notes: null, phone: '122333', …}created_at: "2025-11-08T06:38:24.455318+00:00"details_json: {formulaName: 'Formule Découverte (39€)', deliveryCity: 'Saint-André', formulaOption: null}entreprise_id: nullentreprises: nullid: "793d4e44-7707-487f-830c-da9858acfdc8"notes: nullrequest_date: "2025-11-11"status: "Préparation en cours"total_amount: nulltype: "COMMANDE_MENU"[[Prototype]]: Object2: {id: '05da2ea6-8520-4b89-9456-68e5104d46ce', created_at: '2025-11-08T06:13:44.468812+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'En attente de préparation', …}3: {id: 'ee892598-d723-4827-9cd8-58f907de7d30', created_at: '2025-11-08T06:07:04.848255+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}4: {id: '32ec582b-0ffc-4bc9-961e-af78c8fecd0d', created_at: '2025-11-08T06:02:49.249377+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}5: {id: 'e4e9fbf5-d54e-4f42-b65b-584c52448b62', created_at: '2025-11-08T05:58:38.856431+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}6: {id: '432c063b-54e9-4e8b-b8dc-b32c74c53a54', created_at: '2025-11-08T05:54:26.452943+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}7: {id: '69bc4304-8a1c-4aad-8b28-86763dcbd75c', created_at: '2025-11-08T05:50:28.959019+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}8: {id: 'fb499a52-ad6f-4208-a6f2-18def7a16307', created_at: '2025-11-08T05:49:07.532595+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}9: {id: 'f49c162f-5ad8-4063-a4f0-3269a39c4432', created_at: '2025-11-08T05:39:20.145456+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}10: {id: 'c556aa51-0fd3-4112-9a40-fab2895f0845', created_at: '2025-11-08T05:33:16.001178+00:00', client_id: '7b58e72f-52a7-4ed1-b044-9ce60a92b8c2', type: 'COMMANDE_MENU', status: 'Payée', …}11: {id: '3775b163-3871-4b8c-b231-22e97e048856', created_at: '2025-11-05T04:49:33.976706+00:00', client_id: '5fb428f5-4cca-4371-b5de-ecb108e3d01e', type: 'RESERVATION_SERVICE', status: 'Payée', …}12: {id: '5383a94e-e021-4e93-96a8-47bf6fe89d2e', created_at: '2025-11-04T08:46:11.804359+00:00', client_id: 'b4b467ce-1412-41cb-a197-d3e1c9a5878e', type: 'COMMANDE_MENU', status: 'Payée', …}13: {id: '0e2a8939-e2c9-450f-a8f3-a276b70977ef', created_at: '2025-11-04T08:40:11.630313+00:00', client_id: 'b4b467ce-1412-41cb-a197-d3e1c9a5878e', type: 'COMMANDE_MENU', status: 'Payée', …}14: {id: '6d909a5e-ae4d-4e13-9d3a-6b9b9e9c0efa', created_at: '2025-11-04T08:34:59.228917+00:00', client_id: 'b4b467ce-1412-41cb-a197-d3e1c9a5878e', type: 'RESERVATION_SERVICE', status: 'Payée', …}15: {id: 'be24c18d-eac6-4ce9-9810-8398125b1c09', created_at: '2025-11-04T08:28:40.647549+00:00', client_id: 'b4b467ce-1412-41cb-a197-d3e1c9a5878e', type: 'RESERVATION_SERVICE', status: 'Payée', …}16: {id: 'de9e3f01-6d9c-431d-8a88-37e275ff7d1c', created_at: '2025-11-04T08:21:18.613311+00:00', client_id: 'b4b467ce-1412-41cb-a197-d3e1c9a5878e', type: 'RESERVATION_SERVICE', status: 'Payée', …}length: 17[[Prototype]]: Array(0)
+Devis.js:104 --- [DEBUG] handleGenerateQuote: Démarrage
+Devis.js:105 --- [DEBUG] handleGenerateQuote: Valeur de selectedCustomer: {id: 'b0567e23-200d-48ae-af48-a3c557e33757', created_at: '2025-11-12T08:11:42.420811+00:00', nom_entreprise: 'Test entreprise', siret: '1234756', contact_name: 'jean kischenin', …}
+Devis.js:118 --- [DEBUG] handleGenerateQuote: Début du try/catch
+Devis.js:125 --- [DEBUG] handleGenerateQuote: Payload envoyé: {
+  "customer": {
+    "id": "b0567e23-200d-48ae-af48-a3c557e33757",
+    "created_at": "2025-11-12T08:11:42.420811+00:00",
+    "nom_entreprise": "Test entreprise",
+    "siret": "1234756",
+    "contact_name": "jean kischenin",
+    "contact_email": "heixinlong@gmail.com",
+    "contact_phone": "123",
+    "type": "entreprise"
+  },
+  "items": [
+    {
+      "id": 1762957694111,
+      "service_id": "721698e9-3977-4060-9da0-86f8b88ba054",
+      "name": "Chef à domicile",
+      "description": "Cuisine chez le client",
+      "price": 120,
+      "quantity": 1
+    }
+  ],
+  "total": 120
+}
+devis:1 Access to fetch at 'https://www.asiacuisine.re/create-quote' from origin 'https://gestion.asiacuisine.re' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+Devis.js:127  POST https://www.asiacuisine.re/create-quote net::ERR_FAILED
+onClick @ Devis.js:127
+Ku @ react-dom-client.production.js:12317
+(anonymous) @ react-dom-client.production.js:12867
+Ft @ react-dom-client.production.js:1498
+td @ react-dom-client.production.js:12455
+Eh @ react-dom-client.production.js:15306
+bh @ react-dom-client.production.js:15274
+Devis.js:151 --- [ERREUR] handleGenerateQuote: Erreur capturée dans le catch TypeError: Failed to fetch
+    at onClick (Devis.js:127:36)
+    at Ku (react-dom-client.production.js:12317:13)
+    at react-dom-client.production.js:12867:5
+    at Ft (react-dom-client.production.js:1498:36)
+    at td (react-dom-client.production.js:12455:3)
+    at Eh (react-dom-client.production.js:15306:7)
+    at bh (react-dom-client.production.js:15274:7)
+onClick @ Devis.js:151
+await in onClick
+Ku @ react-dom-client.production.js:12317
+(anonymous) @ react-dom-client.production.js:12867
+Ft @ react-dom-client.production.js:1498
+td @ react-dom-client.production.js:12455
+Eh @ react-dom-client.production.js:15306
+bh @ react-dom-client.production.js:15274
