@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 // Helper function to generate a random 6-character alphanumeric string
-// Trigger comment for redeployment
 function generateClientId() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -161,7 +160,62 @@ export async function onRequest(context) {
         // --- Préparation de l'e-mail ---
         const resendApiKey = context.env.RESEND_API_KEY;
         if (resendApiKey) {
-            // ... (email logic remains the same)
+            let detailsHtml = '<ul>';
+            for (const [key, value] of Object.entries(details)) {
+                if (value) {
+                    const keyMap = {
+                        customerType: 'Type de client',
+                        serviceType: 'Type de service',
+                        numberOfPeople: 'Nombre de personnes',
+                        customerMessage: 'Message du client',
+                        formulaName: 'Formule',
+                        formulaOption: 'Option de la formule',
+                        deliveryCity: 'Ville de livraison'
+                    };
+                    detailsHtml += `<li><strong>${keyMap[key] || key}:</strong> ${value}</li>`;
+                }
+            }
+            detailsHtml += '</ul>';
+
+            let customerInfoHtml = '';
+            if (customerDetailsForEmail.type === 'Particulier') {
+                customerInfoHtml = `
+                    <li><strong>Nom :</strong> ${customerDetailsForEmail.name}</li>
+                    <li><strong>Email :</strong> ${customerDetailsForEmail.email}</li>
+                    <li><strong>Téléphone :</strong> ${customerDetailsForEmail.phone}</li>
+                    <li><strong>ID Client :</strong> ${customerDetailsForEmail.clientId}</li>
+                `;
+            } else if (customerDetailsForEmail.type === 'Entreprise') {
+                customerInfoHtml = `
+                    <li><strong>Nom de l'entreprise :</strong> ${customerDetailsForEmail.companyName}</li>
+                    <li><strong>SIRET :</strong> ${customerDetailsForEmail.siret}</li>
+                    <li><strong>Nom du contact :</strong> ${customerDetailsForEmail.contactName}</li>
+                    <li><strong>Email du contact :</strong> ${customerDetailsForEmail.contactEmail}</li>
+                    <li><strong>Téléphone du contact :</strong> ${customerDetailsForEmail.contactPhone}</li>
+                `;
+            }
+
+            try {
+                const resend = new Resend(resendApiKey);
+                await resend.emails.send({
+                    from: 'reservation@asiacuisine.re',
+                    to: 'contact@asiacuisine.re',
+                    subject: `Nouvelle demande (${customerDetailsForEmail.type})`,
+                    html: `
+                        <h1>Nouvelle demande reçue</h1>
+                        <p>Une nouvelle demande de type <strong>${data.type}</strong> a été soumise par un <strong>${customerDetailsForEmail.type}</strong>.</p>
+                        <h3>Détails du ${customerDetailsForEmail.type} :</h3>
+                        <ul>
+                            ${customerInfoHtml}
+                        </ul>
+                        <h3>Détails de la demande :</h3>
+                        <p><strong>Date souhaitée :</strong> ${new Date(data.requestDate).toLocaleDateString('fr-FR')}</p>
+                        ${detailsHtml}
+                    `
+                });
+            } catch (emailError) {
+                console.error('Failed to send email notification:', emailError);
+            }
         }
 
         return new Response(JSON.stringify({ message: 'Request received and processed successfully.' }), { status: 201 });
