@@ -120,6 +120,13 @@ export async function onRequest(context) {
         // 3. Generate the PDF
         const pdfBytes = await generateQuotePdf(newQuote, customer, quoteItemsPayload);
 
+        // Convert Uint8Array to Base64 string
+        let binaryString = '';
+        pdfBytes.forEach((byte) => {
+            binaryString += String.fromCharCode(byte);
+        });
+        const base64Content = btoa(binaryString);
+
         // 4. Send email with PDF attachment
         const resend = new Resend(context.env.RESEND_API_KEY);
         const recipientEmail = customer.type === 'client' ? customer.email : customer.contact_email;
@@ -140,7 +147,7 @@ export async function onRequest(context) {
             `,
             attachments: [{
                 filename: `devis_${newQuote.id.substring(0, 8)}.pdf`,
-                content: pdfBytes,
+                content: base64Content,
             }],
         });
 
