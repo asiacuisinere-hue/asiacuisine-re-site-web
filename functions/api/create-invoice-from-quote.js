@@ -44,7 +44,7 @@ export async function onRequest(context) {
             entreprise_id: quote.entreprise_id,
             quote_id: quote.id,
             total_amount: quote.total_amount,
-            status: 'Brouillon', // Initial status
+            status: 'draft', // Initial status
         };
 
         const { data: newInvoice, error: invoiceError } = await supabase
