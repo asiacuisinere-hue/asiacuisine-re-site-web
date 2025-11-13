@@ -38,13 +38,14 @@ export async function onRequest(context) {
             throw new Error('This quote has already been processed.');
         }
 
-        // 2. Create the new invoice
+        // 2. Create the new invoice with items included
         const invoicePayload = {
             client_id: quote.client_id,
             entreprise_id: quote.entreprise_id,
             quote_id: quote.id,
             total_amount: quote.total_amount,
             status: 'draft', // Initial status
+            items: quote.quote_items, // Copy quote items directly into the JSONB field
         };
 
         const { data: newInvoice, error: invoiceError } = await supabase
@@ -55,23 +56,7 @@ export async function onRequest(context) {
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        // 3. Copy quote items to invoice items
-        const invoiceItemsPayload = quote.quote_items.map(item => ({
-            invoice_id: newInvoice.id,
-            service_id: item.service_id,
-            name: item.name,
-            description: item.description,
-            quantity: item.quantity,
-            unit_price: item.unit_price,
-        }));
-
-        const { error: invoiceItemsError } = await supabase
-            .from('invoice_items')
-            .insert(invoiceItemsPayload);
-
-        if (invoiceItemsError) throw new Error(`Failed to create invoice items: ${invoiceItemsError.message}`);
-
-        // 4. Update the original quote's status to 'Accepted'
+        // 3. Update the original quote's status to 'Accepted'
         const { error: updateQuoteError } = await supabase
             .from('quotes')
             .update({ status: 'Accepté' })
