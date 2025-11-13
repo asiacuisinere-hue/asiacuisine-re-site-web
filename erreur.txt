@@ -1,56 +1,54 @@
-supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
-supabaseClient.js:7 Has API Key: true
-Devis.js:94 --- [DEBUG] handleGenerateQuote: Démarrage
-Devis.js:95 --- [DEBUG] handleGenerateQuote: Valeur de selectedCustomer: {id: 'b0567e23-200d-48ae-af48-a3c557e33757', created_at: '2025-11-12T08:11:42.420811+00:00', nom_entreprise: 'Test entreprise', siret: '1234756', contact_name: 'jean kischenin', …}
-Devis.js:108 --- [DEBUG] handleGenerateQuote: Début du try/catch
-Devis.js:115 --- [DEBUG] handleGenerateQuote: Payload envoyé: {
-  "customer": {
-    "id": "b0567e23-200d-48ae-af48-a3c557e33757",
-    "created_at": "2025-11-12T08:11:42.420811+00:00",
-    "nom_entreprise": "Test entreprise",
-    "siret": "1234756",
-    "contact_name": "jean kischenin",
-    "contact_email": "heixinlong@gmail.com",
-    "contact_phone": "123",
-    "type": "entreprise"
-  },
-  "items": [
-    {
-      "id": 1763002802938,
-      "service_id": "721698e9-3977-4060-9da0-86f8b88ba054",
-      "name": "Chef à domicile",
-      "description": "Cuisine chez le client",
-      "price": 120,
-      "quantity": 1
-    }
-  ],
-  "total": 120
-}
-Devis.js:117  POST https://www.asiacuisine.re/api/create-quote 500 (Internal Server Error)
-onClick @ Devis.js:117
-Ku @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
-Devis.js:123 --- [DEBUG] handleGenerateQuote: Réponse reçue du serveur, statut: 500
-Devis.js:127 --- [ERREUR] handleGenerateQuote: Réponse non-OK {error: 'Internal Server Error', details: 'Buffer is not defined'}
-onClick @ Devis.js:127
-await in onClick
-Ku @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
-Devis.js:141 --- [ERREUR] handleGenerateQuote: Erreur capturée dans le catch Error: Buffer is not defined
-    at onClick (Devis.js:128:23)
-onClick @ Devis.js:141
-await in onClick
-Ku @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
+2025-11-13T03:07:08.213077Z	Cloning repository...
+2025-11-13T03:07:10.864993Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
+2025-11-13T03:07:10.865538Z	 * branch            e4592dbc53b8977393f2567f95ca51846497d8d3 -> FETCH_HEAD
+2025-11-13T03:07:10.865738Z	
+2025-11-13T03:07:11.574976Z	HEAD is now at e4592db Fix: correction de l'importation  import { Buffer } from 'node:buffer'; en haut du fichier functions/api/create-quote.js
+2025-11-13T03:07:11.575597Z	
+2025-11-13T03:07:11.655233Z	
+2025-11-13T03:07:11.655991Z	Using v2 root directory strategy
+2025-11-13T03:07:11.682406Z	Success: Finished cloning repository files
+2025-11-13T03:07:13.548154Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-13T03:07:13.549124Z	
+2025-11-13T03:07:14.669033Z	No wrangler.toml file found. Continuing.
+2025-11-13T03:07:14.735779Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2025-11-13T03:07:14.748044Z	Installing project dependencies: npm clean-install --progress=false
+2025-11-13T03:07:17.612833Z	
+2025-11-13T03:07:17.61305Z	added 112 packages, and audited 113 packages in 2s
+2025-11-13T03:07:17.613183Z	
+2025-11-13T03:07:17.613311Z	26 packages are looking for funding
+2025-11-13T03:07:17.613578Z	  run `npm fund` for details
+2025-11-13T03:07:17.614633Z	
+2025-11-13T03:07:17.61474Z	found 0 vulnerabilities
+2025-11-13T03:07:17.710208Z	Executing user command: npm install
+2025-11-13T03:07:18.572281Z	
+2025-11-13T03:07:18.572601Z	up to date, audited 113 packages in 550ms
+2025-11-13T03:07:18.572755Z	
+2025-11-13T03:07:18.572893Z	26 packages are looking for funding
+2025-11-13T03:07:18.573019Z	  run `npm fund` for details
+2025-11-13T03:07:18.573738Z	
+2025-11-13T03:07:18.573909Z	found 0 vulnerabilities
+2025-11-13T03:07:18.593107Z	Finished
+2025-11-13T03:07:19.474475Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-13T03:07:19.475185Z	
+2025-11-13T03:07:20.577079Z	No wrangler.toml file found. Continuing.
+2025-11-13T03:07:20.577801Z	Found Functions directory at /functions. Uploading.
+2025-11-13T03:07:20.583474Z	 ⛅️ wrangler 3.101.0
+2025-11-13T03:07:20.583706Z	-------------------
+2025-11-13T03:07:21.856794Z	[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe package "node:buffer" wasn't found on the file system but is built into node.[0m
+2025-11-13T03:07:21.857397Z	
+2025-11-13T03:07:21.857549Z	  Your Worker may throw errors at runtime unless you enable the "nodejs_compat" compatibility flag. Refer to [4mhttps://developers.cloudflare.com/workers/runtime-apis/nodejs/[0m for more details. Imported from:
+2025-11-13T03:07:21.858072Z	   - api/create-quote.js
+2025-11-13T03:07:21.858176Z	
+2025-11-13T03:07:21.858238Z	
+2025-11-13T03:07:21.858381Z	✨ Compiled Worker successfully
+2025-11-13T03:07:22.967399Z	Validating asset output directory
+2025-11-13T03:07:27.287781Z	Deploying your site to Cloudflare's global network...
+2025-11-13T03:07:31.168747Z	Parsed 1 valid redirect rule.
+2025-11-13T03:07:33.260173Z	Uploading... (153/154)
+2025-11-13T03:07:34.066214Z	Uploading... (154/154)
+2025-11-13T03:07:34.066516Z	✨ Success! Uploaded 1 files (153 already uploaded) (1.21 sec)
+2025-11-13T03:07:34.066619Z	
+2025-11-13T03:07:34.503418Z	✨ Upload complete!
+2025-11-13T03:07:38.100258Z	Success: Assets published!
+2025-11-13T03:07:39.995718Z	Error: Failed to publish your Function. Got error: Uncaught Error: No such module "node:buffer".
+  imported from "functionsWorker-0.16310911248697613.js"
