@@ -16,7 +16,7 @@ Devis.js:115 --- [DEBUG] handleGenerateQuote: Payload envoyé: {
   },
   "items": [
     {
-      "id": 1762958411496,
+      "id": 1763002802938,
       "service_id": "721698e9-3977-4060-9da0-86f8b88ba054",
       "name": "Chef à domicile",
       "description": "Cuisine chez le client",
@@ -26,7 +26,7 @@ Devis.js:115 --- [DEBUG] handleGenerateQuote: Payload envoyé: {
   ],
   "total": 120
 }
-Devis.js:117  POST https://gestion.asiacuisine.re/api/create-quote 405 (Method Not Allowed)
+Devis.js:117  POST https://www.asiacuisine.re/api/create-quote 500 (Internal Server Error)
 onClick @ Devis.js:117
 Ku @ react-dom-client.production.js:12317
 (anonymous) @ react-dom-client.production.js:12867
@@ -34,9 +34,18 @@ Ft @ react-dom-client.production.js:1498
 td @ react-dom-client.production.js:12455
 Sh @ react-dom-client.production.js:15306
 bh @ react-dom-client.production.js:15274
-Devis.js:123 --- [DEBUG] handleGenerateQuote: Réponse reçue du serveur, statut: 405
-Devis.js:141 --- [ERREUR] handleGenerateQuote: Erreur capturée dans le catch SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
-    at onClick (Devis.js:126:50)
+Devis.js:123 --- [DEBUG] handleGenerateQuote: Réponse reçue du serveur, statut: 500
+Devis.js:127 --- [ERREUR] handleGenerateQuote: Réponse non-OK {error: 'Internal Server Error', details: 'Buffer is not defined'}
+onClick @ Devis.js:127
+await in onClick
+Ku @ react-dom-client.production.js:12317
+(anonymous) @ react-dom-client.production.js:12867
+Ft @ react-dom-client.production.js:1498
+td @ react-dom-client.production.js:12455
+Sh @ react-dom-client.production.js:15306
+bh @ react-dom-client.production.js:15274
+Devis.js:141 --- [ERREUR] handleGenerateQuote: Erreur capturée dans le catch Error: Buffer is not defined
+    at onClick (Devis.js:128:23)
 onClick @ Devis.js:141
 await in onClick
 Ku @ react-dom-client.production.js:12317

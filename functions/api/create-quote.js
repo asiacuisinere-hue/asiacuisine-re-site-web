@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { Buffer } from 'node:buffer';
 
 const addCorsHeaders = (response) => {
     response.headers.set('Access-Control-Allow-Origin', 'https://gestion.asiacuisine.re');
