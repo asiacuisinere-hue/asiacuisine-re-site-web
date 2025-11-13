@@ -21,7 +21,7 @@ export async function onRequest(context) {
             .from('invoices')
             .select(`
                 *,
-                clients (id, nom, prenom, email, telephone),
+                clients (id, last_name, first_name, email, phone),
                 entreprises (id, nom_entreprise, contact_email, contact_telephone),
                 quotes (id, quote_date, total_amount, status)
             `)
