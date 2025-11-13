@@ -1,54 +1,245 @@
-2025-11-13T03:07:08.213077Z	Cloning repository...
-2025-11-13T03:07:10.864993Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
-2025-11-13T03:07:10.865538Z	 * branch            e4592dbc53b8977393f2567f95ca51846497d8d3 -> FETCH_HEAD
-2025-11-13T03:07:10.865738Z	
-2025-11-13T03:07:11.574976Z	HEAD is now at e4592db Fix: correction de l'importation  import { Buffer } from 'node:buffer'; en haut du fichier functions/api/create-quote.js
-2025-11-13T03:07:11.575597Z	
-2025-11-13T03:07:11.655233Z	
-2025-11-13T03:07:11.655991Z	Using v2 root directory strategy
-2025-11-13T03:07:11.682406Z	Success: Finished cloning repository files
-2025-11-13T03:07:13.548154Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-13T03:07:13.549124Z	
-2025-11-13T03:07:14.669033Z	No wrangler.toml file found. Continuing.
-2025-11-13T03:07:14.735779Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
-2025-11-13T03:07:14.748044Z	Installing project dependencies: npm clean-install --progress=false
-2025-11-13T03:07:17.612833Z	
-2025-11-13T03:07:17.61305Z	added 112 packages, and audited 113 packages in 2s
-2025-11-13T03:07:17.613183Z	
-2025-11-13T03:07:17.613311Z	26 packages are looking for funding
-2025-11-13T03:07:17.613578Z	  run `npm fund` for details
-2025-11-13T03:07:17.614633Z	
-2025-11-13T03:07:17.61474Z	found 0 vulnerabilities
-2025-11-13T03:07:17.710208Z	Executing user command: npm install
-2025-11-13T03:07:18.572281Z	
-2025-11-13T03:07:18.572601Z	up to date, audited 113 packages in 550ms
-2025-11-13T03:07:18.572755Z	
-2025-11-13T03:07:18.572893Z	26 packages are looking for funding
-2025-11-13T03:07:18.573019Z	  run `npm fund` for details
-2025-11-13T03:07:18.573738Z	
-2025-11-13T03:07:18.573909Z	found 0 vulnerabilities
-2025-11-13T03:07:18.593107Z	Finished
-2025-11-13T03:07:19.474475Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-13T03:07:19.475185Z	
-2025-11-13T03:07:20.577079Z	No wrangler.toml file found. Continuing.
-2025-11-13T03:07:20.577801Z	Found Functions directory at /functions. Uploading.
-2025-11-13T03:07:20.583474Z	 ⛅️ wrangler 3.101.0
-2025-11-13T03:07:20.583706Z	-------------------
-2025-11-13T03:07:21.856794Z	[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe package "node:buffer" wasn't found on the file system but is built into node.[0m
-2025-11-13T03:07:21.857397Z	
-2025-11-13T03:07:21.857549Z	  Your Worker may throw errors at runtime unless you enable the "nodejs_compat" compatibility flag. Refer to [4mhttps://developers.cloudflare.com/workers/runtime-apis/nodejs/[0m for more details. Imported from:
-2025-11-13T03:07:21.858072Z	   - api/create-quote.js
-2025-11-13T03:07:21.858176Z	
-2025-11-13T03:07:21.858238Z	
-2025-11-13T03:07:21.858381Z	✨ Compiled Worker successfully
-2025-11-13T03:07:22.967399Z	Validating asset output directory
-2025-11-13T03:07:27.287781Z	Deploying your site to Cloudflare's global network...
-2025-11-13T03:07:31.168747Z	Parsed 1 valid redirect rule.
-2025-11-13T03:07:33.260173Z	Uploading... (153/154)
-2025-11-13T03:07:34.066214Z	Uploading... (154/154)
-2025-11-13T03:07:34.066516Z	✨ Success! Uploaded 1 files (153 already uploaded) (1.21 sec)
-2025-11-13T03:07:34.066619Z	
-2025-11-13T03:07:34.503418Z	✨ Upload complete!
-2025-11-13T03:07:38.100258Z	Success: Assets published!
-2025-11-13T03:07:39.995718Z	Error: Failed to publish your Function. Got error: Uncaught Error: No such module "node:buffer".
-  imported from "functionsWorker-0.16310911248697613.js"
+{
+  "wallTime": 3,
+  "cpuTime": 3,
+  "truncated": false,
+  "executionModel": "stateless",
+  "outcome": "ok",
+  "scriptVersion": {
+    "id": "c62f6af2-910e-4372-bfc1-c35356ba0e44"
+  },
+  "scriptName": "pages-worker--8843313-production",
+  "diagnosticsChannelEvents": [],
+  "exceptions": [],
+  "logs": [],
+  "eventTimestamp": 1763018869107,
+  "event": {
+    "request": {
+      "url": "https://www.asiacuisine.re/api/create-invoice-from-quote",
+      "method": "OPTIONS",
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, br",
+        "accept-language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "access-control-request-headers": "content-type",
+        "access-control-request-method": "POST",
+        "cf-connecting-ip": "92.130.208.48",
+        "cf-ipcountry": "RE",
+        "cf-ray": "99dc8c7befee58fc",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "connection": "Keep-Alive",
+        "host": "www.asiacuisine.re",
+        "origin": "https://gestion.asiacuisine.re",
+        "priority": "u=1, i",
+        "referer": "https://gestion.asiacuisine.re/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+        "transfer-encoding": "chunked",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "x-forwarded-proto": "https",
+        "x-real-ip": "92.130.208.48"
+      },
+      "cf": {
+        "httpProtocol": "HTTP/3",
+        "clientAcceptEncoding": "gzip, deflate, br",
+        "requestPriority": "",
+        "edgeRequestKeepAliveStatus": 1,
+        "requestHeaderNames": {},
+        "clientTcpRtt": 0,
+        "colo": "LIS",
+        "asn": 3215,
+        "asOrganization": "POP REU",
+        "country": "RE",
+        "isEUCountry": "1",
+        "city": "Saint-Denis",
+        "continent": "AF",
+        "region": "Réunion",
+        "regionCode": "",
+        "timezone": "Indian/Reunion",
+        "longitude": "55.4504",
+        "latitude": "-20.88231",
+        "postalCode": "97400",
+        "tlsVersion": "TLSv1.3",
+        "tlsCipher": "AEAD-AES128-GCM-SHA256",
+        "tlsClientRandom": "FLYfAOO32nhF50WZXevhdOmJkQeGD4zxJtWWflj0I+Y=",
+        "tlsClientCiphersSha1": "3HTt3+R/6BL3zeALJDSq0pR1yOQ=",
+        "tlsClientExtensionsSha1": "HUtKvIKU4rJPWEXv+PvVGbm1NhQ=",
+        "tlsClientExtensionsSha1Le": "4wPtCQ1w8tOTNy3cgcpGpIKldaY=",
+        "tlsExportedAuthenticator": {
+          "clientHandshake": "2b7153138d6dc501d80baeba80cd158fe4627a19553d1c3e7cf115ae0c6e6301",
+          "serverHandshake": "f4db5eb41922d8d5898cb0a14bbb06d8eee5d52e1ebed5d86a54410e1e7a92cb",
+          "clientFinished": "b9e004f4aba9eab38eaaac9118cda8277764fa91ba567cefed3cbf3a3df09802",
+          "serverFinished": "3fbd565562328ad2be065ef2559e4198da8a3bbf0decfa275bab291450031ecc"
+        },
+        "tlsClientHelloLength": "1760",
+        "tlsClientAuth": {
+          "certPresented": "0",
+          "certVerified": "NONE",
+          "certRevoked": "0",
+          "certIssuerDN": "",
+          "certSubjectDN": "",
+          "certIssuerDNRFC2253": "",
+          "certSubjectDNRFC2253": "",
+          "certIssuerDNLegacy": "",
+          "certSubjectDNLegacy": "",
+          "certSerial": "",
+          "certIssuerSerial": "",
+          "certSKI": "",
+          "certIssuerSKI": "",
+          "certFingerprintSHA1": "",
+          "certFingerprintSHA256": "",
+          "certNotBefore": "",
+          "certNotAfter": ""
+        },
+        "verifiedBotCategory": "",
+        "pagesHostName": "asiacuisine-re-site-web.pages.dev",
+        "botManagement": {
+          "corporateProxy": false,
+          "verifiedBot": false,
+          "jsDetection": {
+            "passed": false
+          },
+          "staticResource": false,
+          "detectionIds": {},
+          "score": 99
+        }
+      }
+    },
+    "response": {
+      "status": 204
+    }
+  },
+  "id": 0
+}
+
+{
+  "wallTime": 183,
+  "cpuTime": 3,
+  "truncated": false,
+  "executionModel": "stateless",
+  "outcome": "ok",
+  "scriptVersion": {
+    "id": "c62f6af2-910e-4372-bfc1-c35356ba0e44"
+  },
+  "scriptName": "pages-worker--8843313-production",
+  "diagnosticsChannelEvents": [],
+  "exceptions": [],
+  "logs": [
+    {
+      "message": [
+        "--- [ERREUR] Erreur dans create-invoice-from-quote ---"
+      ],
+      "level": "error",
+      "timestamp": 1763018869503
+    },
+    {
+      "message": [
+        "Message:",
+        "Quote not found: column quotes.items does not exist"
+      ],
+      "level": "error",
+      "timestamp": 1763018869503
+    }
+  ],
+  "eventTimestamp": 1763018869323,
+  "event": {
+    "request": {
+      "url": "https://www.asiacuisine.re/api/create-invoice-from-quote",
+      "method": "POST",
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, br",
+        "accept-language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "cf-connecting-ip": "92.130.208.48",
+        "cf-ipcountry": "RE",
+        "cf-ray": "99dc8c7d3a6658fc",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "connection": "Keep-Alive",
+        "content-length": "51",
+        "content-type": "application/json",
+        "host": "www.asiacuisine.re",
+        "origin": "https://gestion.asiacuisine.re",
+        "priority": "u=1, i",
+        "referer": "https://gestion.asiacuisine.re/",
+        "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "x-forwarded-proto": "https",
+        "x-real-ip": "92.130.208.48"
+      },
+      "cf": {
+        "httpProtocol": "HTTP/3",
+        "clientAcceptEncoding": "gzip, deflate, br",
+        "requestPriority": "",
+        "edgeRequestKeepAliveStatus": 1,
+        "requestHeaderNames": {},
+        "clientTcpRtt": 0,
+        "colo": "LIS",
+        "asn": 3215,
+        "asOrganization": "POP REU",
+        "country": "RE",
+        "isEUCountry": "1",
+        "city": "Saint-Denis",
+        "continent": "AF",
+        "region": "Réunion",
+        "regionCode": "",
+        "timezone": "Indian/Reunion",
+        "longitude": "55.4504",
+        "latitude": "-20.88231",
+        "postalCode": "97400",
+        "tlsVersion": "TLSv1.3",
+        "tlsCipher": "AEAD-AES128-GCM-SHA256",
+        "tlsClientRandom": "FLYfAOO32nhF50WZXevhdOmJkQeGD4zxJtWWflj0I+Y=",
+        "tlsClientCiphersSha1": "3HTt3+R/6BL3zeALJDSq0pR1yOQ=",
+        "tlsClientExtensionsSha1": "HUtKvIKU4rJPWEXv+PvVGbm1NhQ=",
+        "tlsClientExtensionsSha1Le": "4wPtCQ1w8tOTNy3cgcpGpIKldaY=",
+        "tlsExportedAuthenticator": {
+          "clientHandshake": "2b7153138d6dc501d80baeba80cd158fe4627a19553d1c3e7cf115ae0c6e6301",
+          "serverHandshake": "f4db5eb41922d8d5898cb0a14bbb06d8eee5d52e1ebed5d86a54410e1e7a92cb",
+          "clientFinished": "b9e004f4aba9eab38eaaac9118cda8277764fa91ba567cefed3cbf3a3df09802",
+          "serverFinished": "3fbd565562328ad2be065ef2559e4198da8a3bbf0decfa275bab291450031ecc"
+        },
+        "tlsClientHelloLength": "1760",
+        "tlsClientAuth": {
+          "certPresented": "0",
+          "certVerified": "NONE",
+          "certRevoked": "0",
+          "certIssuerDN": "",
+          "certSubjectDN": "",
+          "certIssuerDNRFC2253": "",
+          "certSubjectDNRFC2253": "",
+          "certIssuerDNLegacy": "",
+          "certSubjectDNLegacy": "",
+          "certSerial": "",
+          "certIssuerSerial": "",
+          "certSKI": "",
+          "certIssuerSKI": "",
+          "certFingerprintSHA1": "",
+          "certFingerprintSHA256": "",
+          "certNotBefore": "",
+          "certNotAfter": ""
+        },
+        "verifiedBotCategory": "",
+        "pagesHostName": "asiacuisine-re-site-web.pages.dev",
+        "botManagement": {
+          "corporateProxy": false,
+          "verifiedBot": false,
+          "jsDetection": {
+            "passed": false
+          },
+          "staticResource": false,
+          "detectionIds": {},
+          "score": 99
+        }
+      }
+    },
+    "response": {
+      "status": 500
+    }
+  },
+  "id": 1
+}

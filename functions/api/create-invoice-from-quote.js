@@ -8,17 +8,19 @@ const addCorsHeaders = (response) => {
 };
 
 export async function onRequest(context) {
+    // Handle preflight requests
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
+
     if (context.request.method !== 'POST') {
-        return addCorsHeaders(new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), { status: 405, headers: { 'Allow': 'POST' } }));
+        return addCorsHeaders(new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 }));
     }
 
     try {
-        const { quote_id } = await context.request.json();
-        if (!quote_id) {
-            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing required field: quote_id' }), { status: 400 }));
+        const { quoteId } = await context.request.json();
+        if (!quoteId) {
+            return addCorsHeaders(new Response(JSON.stringify({ error: 'quoteId is required' }), { status: 400 }));
         }
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
@@ -26,27 +28,25 @@ export async function onRequest(context) {
         // 1. Fetch the quote and its items
         const { data: quote, error: quoteError } = await supabase
             .from('quotes')
-            .select('*, items') // Assuming items are stored as JSONB in the quotes table
-            .eq('id', quote_id)
+            .select('*, quote_items(*)')
+            .eq('id', quoteId)
             .single();
 
-        if (quoteError) throw new Error(`Quote not found: ${quoteError.message}`);
-        if (quote.status !== 'accepted') {
-            throw new Error(`Quote status is '${quote.status}', not 'accepted'. Cannot create invoice.`);
+        if (quoteError) throw new Error(`Failed to fetch quote: ${quoteError.message}`);
+        if (!quote) throw new Error('Quote not found.');
+        if (quote.status === 'accepted' || quote.status === 'invoiced') {
+            throw new Error('This quote has already been processed.');
         }
 
-        // 2. Create the invoice payload
+        // 2. Create the new invoice
         const invoicePayload = {
-            quote_id: quote.id,
             client_id: quote.client_id,
             entreprise_id: quote.entreprise_id,
-            items: quote.items,
+            quote_id: quote.id,
             total_amount: quote.total_amount,
-            status: 'draft', // Initial status for a new invoice
-            due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Due in 30 days
+            status: 'Brouillon', // Initial status
         };
 
-        // 3. Insert the new invoice
         const { data: newInvoice, error: invoiceError } = await supabase
             .from('invoices')
             .insert(invoicePayload)
@@ -55,31 +55,38 @@ export async function onRequest(context) {
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        // 4. Update the quote status to 'invoiced'
+        // 3. Copy quote items to invoice items
+        const invoiceItemsPayload = quote.quote_items.map(item => ({
+            invoice_id: newInvoice.id,
+            service_id: item.service_id,
+            name: item.name,
+            description: item.description,
+            quantity: item.quantity,
+            unit_price: item.unit_price,
+        }));
+
+        const { error: invoiceItemsError } = await supabase
+            .from('invoice_items')
+            .insert(invoiceItemsPayload);
+
+        if (invoiceItemsError) throw new Error(`Failed to create invoice items: ${invoiceItemsError.message}`);
+
+        // 4. Update the original quote's status to 'Accepted'
         const { error: updateQuoteError } = await supabase
             .from('quotes')
-            .update({ status: 'invoiced' })
-            .eq('id', quote.id);
+            .update({ status: 'Accepté' })
+            .eq('id', quoteId);
 
-        if (updateQuoteError) {
-            // Log the error but don't block the response as the invoice was created
-            console.error(`Failed to update quote status for quote_id ${quote.id}:`, updateQuoteError.message);
-        }
+        if (updateQuoteError) throw new Error(`Failed to update quote status: ${updateQuoteError.message}`);
 
-        return addCorsHeaders(new Response(JSON.stringify({ 
-            success: true, 
-            invoiceId: newInvoice.id 
-        }), {
-            status: 201,
-            headers: { 'Content-Type': 'application/json' }
-        }));
+        return addCorsHeaders(new Response(JSON.stringify({
+            success: true,
+            invoiceId: newInvoice.id,
+            message: `Invoice ${newInvoice.id.substring(0, 8)} created successfully from quote ${quoteId.substring(0, 8)}.`,
+        }), { status: 201 }));
 
     } catch (error) {
-        console.error('--- [ERREUR] Erreur dans create-invoice-from-quote ---');
-        console.error('Message:', error.message);
-        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        }));
+        console.error('Error creating invoice from quote:', error);
+        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), { status: 500 }));
     }
 }
