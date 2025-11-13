@@ -93,8 +93,7 @@ export async function onRequest(context) {
             .select(`
                 *,
                 clients (id, first_name, last_name, email, phone),
-                entreprises (id, nom_entreprise, contact_name, contact_email, contact_phone),
-                invoice_items (*)
+                entreprises (id, nom_entreprise, contact_name, contact_email, contact_phone)
             `)
             .eq('id', invoiceId)
             .single();
@@ -134,7 +133,7 @@ export async function onRequest(context) {
         }
 
         // 2. Generate the PDF
-        const pdfBytes = await generateInvoicePdf(invoice, customerDetails, invoice.invoice_items);
+        const pdfBytes = await generateInvoicePdf(invoice, customerDetails, invoice.items);
 
         // Convert Uint8Array to Base64 string
         let binaryString = '';
