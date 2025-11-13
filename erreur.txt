@@ -1,47 +1,84 @@
-2025-11-13T08:08:15.128995Z	Cloning repository...
-2025-11-13T08:08:17.565018Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
-2025-11-13T08:08:17.565775Z	 * branch            99fc912cc6244b2fca05dc94625b3090885af188 -> FETCH_HEAD
-2025-11-13T08:08:17.56589Z	
-2025-11-13T08:08:18.286445Z	HEAD is now at 99fc912 Fix: correction de l'erreur 500
-2025-11-13T08:08:18.287189Z	
-2025-11-13T08:08:18.368087Z	
-2025-11-13T08:08:18.36853Z	Using v2 root directory strategy
-2025-11-13T08:08:18.394457Z	Success: Finished cloning repository files
-2025-11-13T08:08:20.309521Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-13T08:08:20.31037Z	
-2025-11-13T08:08:21.415203Z	No wrangler.toml file found. Continuing.
-2025-11-13T08:08:21.482102Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
-2025-11-13T08:08:21.49317Z	Installing project dependencies: npm clean-install --progress=false
-2025-11-13T08:08:24.268905Z	
-2025-11-13T08:08:24.269102Z	added 112 packages, and audited 113 packages in 2s
-2025-11-13T08:08:24.269443Z	
-2025-11-13T08:08:24.269567Z	26 packages are looking for funding
-2025-11-13T08:08:24.269804Z	  run `npm fund` for details
-2025-11-13T08:08:24.27015Z	
-2025-11-13T08:08:24.270367Z	found 0 vulnerabilities
-2025-11-13T08:08:24.37263Z	Executing user command: npm install
-2025-11-13T08:08:25.272747Z	
-2025-11-13T08:08:25.273119Z	up to date, audited 113 packages in 589ms
-2025-11-13T08:08:25.273252Z	
-2025-11-13T08:08:25.273742Z	26 packages are looking for funding
-2025-11-13T08:08:25.273831Z	  run `npm fund` for details
-2025-11-13T08:08:25.273977Z	
-2025-11-13T08:08:25.274093Z	found 0 vulnerabilities
-2025-11-13T08:08:25.294926Z	Finished
-2025-11-13T08:08:26.179822Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-13T08:08:26.18044Z	
-2025-11-13T08:08:27.283511Z	No wrangler.toml file found. Continuing.
-2025-11-13T08:08:27.284408Z	Found Functions directory at /functions. Uploading.
-2025-11-13T08:08:27.289827Z	 ⛅️ wrangler 3.101.0
-2025-11-13T08:08:27.290003Z	-------------------
-2025-11-13T08:08:28.569508Z	[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe package "node:buffer" wasn't found on the file system but is built into node.[0m
-2025-11-13T08:08:28.57021Z	
-2025-11-13T08:08:28.5704Z	  Your Worker may throw errors at runtime unless you enable the "nodejs_compat" compatibility flag. Refer to [4mhttps://developers.cloudflare.com/workers/runtime-apis/nodejs/[0m for more details. Imported from:
-2025-11-13T08:08:28.570527Z	   - api/send-invoice.js
-2025-11-13T08:08:28.570647Z	
-2025-11-13T08:08:28.570748Z	
-2025-11-13T08:08:28.570858Z	✨ Compiled Worker successfully
-2025-11-13T08:08:29.673724Z	Validating asset output directory
-2025-11-13T08:08:45.559933Z	Success: Assets published!
-2025-11-13T08:08:47.811102Z	Error: Failed to publish your Function. Got error: Uncaught Error: No such module "node:buffer".
-  imported from "functionsWorker-0.5397151548128916.js"
+supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
+supabaseClient.js:7 Has API Key: true
+Factures.js:14  GET https://www.asiacuisine.re/api/get-invoices 500 (Internal Server Error)
+(anonymous) @ Factures.js:14
+(anonymous) @ Factures.js:35
+ml @ react-dom-client.production.js:8583
+ec @ react-dom-client.production.js:10126
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10137
+_u @ react-dom-client.production.js:11763
+(anonymous) @ react-dom-client.production.js:11498
+R @ scheduler.production.js:151
+Factures.js:27 Error fetching invoices: Error: column entreprises_1.contact_telephone does not exist
+    at Factures.js:21:23
+(anonymous) @ Factures.js:27
+await in (anonymous)
+(anonymous) @ Factures.js:35
+ml @ react-dom-client.production.js:8583
+ec @ react-dom-client.production.js:10126
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10120
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10241
+$l @ react-dom-client.production.js:10101
+ec @ react-dom-client.production.js:10137
+_u @ react-dom-client.production.js:11763
+(anonymous) @ react-dom-client.production.js:11498
+R @ scheduler.production.js:151

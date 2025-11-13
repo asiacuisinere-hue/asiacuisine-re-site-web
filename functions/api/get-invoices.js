@@ -22,7 +22,7 @@ export async function onRequest(context) {
             .select(`
                 *,
                 clients (id, last_name, first_name, email, phone),
-                entreprises (id, nom_entreprise, contact_email, contact_telephone),
+                entreprises (id, nom_entreprise, contact_email, contact_phone),
                 quotes (id, quote_date, total_amount, status)
             `)
             .order('created_at', { ascending: false }); // Order by creation date, newest first
