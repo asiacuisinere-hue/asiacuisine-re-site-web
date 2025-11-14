@@ -50,8 +50,26 @@ export async function onRequest(context) {
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
-        const { data: demande, error } = await supabase.from('demandes').select(`*, clients(*)`).eq('id', demandeId).single();
+        const { data: demande, error } = await supabase
+            .from('demandes')
+            .select(`*, clients(*), entreprises(*)`)
+            .eq('id', demandeId)
+            .single();
+            
         if (error) throw error;
+
+        // Determine customer details
+        let customerName = '';
+        let customerEmail = '';
+        if (demande.clients) {
+            customerName = `${demande.clients.last_name || ''} ${demande.clients.first_name || ''}`.trim();
+            customerEmail = demande.clients.email;
+        } else if (demande.entreprises) {
+            customerName = demande.entreprises.nom_entreprise;
+            customerEmail = demande.entreprises.contact_email;
+        } else {
+            throw new Error('No client or entreprise associated with this demande.');
+        }
 
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage();
@@ -62,9 +80,9 @@ export async function onRequest(context) {
         let yPosition = height - 50;
         page.drawText(`${documentType} - Asiacuisine.re`, { x: 50, y: yPosition, size: 24, font: boldFont });
         yPosition -= 50;
-        page.drawText(`Client: ${demande.clients.last_name} ${demande.clients.first_name || ''}`, { x: 50, y: yPosition, size: 12, font });
+        page.drawText(`Client: ${customerName}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 20;
-        page.drawText(`Email: ${demande.clients.email}`, { x: 50, y: yPosition, size: 12, font });
+        page.drawText(`Email: ${customerEmail}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 40;
         page.drawText(`Date: ${new Date(demande.request_date).toLocaleDateString('fr-FR')}`, { x: 50, y: yPosition, size: 12, font });
         yPosition -= 20;
@@ -94,9 +112,9 @@ export async function onRequest(context) {
             const resend = new Resend(context.env.RESEND_API_KEY);
             await resend.emails.send({
                 from: 'contact@asiacuisine.re',
-                to: demande.clients.email,
+                to: customerEmail,
                 subject: `Votre ${documentType} de Asiacuisine.re`,
-                html: `Bonjour ${demande.clients.first_name || ''},<br><br>Veuillez trouver ci-joint votre ${documentType.toLowerCase()}.<br><br>Cordialement,<br>L'équipe Asiacuisine.re`,
+                html: `Bonjour ${customerName},<br><br>Veuillez trouver ci-joint votre ${documentType.toLowerCase()}.<br><br>Cordialement,<br>L'équipe Asiacuisine.re`,
                 attachments: [{
                     filename: `${docName}.pdf`,
                     content: pdfAsBase64,
