@@ -62,7 +62,8 @@ export async function onRequest(context) {
                         first_name: data.customer.firstName || null,
                         last_name: data.customer.lastName || null,
                         phone: data.customer.phone || null,
-                        client_id: newId
+                        client_id: newId,
+                        type: 'Particulier' // Ajout du champ type
                     })
                     .select()
                     .single();
