@@ -25,10 +25,10 @@ export async function onRequest(context) {
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
-        // 1. Fetch the quote and its items
+        // 1. Fetch the quote
         const { data: quote, error: quoteError } = await supabase
             .from('quotes')
-            .select('*, quote_items(*)')
+            .select('*')
             .eq('id', quoteId)
             .single();
 
@@ -38,14 +38,22 @@ export async function onRequest(context) {
             throw new Error('This quote has already been processed.');
         }
 
-        // 2. Create the new invoice with items included
+        // 2. Fetch the quote items separately for robustness
+        const { data: quoteItems, error: itemsError } = await supabase
+            .from('quote_items')
+            .select('*')
+            .eq('quote_id', quoteId);
+
+        if (itemsError) throw new Error(`Failed to fetch quote items: ${itemsError.message}`);
+
+        // 3. Create the new invoice with items included
         const invoicePayload = {
             client_id: quote.client_id,
             entreprise_id: quote.entreprise_id,
             quote_id: quote.id,
             total_amount: quote.total_amount,
             status: 'draft', // Initial status
-            items: quote.quote_items, // Copy quote items directly into the JSONB field
+            items: quoteItems, // Copy fetched items directly into the JSONB field
         };
 
         const { data: newInvoice, error: invoiceError } = await supabase
@@ -56,7 +64,7 @@ export async function onRequest(context) {
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        // 3. Update the original quote's status to 'Accepted'
+        // 4. Update the original quote's status to 'Accepted'
         const { error: updateQuoteError } = await supabase
             .from('quotes')
             .update({ status: 'Accepté' })
