@@ -1,9 +1,63 @@
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded and parsed');
-    initializeI18n().then(() => {
-        console.log('i18next initialized, now initializing page content.');
-        initializePageContent();
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Gestion du Popup d'accueil ---
+    const popup = document.getElementById('popup-accueil');
+    const closePopup = document.getElementById('close-popup');
+    if (popup && closePopup) {
+        // Afficher le popup après un court délai
+        setTimeout(() => {
+            popup.style.display = 'flex';
+        }, 1000);
+
+        // Fermer le popup
+        closePopup.addEventListener('click', function() {
+            popup.style.display = 'none';
+        });
+    }
+
+    // --- Gestion du sélecteur de langue ---
+    const languageSelector = document.getElementById('language-selector');
+    if (languageSelector) {
+        languageSelector.addEventListener('change', (event) => {
+            const selectedLanguage = event.target.value;
+            i18next.changeLanguage(selectedLanguage, (err, t) => {
+                if (err) return console.log('something went wrong loading', err);
+                updateContent();
+            });
+        });
+    }
+
+    // --- Gestion du formulaire conditionnel ---
+    const customerTypeRadios = document.querySelectorAll('input[name="customerType"]');
+    const particulierFields = document.getElementById('particulier-fields');
+    const entrepriseFields = document.getElementById('entreprise-fields');
+
+    const updateFormFields = () => {
+        const selectedType = document.querySelector('input[name="customerType"]:checked').value;
+        if (selectedType === 'Particulier') {
+            particulierFields.style.display = 'block';
+            entrepriseFields.style.display = 'none';
+            // Set required attributes for particulier fields
+            particulierFields.querySelectorAll('input').forEach(input => input.required = true);
+            entrepriseFields.querySelectorAll('input').forEach(input => input.required = false);
+        } else {
+            particulierFields.style.display = 'none';
+            entrepriseFields.style.display = 'block';
+            // Set required attributes for entreprise fields
+            particulierFields.querySelectorAll('input').forEach(input => input.required = false);
+            entrepriseFields.querySelectorAll('input').forEach(input => input.required = true);
+        }
+    };
+
+    if (customerTypeRadios.length > 0) {
+        customerTypeRadios.forEach(radio => {
+            radio.addEventListener('change', updateFormFields);
+        });
+        // Initialiser les champs au chargement de la page
+        updateFormFields();
+    }
+
+    // Initialiser le calendrier avec les dates indisponibles
+    fetchAndInitializeDatepicker();
 });
 
 // --- I18N (TRANSLATION) LOGIC ---
@@ -110,11 +164,11 @@ function initializePageContent() {
     createLanguageSwitcher();
     initializeCookieConsent();
     initializeWelcomePopup();
+    fetchAndInitializeDatepicker(); // Moved to be called on all pages
 
     // Functions that should ONLY run on the main page (index.html)
     if (document.querySelector('#accueil')) {
         initializeScrollBasedEffects();
-        fetchAndInitializeDatepicker();
         initializeServiceMenu();
         initializeMobileMenu();
         initializeBackToTopButton();
