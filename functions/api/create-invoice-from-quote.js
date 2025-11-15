@@ -34,7 +34,8 @@ export async function onRequest(context) {
 
         if (quoteError) throw new Error(`Failed to fetch quote: ${quoteError.message}`);
         if (!quote) throw new Error('Quote not found.');
-        if (quote.status === 'accepted' || quote.status === 'invoiced') {
+        // Correction de la vérification de statut
+        if (quote.status === 'Accepté' || quote.status === 'invoiced') {
             throw new Error('This quote has already been processed.');
         }
 
@@ -64,10 +65,10 @@ export async function onRequest(context) {
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        // 4. Update the original quote's status to 'Accepted'
+        // 4. Update the original quote's status to 'invoiced'
         const { error: updateQuoteError } = await supabase
             .from('quotes')
-            .update({ status: 'Accepté' })
+            .update({ status: 'invoiced' })
             .eq('id', quoteId);
 
         if (updateQuoteError) throw new Error(`Failed to update quote status: ${updateQuoteError.message}`);
