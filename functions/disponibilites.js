@@ -86,7 +86,7 @@ export async function onRequest(context) {
             return new Date(`${yearA}-${monthA}-${dayA}`) - new Date(`${yearB}-${monthB}-${dayB}`);
         });
 
-        return addCorsHeaders(new Response(JSON.stringify({ unavailableDates: sortedUnavailableDates }), {
+        return addCorsHeaders(new Response(JSON.stringify(sortedUnavailableDates), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         }));
