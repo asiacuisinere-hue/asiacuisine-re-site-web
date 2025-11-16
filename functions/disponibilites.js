@@ -54,20 +54,21 @@ export async function onRequest(context) {
 
         indisponibilites.forEach(item => {
             if (item.date) {
-                // Specific date blocked
-                const blockedDate = new Date(item.date);
-                blockedDate.setHours(0, 0, 0, 0);
+                // Specific date blocked, convert YYYY-MM-DD to DD/MM/YYYY
+                const dateParts = item.date.split('-'); // [YYYY, MM, DD]
+                const blockedDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                
                 if (blockedDate >= today) { // Only add future or current dates
-                    const day = blockedDate.getDate().toString().padStart(2, '0');
-                    const month = (blockedDate.getMonth() + 1).toString().padStart(2, '0');
-                    const year = blockedDate.getFullYear();
+                    const day = dateParts[2];
+                    const month = dateParts[1];
+                    const year = dateParts[0];
                     unavailableDates.add(`${day}/${month}/${year}`);
                 }
             } else if (item.day_of_week !== null) {
                 // Recurring day of week blocked
                 // Add all future occurrences of this day of week for the next year
                 for (let i = 0; i < 365; i++) {
-                    const futureDate = new Date(today);
+                    const futureDate = new Date();
                     futureDate.setDate(today.getDate() + i);
                     if (futureDate.getDay() === item.day_of_week) {
                         const day = futureDate.getDate().toString().padStart(2, '0');
@@ -79,9 +80,13 @@ export async function onRequest(context) {
             }
         });
 
-        const sortedUnavailableDates = Array.from(unavailableDates).sort();
+        const sortedUnavailableDates = Array.from(unavailableDates).sort((a, b) => {
+            const [dayA, monthA, yearA] = a.split('/');
+            const [dayB, monthB, yearB] = b.split('/');
+            return new Date(`${yearA}-${monthA}-${dayA}`) - new Date(`${yearB}-${monthB}-${dayB}`);
+        });
 
-        return addCorsHeaders(new Response(JSON.stringify(sortedUnavailableDates), {
+        return addCorsHeaders(new Response(JSON.stringify({ unavailableDates: sortedUnavailableDates }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         }));
