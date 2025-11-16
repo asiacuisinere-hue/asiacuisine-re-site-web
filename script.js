@@ -229,6 +229,7 @@ async function fetchAndInitializeDatepicker() {
         if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         
         const data = await response.json();
+console.log('--- [DEBUG] Disponibilités reçues:', data);
         const unavailableDates = (data.unavailableDates || []).map(date => {
             const parts = date.split('/');
             return `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD/MM/YYYY to YYYY-MM-DD
@@ -703,6 +704,7 @@ async function fetchAndInitializeDatepicker() {
         if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         
         const data = await response.json();
+console.log('--- [DEBUG] Disponibilités reçues:', data);
         const unavailableDates = (data.unavailableDates || []).map(date => {
             const parts = date.split('/');
             return `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD/MM/YYYY to YYYY-MM-DD
