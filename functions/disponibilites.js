@@ -32,7 +32,11 @@ export async function onRequest(context) {
         }
 
         demandes.forEach(demande => {
-            unavailableDates.add(demande.request_date);
+            const date = new Date(demande.request_date);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            unavailableDates.add(`${day}/${month}/${year}`);
         });
 
         // 2. Fetch dates from 'indisponibilites' table (new logic)
@@ -54,7 +58,10 @@ export async function onRequest(context) {
                 const blockedDate = new Date(item.date);
                 blockedDate.setHours(0, 0, 0, 0);
                 if (blockedDate >= today) { // Only add future or current dates
-                    unavailableDates.add(item.date);
+                    const day = blockedDate.getDate().toString().padStart(2, '0');
+                    const month = (blockedDate.getMonth() + 1).toString().padStart(2, '0');
+                    const year = blockedDate.getFullYear();
+                    unavailableDates.add(`${day}/${month}/${year}`);
                 }
             } else if (item.day_of_week !== null) {
                 // Recurring day of week blocked
@@ -63,7 +70,10 @@ export async function onRequest(context) {
                     const futureDate = new Date(today);
                     futureDate.setDate(today.getDate() + i);
                     if (futureDate.getDay() === item.day_of_week) {
-                        unavailableDates.add(futureDate.toISOString().split('T')[0]);
+                        const day = futureDate.getDate().toString().padStart(2, '0');
+                        const month = (futureDate.getMonth() + 1).toString().padStart(2, '0');
+                        const year = futureDate.getFullYear();
+                        unavailableDates.add(`${day}/${month}/${year}`);
                     }
                 }
             }
