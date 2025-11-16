@@ -181,10 +181,7 @@ async function fetchAndInitializeDatepicker() {
         
         const data = await response.json();
 console.log('--- [DEBUG] Disponibilités reçues:', data);
-        const unavailableDates = (data.unavailableDates || []).map(date => {
-            const parts = date.split('/');
-            return `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD/MM/YYYY to YYYY-MM-DD
-        });
+        const unavailableDates = data || [];
 
         new Datepicker(dateInput, {
             format: 'dd/mm/yyyy', // Display format
@@ -656,10 +653,7 @@ async function fetchAndInitializeDatepicker() {
         
         const data = await response.json();
 console.log('--- [DEBUG] Disponibilités reçues:', data);
-        const unavailableDates = (data.unavailableDates || []).map(date => {
-            const parts = date.split('/');
-            return `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD/MM/YYYY to YYYY-MM-DD
-        });
+        const unavailableDates = data || [];
 
         new Datepicker(dateInput, {
             format: 'dd/mm/yyyy', // Display format
