@@ -455,12 +455,27 @@ function initializeCookieConsent() {
     });
 }
 
-function initializeWelcomePopup() {
+async function initializeWelcomePopup() {
     const popup = document.getElementById('welcome-popup');
     const closeBtn = document.getElementById('welcome-popup-close');
+    const messageElement = document.getElementById('welcome-popup-message');
 
-    if (!popup || !closeBtn) {
+    if (!popup || !closeBtn || !messageElement) {
         return;
+    }
+
+    // Fetch the custom message
+    try {
+        const response = await fetch('/functions/get-setting?key=welcomePopupMessage');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.value) {
+                messageElement.textContent = data.value;
+            }
+        }
+    } catch (error) {
+        console.error('Could not fetch welcome popup message:', error);
+        // The default message in the HTML will be used as a fallback
     }
 
     const sessionKey = 'asiacuisine.re-welcome-shown';
@@ -927,12 +942,27 @@ function initializeCookieConsent() {
     });
 }
 
-function initializeWelcomePopup() {
+async function initializeWelcomePopup() {
     const popup = document.getElementById('welcome-popup');
     const closeBtn = document.getElementById('welcome-popup-close');
+    const messageElement = document.getElementById('welcome-popup-message');
 
-    if (!popup || !closeBtn) {
+    if (!popup || !closeBtn || !messageElement) {
         return;
+    }
+
+    // Fetch the custom message
+    try {
+        const response = await fetch('/functions/get-setting?key=welcomePopupMessage');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.value) {
+                messageElement.textContent = data.value;
+            }
+        }
+    } catch (error) {
+        console.error('Could not fetch welcome popup message:', error);
+        // The default message in the HTML will be used as a fallback
     }
 
     const sessionKey = 'asiacuisine.re-welcome-shown';

@@ -6,7 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginError = document.getElementById('login-error');
     const bookingList = document.getElementById('booking-list');
 
+    // New elements for Welcome Message
+    const welcomeMessageInput = document.getElementById('welcome-message-input');
+    const saveWelcomeMessageBtn = document.getElementById('save-welcome-message');
+    const saveStatus = document.getElementById('save-status');
+
     let adminPassword = null;
+
+    // 0. Add event listener for the save button
+    saveWelcomeMessageBtn.addEventListener('click', handleSaveWelcomeMessage);
 
     // 1. Handle Login
     loginForm.addEventListener('submit', async (e) => {
@@ -28,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginSection.style.display = 'none';
                 adminContent.style.display = 'block';
                 fetchAndDisplayBookings();
+                fetchAndDisplayWelcomeMessage(); // Fetch the welcome message
             } else {
                 loginError.textContent = result.message || 'Erreur de connexion.';
             }
@@ -35,6 +44,64 @@ document.addEventListener('DOMContentLoaded', () => {
             loginError.textContent = 'Une erreur de réseau est survenue.';
         }
     });
+
+    // New function to fetch and display the welcome message
+    async function fetchAndDisplayWelcomeMessage() {
+        try {
+            const response = await fetch('/functions/get-setting?key=welcomePopupMessage');
+            // No auth needed for GET
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.value) {
+                    welcomeMessageInput.value = data.value;
+                }
+            } else if (response.status === 404) {
+                // Key doesn't exist yet, which is fine.
+                welcomeMessageInput.value = '';
+            } 
+            else {
+                console.error('Failed to fetch welcome message');
+            }
+        } catch (error) {
+            console.error('Error fetching welcome message:', error);
+        }
+    }
+
+    // New function to handle saving the welcome message
+    async function handleSaveWelcomeMessage() {
+        if (!adminPassword) return;
+
+        const message = welcomeMessageInput.value;
+        saveStatus.textContent = 'Enregistrement...';
+        saveStatus.style.color = '#333';
+
+        try {
+            const response = await fetch('/api/update-setting', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    password: adminPassword,
+                    key: 'welcomePopupMessage',
+                    value: message
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                saveStatus.textContent = 'Message enregistré avec succès !';
+                saveStatus.style.color = 'green';
+            } else {
+                throw new Error(result.message || 'Failed to save message.');
+            }
+        } catch (error) {
+            saveStatus.textContent = `Erreur: ${error.message}`;
+            saveStatus.style.color = 'red';
+            console.error('Error saving welcome message:', error);
+        }
+    }
+
 
     // 2. Fetch and Display Bookings
     async function fetchAndDisplayBookings() {
