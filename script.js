@@ -188,7 +188,7 @@ console.log('--- [DEBUG] Disponibilités reçues:', data);
             language: 'fr',
             autohide: true,
             datesDisabled: unavailableDates,
-            minDate: new Date(new Date().setDate(new Date().getDate() + 1)),
+            minDate: new Date(new Date().setDate(new Date().getDate() + 7)),
             showDaysInNextAndPreviousMonths: false
         });
 
@@ -660,7 +660,7 @@ console.log('--- [DEBUG] Disponibilités reçues:', data);
             language: 'fr',
             autohide: true,
             datesDisabled: unavailableDates,
-            minDate: new Date(new Date().setDate(new Date().getDate() + 1)),
+            minDate: new Date(new Date().setDate(new Date().getDate() + 7)),
             showDaysInNextAndPreviousMonths: false
         });
 
