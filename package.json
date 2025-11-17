@@ -16,5 +16,8 @@
     "dotenv": "^17.2.1",
     "pdf-lib": "^1.17.1",
     "resend": "^3.5.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.47.0"
   }
 }

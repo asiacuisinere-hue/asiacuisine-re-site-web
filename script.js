@@ -466,7 +466,7 @@ async function initializeWelcomePopup() {
 
     // Fetch the custom message
     try {
-        const response = await fetch('/functions/get-setting?key=welcomePopupMessage');
+        const response = await fetch('/get-setting?key=welcomePopupMessage');
         if (response.ok) {
             const data = await response.json();
             if (data.value) {
@@ -953,7 +953,7 @@ async function initializeWelcomePopup() {
 
     // Fetch the custom message
     try {
-        const response = await fetch('/functions/get-setting?key=welcomePopupMessage');
+        const response = await fetch('/get-setting?key=welcomePopupMessage');
         if (response.ok) {
             const data = await response.json();
             if (data.value) {
