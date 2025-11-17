@@ -9,6 +9,8 @@ const addCorsHeaders = (response) => {
 };
 
 export async function onRequest(context) {
+    console.log('--- [DEBUG] get-setting function invoked ---'); // Added for debugging
+
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
