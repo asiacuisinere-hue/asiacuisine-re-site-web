@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let unavailableDates = [];
     let selectedDate = null;
 
+    // Helper function to convert DD/MM/YYYY to YYYY-MM-DD for API submission
+    function convertDateToISO(dateString) {
+        if (!dateString) return null;
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        return dateString; // Return original if format is unexpected
+    }
+
     // Fetch unavailable dates from Netlify function
     async function fetchUnavailableDates() {
         try {
@@ -16,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            unavailableDates = data.unavailableDates || [];
+            unavailableDates = data || []; // Data is already DD/MM/YYYY array
             renderCalendar();
         } catch (error) {
             console.error('Error fetching unavailable dates:', error);
@@ -74,16 +84,40 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= daysInMonth; i++) {
             const date = new Date(year, month, i);
             date.setHours(0, 0, 0, 0);
-            const dateString = date.toISOString().split('T')[0];
+            // Format date for comparison with unavailableDates (DD/MM/YYYY)
+            const dateStringDDMMYYYY = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
             const dayOfWeek = date.getDay();
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day current-month';
             dayElement.textContent = i;
-            let isDisabled = date < today || (dayOfWeek !== 3 && dayOfWeek !== 5 && dayOfWeek !== 6) || unavailableDates.includes(dateString);
+            
+            let isDisabled = false;
+
+            // Disable past dates
+            if (date < today) {
+                isDisabled = true;
+            }
+
+            // Disable non-Wednesday, Friday, Saturday (0=Sun, 1=Mon, ..., 6=Sat)
+            if (dayOfWeek !== 3 && dayOfWeek !== 5 && dayOfWeek !== 6) {
+                isDisabled = true;
+            }
+
+            // Disable dates from API
+            if (unavailableDates.includes(dateStringDDMMYYYY)) {
+                isDisabled = true;
+            }
+
+            // Calculate cut-off time for 48-hour advance booking before 11 AM
             const cutOffDate = new Date(date);
-            cutOffDate.setDate(date.getDate() - 2);
-            cutOffDate.setHours(11, 0, 0, 0);
-            if (new Date() > cutOffDate) isDisabled = true;
+            cutOffDate.setDate(date.getDate() - 2); // 2 days before delivery date
+            cutOffDate.setHours(11, 0, 0, 0); // Set to 11 AM
+
+            const now = new Date();
+
+            if (now > cutOffDate) {
+                isDisabled = true;
+            }
 
             if (isDisabled) {
                 dayElement.classList.add('disabled');
@@ -91,15 +125,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 dayElement.classList.add('available');
                 dayElement.addEventListener('click', () => {
                     selectedDate = date;
-                    jourInput.value = dateString;
+                    jourInput.value = dateStringDDMMYYYY; // Store in DD/MM/YYYY
                     selectedDateDisplay.value = formatDateForDisplay(date);
                     renderCalendar(monthOffset);
                 });
             }
-            if (selectedDate && dateString === selectedDate.toISOString().split('T')[0]) {
+            if (selectedDate && dateStringDDMMYYYY === `${String(selectedDate.getDate()).padStart(2, '0')}/${String(selectedDate.getMonth() + 1).padStart(2, '0')}/${selectedDate.getFullYear()}`) {
                 dayElement.classList.add('selected');
             }
-            if (dateString === today.toISOString().split('T')[0]) {
+            if (dateStringDDMMYYYY === `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`) {
                 dayElement.classList.add('today');
             }
             calendarGrid.appendChild(dayElement);
