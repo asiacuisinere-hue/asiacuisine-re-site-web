@@ -1,12 +1,22 @@
 script.js:5 DOM fully loaded and parsed
-script.js:32 Failed to initialize page: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-loadRecaptchaAndInitialize @ script.js:32
-script.js:44 Initializing i18next...
-script.js:60 Language detected from URL: fr
+script.js:16 Initializing i18next...
+script.js:32 Language detected from URL: fr
 i18next.min.js:1 i18next: languageChanged fr
 i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
-script.js:77 Running updateContent()...
-script.js:79 Found 98 elements to translate.
-script.js:95 Updating links to persist language: fr
-script.js:211 --- [DEBUG] Disponibilités reçues: ['18/11/2025']
+script.js:7 i18next initialized, now initializing page content.
+script.js:49 Running updateContent()...
+script.js:51 Found 98 elements to translate.
+script.js:67 Updating links to persist language: fr
+script.js:183 --- [DEBUG] Disponibilités reçues: ['18/11/2025']
 asiacuisine.re/favicon.png:1  GET https://asiacuisine.re/favicon.png net::ERR_CONNECTION_REFUSED
+recaptcha__fr.js:224 Uncaught Error: Invalid site key or not loaded in api.js: %%RECAPTCHA_SITE_KEY%%
+    at Array.<anonymous> (recaptcha__fr.js:224:374)
+    at recaptcha__fr.js:290:244
+    at script.js:361:24
+(anonymous) @ recaptcha__fr.js:224
+(anonymous) @ recaptcha__fr.js:290
+(anonymous) @ script.js:361
+setTimeout
+t @ recaptcha__fr.js:44
+(anonymous) @ recaptcha__fr.js:191
+(anonymous) @ script.js:360
