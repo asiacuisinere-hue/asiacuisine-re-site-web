@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch and display menu content or override message
     async function fetchMenuContent() {
         try {
-            const response = await fetch('/api/get-menus');
+            const response = await fetch('/get-menus');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
