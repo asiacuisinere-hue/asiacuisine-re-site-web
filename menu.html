@@ -15,201 +15,8 @@
 
     <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        body {
-            background: #f8f8f8;
-        }
-        .menu-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 120px 2rem 4rem; /* Padding top to be below navbar */
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-            margin-top: 4rem;
-            margin-bottom: 4rem;
-        }
-        .menu-container h1, .menu-container h2, .menu-container h3 {
-            color: #1a1a1a;
-            text-align: center;
-        }
-        .menu-container h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .menu-container .subtitle {
-            text-align: center;
-            font-style: italic;
-            color: #666;
-            margin-bottom: 3rem;
-        }
-        .formula-card {
-            border: 2px solid #eee;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            opacity: 0.7; /* Par défaut : légèrement estompé */
-            filter: grayscale(50%); /* Par défaut : légèrement désaturé */
-        }
-        .formula-card:hover {
-            border-color: #d4af37;
-            opacity: 0.85; /* Au survol d'une carte non sélectionnée : un peu plus visible */
-            filter: grayscale(25%);
-        }
-        .formula-card.selected {
-            border-color: #d4af37;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-            opacity: 1; /* Sélectionné : pleine couleur */
-            filter: grayscale(0%);
-        }
-        .formula-card.selected:hover {
-            /* Garde l'état sélectionné proéminent au survol */
-            opacity: 1;
-            filter: grayscale(0%);
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3); /* Ombre légèrement plus prononcée */
-        }
-        .formula-card input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            cursor: pointer;
-        }
-        .formula-card h3 {
-            color: #d4af37;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .formula-card .price {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #1a1a1a;
-            margin-bottom: 1rem;
-        }
-        .info-section {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 2px dashed #eee;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: bold;
-        }
-        .form-group input {
-            padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        @media (max-width: 600px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        /* Calendar styles */
-        .calendar {
-            font-family: Arial, sans-serif;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            background-color: #fff;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .calendar-header button {
-            background-color: #d4af37;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .calendar-header button:hover {
-            background-color: #c0a030;
-        }
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            text-align: center;
-        }
-        .calendar-day-header {
-            font-weight: bold;
-            color: #555;
-        }
-        .calendar-day {
-            padding: 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .calendar-day.current-month {
-            color: #333;
-        }
-        .calendar-day.other-month {
-            color: #ccc;
-            cursor: not-allowed;
-        }
-        .calendar-day.selected {
-            background-color: #d4af37;
-            color: white;
-        }
-        .calendar-day.available:hover:not(.selected) {
-            background-color: #ffe082;
-        }
-        .calendar-day.disabled {
-            color: #ccc;
-            cursor: not-allowed;
-            background-color: #f0f0f0;
-        }
-        .calendar-day.today {
-            border: 1px solid #d4af37;
-        }
-        /* Style for selected sub-options */
-        .sub-options label input[type="radio"]:checked + span {
-            font-weight: bold;
-            color: #d4af37;
-        }
-        .sub-options label {
-            cursor: pointer;
-            padding: 5px 0;
-            border-radius: 5px;
-            transition: background-color 0.2s ease;
-        }
-        .sub-options label:hover {
-            background-color: #f0f0f0;
-        }
-        .sub-options label input[type="radio"] {
-            margin-right: 8px;
-            position: relative; /* Override absolute positioning from formula-card input */
-            opacity: 1; /* Make radio button visible */
-            width: auto;
-            height: auto;
-            cursor: pointer;
-        }
-        
-    </style>
+    <!-- Google reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=%%RECAPTCHA_SITE_KEY%%"></script>
 </head>
 <body>
 
@@ -539,81 +346,103 @@
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
+                const submitBtn = form.querySelector('.cta-button');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Vérification...';
+                submitBtn.disabled = true;
 
-                // --- Validation des champs ---
-                if (!data.formule) {
-                    alert('Veuillez choisir une formule.');
-                    return;
-                }
-                if (!data.jour) {
-                    alert('Veuillez choisir une date de livraison/retrait.');
-                    return;
-                }
-                if (!data.email) {
-                    alert('Veuillez renseigner votre adresse e-mail.');
-                    return;
-                }
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
+                        const formData = new FormData(form);
+                        const data = Object.fromEntries(formData.entries());
 
-                let formulaOption = null;
-                if (data.formule.includes("Formule Standard")) {
-                    const selectedOptionStandard = document.querySelector('input[name="optionStandard"]:checked');
-                    if (!selectedOptionStandard) {
-                        alert('Veuillez choisir une option (A ou B) pour la Formule Standard.');
-                        return;
-                    }
-                    formulaOption = selectedOptionStandard.value;
-                } else if (data.formule.includes("Formule Confort")) {
-                    const selectedOptionConfort = document.querySelector('input[name="optionConfort"]:checked');
-                    if (!selectedOptionConfort) {
-                        alert('Veuillez choisir une option (A ou B) pour la Formule Confort.');
-                        return;
-                    }
-                    formulaOption = selectedOptionConfort.value;
-                } else if (data.formule.includes("Option Duo")) {
-                    const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
-                    if (!selectedOptionDuo) {
-                        alert("Veuillez choisir une option (A ou B) pour l'Option Duo.");
-                        return;
-                    }
-                    formulaOption = selectedOptionDuo.value;
-                }
+                        // --- Validation des champs ---
+                        if (!data.formule) {
+                            alert('Veuillez choisir une formule.');
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                        if (!data.jour) {
+                            alert('Veuillez choisir une date de livraison/retrait.');
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                        if (!data.email) {
+                            alert('Veuillez renseigner votre adresse e-mail.');
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            return;
+                        }
 
-                // --- Préparation des données pour l'API ---
-                const orderData = {
-                    type: 'COMMANDE_MENU',
-                    customerType: 'Particulier', // Correction de la valeur
-                    formulaName: data.formule,
-                    formulaOption: formulaOption,
-                    customer: {
-                        firstName: data.prenom,
-                        lastName: data.nom,
-                        phone: data.telephone,
-                        email: data.email
-                    },
-                    deliveryCity: data.livraison,
-                    requestDate: data.jour
-                };
+                        let formulaOption = null;
+                        if (data.formule.includes("Formule Standard")) {
+                            const selectedOptionStandard = document.querySelector('input[name="optionStandard"]:checked');
+                            if (!selectedOptionStandard) {
+                                alert('Veuillez choisir une option (A ou B) pour la Formule Standard.');
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                                return;
+                            }
+                            formulaOption = selectedOptionStandard.value;
+                        } else if (data.formule.includes("Formule Confort")) {
+                            const selectedOptionConfort = document.querySelector('input[name="optionConfort"]:checked');
+                            if (!selectedOptionConfort) {
+                                alert('Veuillez choisir une option (A ou B) pour la Formule Confort.');
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                                return;
+                            }
+                            formulaOption = selectedOptionConfort.value;
+                        } else if (data.formule.includes("Option Duo")) {
+                            const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
+                            if (!selectedOptionDuo) {
+                                alert("Veuillez choisir une option (A ou B) pour l'Option Duo.");
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                                return;
+                            }
+                            formulaOption = selectedOptionDuo.value;
+                        }
 
-                try {
-                    // 1. Envoyer les données à l'API pour enregistrement
-                    const response = await fetch('/create-request/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(orderData)
-                    });
+                        // --- Préparation des données pour l'API ---
+                        const orderData = {
+                            type: 'COMMANDE_MENU',
+                            customerType: 'Particulier', // Correction de la valeur
+                            formulaName: data.formule,
+                            formulaOption: formulaOption,
+                            customer: {
+                                firstName: data.prenom,
+                                lastName: data.nom,
+                                phone: data.telephone,
+                                email: data.email
+                            },
+                            deliveryCity: data.livraison,
+                            requestDate: data.jour,
+                            recaptchaToken: recaptchaToken // Add reCAPTCHA token
+                        };
 
-                    if (!response.ok) {
-                        const errorResult = await response.json();
-                        throw new Error(errorResult.error || 'Une erreur serveur est survenue.');
-                    }
+                        submitBtn.textContent = 'Envoi en cours...';
 
-                    // 2. Si l'enregistrement est réussi, préparer et ouvrir WhatsApp
-                    const formuleDetails = data.formule + (formulaOption ? ` (${formulaOption})` : '');
-                    const message = `
+                        try {
+                            // 1. Envoyer les données à l'API pour enregistrement
+                            const response = await fetch('/create-request/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(orderData)
+                            });
+
+                            if (!response.ok) {
+                                const errorResult = await response.json();
+                                throw new Error(errorResult.error || 'Une erreur serveur est survenue.');
+                            }
+
+                            // 2. Si l'enregistrement est réussi, préparer et ouvrir WhatsApp
+                            const formuleDetails = data.formule + (formulaOption ? ` (${formulaOption})` : '');
+                            const message = `
 Bonjour, je souhaite passer une commande :
 
 - Formule : ${formuleDetails}
@@ -622,20 +451,25 @@ Bonjour, je souhaite passer une commande :
 - Livraison/Retrait : ${data.livraison}, le ${data.jour}
 
 Merci !
-                    `;
+                            `;
 
-                    const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message.trim())}`;
-                    window.open(whatsappUrl, '_blank');
+                            const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message.trim())}`;
+                            window.open(whatsappUrl, '_blank');
 
-                    // 3. Réinitialiser le formulaire
-                    form.reset();
-                    // Optionnel : réinitialiser l'état visuel des cartes
-                    cards.forEach(c => c.classList.remove('selected'));
+                            // 3. Réinitialiser le formulaire
+                            form.reset();
+                            // Optionnel : réinitialiser l'état visuel des cartes
+                            cards.forEach(c => c.classList.remove('selected'));
 
-                } catch (error) {
-                    console.error('Erreur lors de la soumission:', error);
-                    alert(`Une erreur est survenue : ${error.message}`);
-                }
+                        } catch (error) {
+                            console.error('Erreur lors de la soumission:', error);
+                            alert(`Une erreur est survenue : ${error.message}`);
+                        } finally {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    }.bind(this)); // Bind 'this' to the async function
+                });
             });
         });
     </script>

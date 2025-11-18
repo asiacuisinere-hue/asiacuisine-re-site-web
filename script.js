@@ -348,40 +348,47 @@ function initializeForm() {
             return;
         }
 
-        submitBtn.textContent = 'Envoi en cours...';
+        submitBtn.textContent = 'Vérification...';
         submitBtn.disabled = true;
 
-        const requestPayload = {
-            type: 'RESERVATION_SERVICE',
-            customerType: data.customer_type,
-            customer: customerData, // Use the dynamically built customerData
-            requestDate: data.date,
-            serviceType: data.service,
-            numberOfPeople: data.personnes,
-            customerMessage: data.message || null
-        };
+        grecaptcha.ready(function() {
+            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
+                const requestPayload = {
+                    type: 'RESERVATION_SERVICE',
+                    customerType: data.customer_type,
+                    customer: customerData, // Use the dynamically built customerData
+                    requestDate: data.date,
+                    serviceType: data.service,
+                    numberOfPeople: data.personnes,
+                    customerMessage: data.message || null,
+                    recaptchaToken: recaptchaToken // Add reCAPTCHA token
+                };
 
-        try {
-            const response = await fetch('/create-request/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestPayload),
-            });
-            const result = await response.json();
-            if (response.ok) {
-                showNotification('Votre demande a été envoyée avec succès !');
-                this.reset();
-                fetchAndInitializeDatepicker(); // Re-initialize datepicker to refresh unavailable dates
-            } else {
-                showNotification(`Erreur: ${result.error || 'Une erreur inconnue est survenue.'}`, 'error');
-            }
-        } catch (error) {
-            console.error('Submission Error:', error);
-            showNotification('Une erreur de connexion est survenue. Veuillez réessayer.', 'error');
-        } finally {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
+                submitBtn.textContent = 'Envoi en cours...';
+
+                try {
+                    const response = await fetch('/create-request/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestPayload),
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showNotification('Votre demande a été envoyée avec succès !');
+                        this.reset();
+                        fetchAndInitializeDatepicker(); // Re-initialize datepicker to refresh unavailable dates
+                    } else {
+                        showNotification(`Erreur: ${result.error || 'Une erreur inconnue est survenue.'}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Submission Error:', error);
+                    showNotification('Une erreur de connexion est survenue. Veuillez réessayer.', 'error');
+                } finally {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            }.bind(this)); // Bind 'this' to the async function
+        });
     });
 }
 
@@ -835,40 +842,47 @@ function initializeForm() {
             return;
         }
 
-        submitBtn.textContent = 'Envoi en cours...';
+        submitBtn.textContent = 'Vérification...';
         submitBtn.disabled = true;
 
-        const requestPayload = {
-            type: 'RESERVATION_SERVICE',
-            customerType: data.customer_type,
-            customer: customerData, // Use the dynamically built customerData
-            requestDate: data.date,
-            serviceType: data.service,
-            numberOfPeople: data.personnes,
-            customerMessage: data.message || null
-        };
+        grecaptcha.ready(function() {
+            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
+                const requestPayload = {
+                    type: 'RESERVATION_SERVICE',
+                    customerType: data.customer_type,
+                    customer: customerData, // Use the dynamically built customerData
+                    requestDate: data.date,
+                    serviceType: data.service,
+                    numberOfPeople: data.personnes,
+                    customerMessage: data.message || null,
+                    recaptchaToken: recaptchaToken // Add reCAPTCHA token
+                };
 
-        try {
-            const response = await fetch('/create-request/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestPayload),
-            });
-            const result = await response.json();
-            if (response.ok) {
-                showNotification('Votre demande a été envoyée avec succès !');
-                this.reset();
-                fetchAndInitializeDatepicker(); // Re-initialize datepicker to refresh unavailable dates
-            } else {
-                showNotification(`Erreur: ${result.error || 'Une erreur inconnue est survenue.'}`, 'error');
-            }
-        } catch (error) {
-            console.error('Submission Error:', error);
-            showNotification('Une erreur de connexion est survenue. Veuillez réessayer.', 'error');
-        } finally {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
+                submitBtn.textContent = 'Envoi en cours...';
+
+                try {
+                    const response = await fetch('/create-request/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestPayload),
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showNotification('Votre demande a été envoyée avec succès !');
+                        this.reset();
+                        fetchAndInitializeDatepicker(); // Re-initialize datepicker to refresh unavailable dates
+                    } else {
+                        showNotification(`Erreur: ${result.error || 'Une erreur inconnue est survenue.'}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Submission Error:', error);
+                    showNotification('Une erreur de connexion est survenue. Veuillez réessayer.', 'error');
+                } finally {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            }.bind(this)); // Bind 'this' to the async function
+        });
     });
 }
 
