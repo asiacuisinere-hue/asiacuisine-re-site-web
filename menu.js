@@ -10,13 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const menus = await response.json();
             const contentContainer = document.getElementById('weekly-menu-content');
+            const form = document.getElementById('whatsapp-order-form');
 
-            if (!contentContainer) return;
+            if (!contentContainer || !form) return;
 
             // Check if the override message is enabled and has content
             if (menus.menu_override_enabled === 'true' && menus.menu_override_message) {
                 // Display only the override message
                 contentContainer.innerHTML = `<p style="font-weight: bold; color: #c0392b; white-space: pre-wrap;">${menus.menu_override_message}</p>`;
+                
+                // Disable the form
+                form.style.opacity = '0.5';
+                form.style.pointerEvents = 'none';
+                Array.from(form.elements).forEach(element => {
+                    element.disabled = true;
+                });
+
             } else {
                 // Otherwise, display the regular menu details
                 const menuMapping = {
