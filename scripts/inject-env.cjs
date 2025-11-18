@@ -1,4 +1,7 @@
-const replace = require('replace-in-file');
+const fs = require('fs');
+const path = require('path');
+
+console.log('--- Running custom build script using Node.js fs ---');
 
 const siteKey = process.env.RECAPTCHA_SITE_KEY;
 
@@ -7,24 +10,32 @@ if (!siteKey) {
     process.exit(1);
 }
 
-const options = {
-    files: [
-        './index.html',
-        './menu.html',
-    ],
-    from: /%%RECAPTCHA_SITE_KEY%%/g,
-    to: siteKey,
-};
+console.log('RECAPTCHA_SITE_KEY is available. Starting file replacements...');
 
-async function runReplace() {
+const filesToProcess = [
+    path.join(__dirname, '..', 'index.html'),
+    path.join(__dirname, '..', 'menu.html'),
+];
+
+filesToProcess.forEach(filePath => {
     try {
-        const results = await replace(options);
-        console.log('Replacement results:', results);
-        console.log('Successfully injected reCAPTCHA site key.');
+        console.log(`Processing file: ${filePath}`);
+        const content = fs.readFileSync(filePath, 'utf8');
+        
+        if (!content.includes('%%RECAPTCHA_SITE_KEY%%')) {
+            console.warn(`Warning: Placeholder not found in ${filePath}. Skipping.`);
+            return;
+        }
+
+        const newContent = content.replace(/%%RECAPTCHA_SITE_KEY%%/g, siteKey);
+        fs.writeFileSync(filePath, newContent, 'utf8');
+        
+        console.log(`Successfully injected site key into ${filePath}`);
     } catch (error) {
-        console.error('Error occurred during file replacement:', error);
+        console.error(`Error processing file ${filePath}:`, error);
         process.exit(1);
     }
-}
+});
 
-runReplace();
+console.log('Build script finished successfully.');
+process.exit(0);

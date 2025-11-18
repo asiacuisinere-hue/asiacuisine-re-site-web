@@ -1,22 +1,48 @@
-script.js:5 DOM fully loaded and parsed
-script.js:16 Initializing i18next...
-script.js:32 Language detected from URL: fr
-i18next.min.js:1 i18next: languageChanged fr
-i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
-script.js:7 i18next initialized, now initializing page content.
-script.js:49 Running updateContent()...
-script.js:51 Found 98 elements to translate.
-script.js:67 Updating links to persist language: fr
-script.js:183 --- [DEBUG] Disponibilités reçues: ['18/11/2025']
-asiacuisine.re/favicon.png:1  GET https://asiacuisine.re/favicon.png net::ERR_CONNECTION_REFUSED
-recaptcha__fr.js:224 Uncaught Error: Invalid site key or not loaded in api.js: %%RECAPTCHA_SITE_KEY%%
-    at Array.<anonymous> (recaptcha__fr.js:224:374)
-    at recaptcha__fr.js:290:244
-    at script.js:361:24
-(anonymous) @ recaptcha__fr.js:224
-(anonymous) @ recaptcha__fr.js:290
-(anonymous) @ script.js:361
-setTimeout
-t @ recaptcha__fr.js:44
-(anonymous) @ recaptcha__fr.js:191
-(anonymous) @ script.js:360
+2025-11-18T09:00:55.808793Z	Cloning repository...
+2025-11-18T09:00:58.69364Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
+2025-11-18T09:00:58.694036Z	 * branch            58a89bad3b1dbd753d824f5279e711f9ce036003 -> FETCH_HEAD
+2025-11-18T09:00:58.694136Z	
+2025-11-18T09:00:59.475687Z	HEAD is now at 58a89ba Fix: code corrigé pour lancer le build
+2025-11-18T09:00:59.47613Z	
+2025-11-18T09:00:59.560944Z	
+2025-11-18T09:00:59.561445Z	Using v2 root directory strategy
+2025-11-18T09:00:59.589433Z	Success: Finished cloning repository files
+2025-11-18T09:01:01.71233Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-18T09:01:01.712895Z	
+2025-11-18T09:01:02.825946Z	No wrangler.toml file found. Continuing.
+2025-11-18T09:01:03.050948Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2025-11-18T09:01:03.062761Z	Installing project dependencies: npm clean-install --progress=false
+2025-11-18T09:01:12.40347Z	
+2025-11-18T09:01:12.40375Z	added 177 packages, and audited 178 packages in 8s
+2025-11-18T09:01:12.403922Z	
+2025-11-18T09:01:12.404056Z	37 packages are looking for funding
+2025-11-18T09:01:12.404172Z	  run `npm fund` for details
+2025-11-18T09:01:12.407764Z	
+2025-11-18T09:01:12.408081Z	3 high severity vulnerabilities
+2025-11-18T09:01:12.408247Z	
+2025-11-18T09:01:12.408379Z	To address issues that do not require attention, run:
+2025-11-18T09:01:12.408511Z	  npm audit fix
+2025-11-18T09:01:12.408672Z	
+2025-11-18T09:01:12.408791Z	To address all issues (including breaking changes), run:
+2025-11-18T09:01:12.408918Z	  npm audit fix --force
+2025-11-18T09:01:12.409042Z	
+2025-11-18T09:01:12.409538Z	Run `npm audit` for details.
+2025-11-18T09:01:12.503766Z	Executing user command: npm run build
+2025-11-18T09:01:12.907793Z	
+2025-11-18T09:01:12.908046Z	> site_internet@1.0.0 build
+2025-11-18T09:01:12.908138Z	> node ./scripts/inject-env.cjs
+2025-11-18T09:01:12.908239Z	
+2025-11-18T09:01:13.013719Z	Error occurred during file replacement: TypeError: replace is not a function
+2025-11-18T09:01:13.014045Z	    at runReplace (/opt/buildhome/repo/scripts/inject-env.cjs:21:31)
+2025-11-18T09:01:13.014211Z	    at Object.<anonymous> (/opt/buildhome/repo/scripts/inject-env.cjs:30:1)
+2025-11-18T09:01:13.01437Z	    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+2025-11-18T09:01:13.014512Z	    at Object..js (node:internal/modules/cjs/loader:1895:10)
+2025-11-18T09:01:13.014629Z	    at Module.load (node:internal/modules/cjs/loader:1465:32)
+2025-11-18T09:01:13.014741Z	    at Function._load (node:internal/modules/cjs/loader:1282:12)
+2025-11-18T09:01:13.014817Z	    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+2025-11-18T09:01:13.014921Z	    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+2025-11-18T09:01:13.015029Z	    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+2025-11-18T09:01:13.015139Z	    at node:internal/main/run_main_module:36:49
+2025-11-18T09:01:13.027548Z	Failed: Error while executing user command. Exited with error code: 1
+2025-11-18T09:01:13.042061Z	Failed: build command exited with code: 1
+2025-11-18T09:01:14.304439Z	Failed: error occurred while running build command
