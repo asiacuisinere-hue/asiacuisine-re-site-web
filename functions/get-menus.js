@@ -20,10 +20,9 @@ export async function onRequest(context) {
         console.log('--- [DEBUG] get-menus function called ---');
 
         const { data, error } = await supabase
-            .from('menu_settings')
+            .from('menus_semaine')
             .select('*')
-            .eq('id', 1)
-            .single();
+            .eq('is_active', true);
 
         if (error) {
             console.error('Error fetching menus:', error);
