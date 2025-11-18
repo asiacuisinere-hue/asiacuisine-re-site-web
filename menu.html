@@ -15,8 +15,6 @@
 
     <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="icon" type="image/png" href="favicon.png">
-    <!-- Google reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=%%RECAPTCHA_SITE_KEY%%"></script>
 </head>
 <body>
 
@@ -165,7 +163,30 @@
 
     <script src="menu.js" defer></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        async function loadRecaptchaAndInitialize() {
+            try {
+                const envResponse = await fetch('/get-env');
+                if (!envResponse.ok) throw new Error('Failed to load env config.');
+                
+                const publicEnv = await envResponse.json();
+                const recaptchaSiteKey = publicEnv.recaptchaSiteKey;
+                if (!recaptchaSiteKey) throw new Error('reCAPTCHA Site Key missing.');
+
+                const script = document.createElement('script');
+                script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
+                script.onload = () => {
+                    console.log('reCAPTCHA script loaded for menu page.');
+                    initializeMenuForm(recaptchaSiteKey);
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                console.error('Failed to initialize reCAPTCHA:', error);
+                // Fallback for form initialization without reCAPTCHA
+                initializeMenuForm(null);
+            }
+        }
+
+        function initializeMenuForm(recaptchaSiteKey) {
             const form = document.getElementById('whatsapp-order-form');
             const cards = document.querySelectorAll('.formula-card');
             const selectedDateDisplay = document.getElementById('selected-date-display');
@@ -175,61 +196,45 @@
             let unavailableDates = [];
             let selectedDate = null;
 
-            // Fetch unavailable dates from Netlify function
             async function fetchUnavailableDates() {
                 try {
                     const response = await fetch('/disponibilites');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     unavailableDates = data.unavailableDates || [];
                     renderCalendar();
                 } catch (error) {
                     console.error('Error fetching unavailable dates:', error);
-                    // Fallback: render calendar without unavailable dates if API fails
                     renderCalendar();
                 }
             }
 
-            // Calendar rendering logic
             function renderCalendar(monthOffset = 0) {
-                console.log('Rendering calendar with monthOffset:', monthOffset);
-                calendarContainer.innerHTML = ''; // Clear previous calendar
-
+                calendarContainer.innerHTML = '';
                 const calendarDiv = document.createElement('div');
                 calendarDiv.className = 'calendar';
-
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-
                 const displayDate = new Date();
                 displayDate.setMonth(displayDate.getMonth() + monthOffset);
-                displayDate.setDate(1); // Start from the first day of the month
-
+                displayDate.setDate(1);
                 const month = displayDate.getMonth();
                 const year = displayDate.getFullYear();
-
                 const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-                const dayNames = ["Dim", "Lun", "Mar", "Jeu", "Ven", "Sam"]; // Removed 'Mar' and 'Jeu' as they are not selectable
-
-                // Create calendar header
+                const dayNames = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+                
                 const calendarHeaderDiv = document.createElement('div');
                 calendarHeaderDiv.className = 'calendar-header';
-
                 const prevMonthButton = document.createElement('button');
                 prevMonthButton.id = 'prevMonth';
                 prevMonthButton.innerHTML = '&lt;';
                 prevMonthButton.addEventListener('click', () => renderCalendar(monthOffset - 1));
-
                 const monthYearH2 = document.createElement('h2');
                 monthYearH2.textContent = `${monthNames[month]} ${year}`;
-
                 const nextMonthButton = document.createElement('button');
                 nextMonthButton.id = 'nextMonth';
                 nextMonthButton.innerHTML = '&gt;';
                 nextMonthButton.addEventListener('click', () => renderCalendar(monthOffset + 1));
-
                 calendarHeaderDiv.appendChild(prevMonthButton);
                 calendarHeaderDiv.appendChild(monthYearH2);
                 calendarHeaderDiv.appendChild(nextMonthButton);
@@ -237,8 +242,6 @@
 
                 const calendarGrid = document.createElement('div');
                 calendarGrid.className = 'calendar-grid';
-
-                // Day headers
                 dayNames.forEach(day => {
                     const dayHeader = document.createElement('div');
                     dayHeader.className = 'calendar-day-header';
@@ -246,56 +249,24 @@
                     calendarGrid.appendChild(dayHeader);
                 });
 
-                // Fill in days
-                const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 for Sunday, 1 for Monday, etc.
+                const firstDayOfMonth = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-                // Add empty divs for days before the 1st of the month
                 for (let i = 0; i < firstDayOfMonth; i++) {
                     calendarGrid.appendChild(document.createElement('div'));
                 }
-
                 for (let i = 1; i <= daysInMonth; i++) {
                     const date = new Date(year, month, i);
                     date.setHours(0, 0, 0, 0);
                     const dateString = date.toISOString().split('T')[0];
-                    const dayOfWeek = date.getDay(); // 0-6, 0 is Sunday
-
+                    const dayOfWeek = date.getDay();
                     const dayElement = document.createElement('div');
                     dayElement.className = 'calendar-day current-month';
                     dayElement.textContent = i;
-
-                    let isDisabled = false;
-
-                    // Disable past dates
-                    if (date < today) {
-                        isDisabled = true;
-                    }
-
-                    // Disable non-Wednesday, Friday, Saturday
-                    if (dayOfWeek !== 3 && dayOfWeek !== 5 && dayOfWeek !== 6) {
-                        isDisabled = true;
-                    }
-
-                    // Disable dates from API
-                    if (unavailableDates.includes(dateString)) {
-                        isDisabled = true;
-                        console.log(`  - Disabled because in unavailableDates.`);
-                    }
-
-                    // Calculate cut-off time for 48-hour advance booking before 11 AM
+                    let isDisabled = date < today || (dayOfWeek !== 3 && dayOfWeek !== 5 && dayOfWeek !== 6) || unavailableDates.includes(dateString);
                     const cutOffDate = new Date(date);
-                    cutOffDate.setDate(date.getDate() - 2); // 2 days before delivery date
-                    cutOffDate.setHours(11, 0, 0, 0); // Set to 11 AM
-
-                    const now = new Date();
-
-                    if (now > cutOffDate) {
-                        isDisabled = true;
-                        console.log(`  - Disabled because order must be placed 48h in advance (cut-off: ${cutOffDate.toLocaleString()}).`);
-                    }
-
-                    console.log(`  - Final isDisabled: ${isDisabled}`);
+                    cutOffDate.setDate(date.getDate() - 2);
+                    cutOffDate.setHours(11, 0, 0, 0);
+                    if (new Date() > cutOffDate) isDisabled = true;
 
                     if (isDisabled) {
                         dayElement.classList.add('disabled');
@@ -305,22 +276,17 @@
                             selectedDate = date;
                             jourInput.value = dateString;
                             selectedDateDisplay.value = formatDateForDisplay(date);
-                            // Re-render to update selected state
                             renderCalendar(monthOffset);
                         });
                     }
-
                     if (selectedDate && dateString === selectedDate.toISOString().split('T')[0]) {
                         dayElement.classList.add('selected');
                     }
-
                     if (dateString === today.toISOString().split('T')[0]) {
                         dayElement.classList.add('today');
                     }
-
                     calendarGrid.appendChild(dayElement);
                 }
-
                 calendarDiv.appendChild(calendarGrid);
                 calendarContainer.appendChild(calendarDiv);
             }
@@ -330,11 +296,8 @@
                 return date.toLocaleDateString('fr-FR', options);
             }
 
-            // Initial calls
-            console.log('Fetching unavailable dates...');
             fetchUnavailableDates();
 
-            // Handle card selection visual
             cards.forEach(card => {
                 card.addEventListener('click', () => {
                     cards.forEach(c => c.classList.remove('selected'));
@@ -343,34 +306,26 @@
                 });
             });
 
-            form.addEventListener('submit', async (e) => {
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
-
                 const submitBtn = form.querySelector('.cta-button');
                 const originalText = submitBtn.textContent;
+
+                if (!recaptchaSiteKey || typeof grecaptcha === 'undefined') {
+                    alert('Erreur de configuration de la sécurité. Veuillez rafraîchir la page.');
+                    return;
+                }
+
                 submitBtn.textContent = 'Vérification...';
                 submitBtn.disabled = true;
 
                 grecaptcha.ready(function() {
-                    grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
+                    grecaptcha.execute(recaptchaSiteKey, {action: 'submit'}).then(async function(recaptchaToken) {
                         const formData = new FormData(form);
                         const data = Object.fromEntries(formData.entries());
 
-                        // --- Validation des champs ---
-                        if (!data.formule) {
-                            alert('Veuillez choisir une formule.');
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                            return;
-                        }
-                        if (!data.jour) {
-                            alert('Veuillez choisir une date de livraison/retrait.');
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                            return;
-                        }
-                        if (!data.email) {
-                            alert('Veuillez renseigner votre adresse e-mail.');
+                        if (!data.formule || !data.jour || !data.email) {
+                            alert('Veuillez remplir tous les champs obligatoires.');
                             submitBtn.textContent = originalText;
                             submitBtn.disabled = false;
                             return;
@@ -406,61 +361,36 @@
                             formulaOption = selectedOptionDuo.value;
                         }
 
-                        // --- Préparation des données pour l'API ---
                         const orderData = {
                             type: 'COMMANDE_MENU',
-                            customerType: 'Particulier', // Correction de la valeur
+                            customerType: 'Particulier',
                             formulaName: data.formule,
                             formulaOption: formulaOption,
-                            customer: {
-                                firstName: data.prenom,
-                                lastName: data.nom,
-                                phone: data.telephone,
-                                email: data.email
-                            },
+                            customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
                             deliveryCity: data.livraison,
                             requestDate: data.jour,
-                            recaptchaToken: recaptchaToken // Add reCAPTCHA token
+                            recaptchaToken: recaptchaToken
                         };
 
                         submitBtn.textContent = 'Envoi en cours...';
 
                         try {
-                            // 1. Envoyer les données à l'API pour enregistrement
                             const response = await fetch('/create-request/', {
                                 method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
+                                headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(orderData)
                             });
-
                             if (!response.ok) {
                                 const errorResult = await response.json();
                                 throw new Error(errorResult.error || 'Une erreur serveur est survenue.');
                             }
 
-                            // 2. Si l'enregistrement est réussi, préparer et ouvrir WhatsApp
                             const formuleDetails = data.formule + (formulaOption ? ` (${formulaOption})` : '');
-                            const message = `
-Bonjour, je souhaite passer une commande :
-
-- Formule : ${formuleDetails}
-- Nom : ${data.nom} ${data.prenom || ''}
-- Téléphone : ${data.telephone}
-- Livraison/Retrait : ${data.livraison}, le ${data.jour}
-
-Merci !
-                            `;
-
+                            const message = `\nBonjour, je souhaite passer une commande :\n\n- Formule : ${formuleDetails}\n- Nom : ${data.nom} ${data.prenom || ''}\n- Téléphone : ${data.telephone}\n- Livraison/Retrait : ${data.livraison}, le ${data.jour}\n\nMerci !\n`;
                             const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message.trim())}`;
                             window.open(whatsappUrl, '_blank');
-
-                            // 3. Réinitialiser le formulaire
                             form.reset();
-                            // Optionnel : réinitialiser l'état visuel des cartes
                             cards.forEach(c => c.classList.remove('selected'));
-
                         } catch (error) {
                             console.error('Erreur lors de la soumission:', error);
                             alert(`Une erreur est survenue : ${error.message}`);
@@ -468,10 +398,12 @@ Merci !
                             submitBtn.textContent = originalText;
                             submitBtn.disabled = false;
                         }
-                    }.bind(this)); // Bind 'this' to the async function
+                    });
                 });
             });
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRecaptchaAndInitialize);
     </script>
    <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
   <script src="script.js" defer></script>
