@@ -358,7 +358,7 @@ function initializeForm() {
         submitBtn.disabled = true;
 
         grecaptcha.ready(function() {
-            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
+            grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async function(recaptchaToken) {
                 const requestPayload = {
                     type: 'RESERVATION_SERVICE',
                     customerType: data.customer_type,

@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="icon" type="image/png" href="favicon.png">
     <!-- Google reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=%%RECAPTCHA_SITE_KEY%%" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq" async defer></script>
 </head>
 <body>
 
@@ -304,7 +304,7 @@
                 submitBtn.disabled = true;
 
                 grecaptcha.ready(function() {
-                    grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
+                    grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async function(recaptchaToken) {
                         const formData = new FormData(form);
                         const data = Object.fromEntries(formData.entries());
 

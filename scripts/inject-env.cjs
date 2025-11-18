@@ -15,6 +15,7 @@ console.log('RECAPTCHA_SITE_KEY is available. Starting file replacements...');
 const filesToProcess = [
     path.join(__dirname, '..', 'index.html'),
     path.join(__dirname, '..', 'menu.html'),
+    path.join(__dirname, '..', 'script.js'),
 ];
 
 filesToProcess.forEach(filePath => {
