@@ -147,7 +147,38 @@ document.addEventListener('DOMContentLoaded', () => {
         return date.toLocaleDateString('fr-FR', options);
     }
 
+    // Fetch and display menu content or override message
+    async function fetchMenuContent() {
+        try {
+            const response = await fetch('/functions/get-menus');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data.menu_override_enabled === 'true' && data.menu_override_message) {
+                // Display override message and hide the form
+                const menuContainer = document.getElementById('weekly-menu-content');
+                const orderForm = document.getElementById('whatsapp-order-form');
+                if (menuContainer && orderForm) {
+                    menuContainer.innerHTML = `<h2>Information importante</h2><p>${data.menu_override_message}</p>`;
+                    orderForm.style.display = 'none';
+                }
+            } else {
+                // Populate menu content
+                document.getElementById('content-decouverte').textContent = data.menu_decouverte || '';
+                document.getElementById('content-standard').textContent = data.menu_standard || '';
+                document.getElementById('content-confort').textContent = data.menu_confort || '';
+                document.getElementById('content-duo').textContent = data.menu_duo || '';
+            }
+        } catch (error) {
+            console.error('Error fetching menu content:', error);
+        }
+    }
+
+    // Initial calls
     fetchUnavailableDates();
+    fetchMenuContent();
 
     cards.forEach(card => {
         card.addEventListener('click', () => {
