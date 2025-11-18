@@ -15,6 +15,8 @@
 
     <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="icon" type="image/png" href="favicon.png">
+    <!-- Google reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=%%RECAPTCHA_SITE_KEY%%" async defer></script>
 </head>
 <body>
 
@@ -163,30 +165,7 @@
 
     <script src="menu.js" defer></script>
     <script>
-        async function loadRecaptchaAndInitialize() {
-            try {
-                const envResponse = await fetch('/get-env');
-                if (!envResponse.ok) throw new Error('Failed to load env config.');
-                
-                const publicEnv = await envResponse.json();
-                const recaptchaSiteKey = publicEnv.recaptchaSiteKey;
-                if (!recaptchaSiteKey) throw new Error('reCAPTCHA Site Key missing.');
-
-                const script = document.createElement('script');
-                script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
-                script.onload = () => {
-                    console.log('reCAPTCHA script loaded for menu page.');
-                    initializeMenuForm(recaptchaSiteKey);
-                };
-                document.head.appendChild(script);
-            } catch (error) {
-                console.error('Failed to initialize reCAPTCHA:', error);
-                // Fallback for form initialization without reCAPTCHA
-                initializeMenuForm(null);
-            }
-        }
-
-        function initializeMenuForm(recaptchaSiteKey) {
+        document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('whatsapp-order-form');
             const cards = document.querySelectorAll('.formula-card');
             const selectedDateDisplay = document.getElementById('selected-date-display');
@@ -196,19 +175,24 @@
             let unavailableDates = [];
             let selectedDate = null;
 
+            // Fetch unavailable dates from Netlify function
             async function fetchUnavailableDates() {
                 try {
                     const response = await fetch('/disponibilites');
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     const data = await response.json();
                     unavailableDates = data.unavailableDates || [];
                     renderCalendar();
                 } catch (error) {
                     console.error('Error fetching unavailable dates:', error);
+                    // Fallback: render calendar without unavailable dates if API fails
                     renderCalendar();
                 }
             }
 
+            // Calendar rendering logic
             function renderCalendar(monthOffset = 0) {
                 calendarContainer.innerHTML = '';
                 const calendarDiv = document.createElement('div');
@@ -311,7 +295,7 @@
                 const submitBtn = form.querySelector('.cta-button');
                 const originalText = submitBtn.textContent;
 
-                if (!recaptchaSiteKey || typeof grecaptcha === 'undefined') {
+                if (typeof grecaptcha === 'undefined') {
                     alert('Erreur de configuration de la sécurité. Veuillez rafraîchir la page.');
                     return;
                 }
@@ -320,7 +304,7 @@
                 submitBtn.disabled = true;
 
                 grecaptcha.ready(function() {
-                    grecaptcha.execute(recaptchaSiteKey, {action: 'submit'}).then(async function(recaptchaToken) {
+                    grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
                         const formData = new FormData(form);
                         const data = Object.fromEntries(formData.entries());
 
@@ -401,9 +385,7 @@
                     });
                 });
             });
-        }
-
-        document.addEventListener('DOMContentLoaded', loadRecaptchaAndInitialize);
+        });
     </script>
    <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
   <script src="script.js" defer></script>

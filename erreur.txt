@@ -1,110 +1,12 @@
-supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
-supabaseClient.js:7 Has API Key: true
-Parametres.js:26 Error fetching welcome message: SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
-(anonymous) @ Parametres.js:26
-await in (anonymous)
-(anonymous) @ Parametres.js:31
-ml @ react-dom-client.production.js:8583
-ec @ react-dom-client.production.js:10126
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10137
-Su @ react-dom-client.production.js:11763
-(anonymous) @ react-dom-client.production.js:11498
-O @ scheduler.production.js:151
-Parametres.js:26 Error fetching welcome message: SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
-(anonymous) @ Parametres.js:26
-await in (anonymous)
-(anonymous) @ Parametres.js:31
-ml @ react-dom-client.production.js:8583
-ec @ react-dom-client.production.js:10126
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10120
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10241
-$l @ react-dom-client.production.js:10101
-ec @ react-dom-client.production.js:10137
-Su @ react-dom-client.production.js:11763
-bu @ react-dom-client.production.js:11739
-wu @ react-dom-client.production.js:11718
-gu @ react-dom-client.production.js:11521
-Qc @ react-dom-client.production.js:10920
-Kc @ react-dom-client.production.js:10826
-zu @ react-dom-client.production.js:12086
-Lu @ react-dom-client.production.js:11944
-Bu @ react-dom-client.production.js:11990
-(anonymous) @ react-dom-client.production.js:12095
-Parametres.js:45  POST https://gestion.asiacuisine.re/api/update-setting 405 (Method Not Allowed)
-onClick @ Parametres.js:45
-await in onClick
-Ku @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-_h @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
-Parametres.js:65 Error saving welcome message: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
-    at onClick (Parametres.js:57:43)
-onClick @ Parametres.js:65
-await in onClick
-Ku @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-_h @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
+script.js:5 DOM fully loaded and parsed
+script.js:32 Failed to initialize page: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+loadRecaptchaAndInitialize @ script.js:32
+script.js:44 Initializing i18next...
+script.js:60 Language detected from URL: fr
+i18next.min.js:1 i18next: languageChanged fr
+i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
+script.js:77 Running updateContent()...
+script.js:79 Found 98 elements to translate.
+script.js:95 Updating links to persist language: fr
+script.js:211 --- [DEBUG] Disponibilités reçues: ['18/11/2025']
+asiacuisine.re/favicon.png:1  GET https://asiacuisine.re/favicon.png net::ERR_CONNECTION_REFUSED

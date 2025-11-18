@@ -1,42 +1,14 @@
 // --- SCRIPT INITIALIZATION ---
 
-// New orchestrator function to handle dynamic script loading
-async function loadRecaptchaAndInitialize() {
+// Orchestrator function to ensure proper loading order
+async function main() {
     console.log('DOM fully loaded and parsed');
-    try {
-        // 1. Fetch public environment variables (like reCAPTCHA site key)
-        const envResponse = await fetch('/get-env');
-        if (!envResponse.ok) throw new Error('Failed to load environment configuration.');
-        
-        const publicEnv = await envResponse.json();
-        const recaptchaSiteKey = publicEnv.recaptchaSiteKey;
-
-        if (!recaptchaSiteKey) throw new Error('reCAPTCHA Site Key is missing.');
-
-        // 2. Create and inject the reCAPTCHA script tag
-        const script = document.createElement('script');
-        script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
-        
-        // 3. Initialize the rest of the app once the script is loaded
-        script.onload = async () => {
-            console.log('reCAPTCHA script loaded.');
-            await initializeI18n();
-            console.log('i18next initialized, now initializing page content.');
-            // Pass the site key to the function that initializes the form
-            initializePageContent(recaptchaSiteKey); 
-        };
-        
-        document.head.appendChild(script);
-
-    } catch (error) {
-        console.error('Failed to initialize page:', error);
-        // Fallback initialization without reCAPTCHA if setup fails
-        await initializeI18n();
-        initializePageContent(null);
-    }
+    await initializeI18n(); // Wait for translations to be loaded
+    console.log('i18next initialized, now initializing page content.');
+    initializePageContent(); // Now run the rest of the page setup
 }
 
-document.addEventListener('DOMContentLoaded', loadRecaptchaAndInitialize);
+document.addEventListener('DOMContentLoaded', main);
 
 
 // --- I18N (TRANSLATION) LOGIC ---
@@ -137,7 +109,7 @@ function createLanguageSwitcher() {
     });
 }
 
-function initializePageContent(recaptchaSiteKey) { // Accept site key
+function initializePageContent() {
     // Functions that should run on ALL pages
     updateContent();
     createLanguageSwitcher();
@@ -152,7 +124,7 @@ function initializePageContent(recaptchaSiteKey) { // Accept site key
         initializeMobileMenu();
         initializeBackToTopButton();
         initializeLightbox();
-        initializeForm(recaptchaSiteKey); // Pass site key to form initializer
+        initializeForm();
         handleResponsiveLayout();
         window.addEventListener('resize', handleResponsiveLayout);
     }
@@ -309,7 +281,7 @@ function showNotification(message, type = 'success') {
     }, 4000);
 }
 
-function initializeForm(recaptchaSiteKey) { // Accept site key
+function initializeForm() {
     const bookingForm = document.getElementById('bookingForm');
     if (!bookingForm) return;
 
@@ -343,7 +315,7 @@ function initializeForm(recaptchaSiteKey) { // Accept site key
         const submitBtn = this.querySelector('.submit-btn');
         const originalText = submitBtn.textContent;
 
-        if (!recaptchaSiteKey || typeof grecaptcha === 'undefined') {
+        if (typeof grecaptcha === 'undefined') {
             showNotification('Erreur de configuration de la sécurité. Veuillez rafraîchir la page.', 'error');
             return;
         }
@@ -386,7 +358,7 @@ function initializeForm(recaptchaSiteKey) { // Accept site key
         submitBtn.disabled = true;
 
         grecaptcha.ready(function() {
-            grecaptcha.execute(recaptchaSiteKey, {action: 'submit'}).then(async function(recaptchaToken) {
+            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
                 const requestPayload = {
                     type: 'RESERVATION_SERVICE',
                     customerType: data.customer_type,
