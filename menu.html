@@ -43,58 +43,64 @@
                 <p id="content-duo" style="margin-bottom: 0.5rem;"></p>
             </div>
 
+            <div id="menu-override-message" class="menu-override" style="display: none; margin-bottom: 2.5rem; padding: 1.5rem; background: #fffbe6; border-left: 4px solid #ffc107; border-radius: 4px;">
+                <p></p>
+            </div>
+
             <form id="whatsapp-order-form">
-                <h2 style="margin-bottom: 1.5rem;">1. Choisissez votre formule</h2>
-                
-                <div class="formula-card" id="card-decouverte">
-                    <input type="radio" name="formule" value="Formule Découverte (39€)" id="formule-decouverte" required>
-                    <h3 data-i18n="menu.discovery_title">🔹 Formule Découverte</h3>
-                    <p class="price">39 €</p>
-                    <p data-i18n="menu.discovery_desc">3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous</p>
-                </div>
-
-                <div class="formula-card" id="card-standard">
-                    <input type="radio" name="formule" value="Formule Standard (49€)" id="formule-standard">
-                    <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
-                    <p class="price">49 €</p>
-                    <p data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
-                    <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                        <label style="display: block; margin-bottom: 0.5rem;">
-                            <input type="radio" name="optionStandard" value="Option A"> Option A
-                        </label>
-                        <label style="display: block;">
-                            <input type="radio" name="optionStandard" value="Option B"> Option B
-                        </label>
+                <div id="formula-cards-container">
+                    <h2 style="margin-bottom: 1.5rem;">1. Choisissez votre formule</h2>
+                    
+                    <div class="formula-card" id="card-decouverte">
+                        <input type="radio" name="formule" value="Formule Découverte (39€)" id="formule-decouverte" required>
+                        <h3 data-i18n="menu.discovery_title">🔹 Formule Découverte</h3>
+                        <p class="price">39 €</p>
+                        <p data-i18n="menu.discovery_desc">3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous</p>
                     </div>
-                </div>
 
-                <div class="formula-card" id="card-confort">
-                    <input type="radio" name="formule" value="Formule Confort (59€)" id="formule-confort">
-                    <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
-                    <p class="price">59 €</p>
-                    <p data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
-                    <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                        <label style="display: block; margin-bottom: 0.5rem;">
-                            <input type="radio" name="optionConfort" value="Option A"> Option A
-                        </label>
-                        <label style="display: block;">
-                            <input type="radio" name="optionConfort" value="Option B"> Option B
-                        </label>
+                    <div class="formula-card" id="card-standard">
+                        <input type="radio" name="formule" value="Formule Standard (49€)" id="formule-standard">
+                        <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
+                        <p class="price">49 €</p>
+                        <p data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
+                        <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                            <label style="display: block; margin-bottom: 0.5rem;">
+                                <input type="radio" name="optionStandard" value="Option A"> Option A
+                            </label>
+                            <label style="display: block;">
+                                <input type="radio" name="optionStandard" value="Option B"> Option B
+                            </label>
+                        </div>
                     </div>
-                </div>
 
-                <div class="formula-card" id="card-duo">
-                    <input type="radio" name="formule" value="Option Duo (94€)" id="formule-duo">
-                    <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
-                    <p class="price">94 €</p>
-                    <p data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV</p>
-                    <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                        <label style="display: block; margin-bottom: 0.5rem;">
-                            <input type="radio" name="optionDuo" value="Option A"> Option A
-                        </label>
-                        <label style="display: block;">
-                            <input type="radio" name="optionDuo" value="Option B"> Option B
-                        </label>
+                    <div class="formula-card" id="card-confort">
+                        <input type="radio" name="formule" value="Formule Confort (59€)" id="formule-confort">
+                        <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
+                        <p class="price">59 €</p>
+                        <p data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
+                        <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                            <label style="display: block; margin-bottom: 0.5rem;">
+                                <input type="radio" name="optionConfort" value="Option A"> Option A
+                            </label>
+                            <label style="display: block;">
+                                <input type="radio" name="optionConfort" value="Option B"> Option B
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="formula-card" id="card-duo">
+                        <input type="radio" name="formule" value="Option Duo (94€)" id="formule-duo">
+                        <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
+                        <p class="price">94 €</p>
+                        <p data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV</p>
+                        <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                            <label style="display: block; margin-bottom: 0.5rem;">
+                                <input type="radio" name="optionDuo" value="Option A"> Option A
+                            </label>
+                            <label style="display: block;">
+                                <input type="radio" name="optionDuo" value="Option B"> Option B
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -156,7 +162,7 @@
                     </div>
                 </div>
 
-                <div class="info-section" style="text-align: center;">
+                <div id="whatsapp-button-container" class="info-section" style="text-align: center;">
                     <button type="submit" class="cta-button" style="margin-top: 1rem;" data-i18n="menu.to_order_cta">Commander via WhatsApp</button>
                 </div>
             </form>

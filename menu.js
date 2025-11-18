@@ -156,14 +156,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const data = await response.json();
 
+            const menuOverrideMessage = document.getElementById('menu-override-message');
+            const formulaCardsContainer = document.getElementById('formula-cards-container');
+            const whatsappButtonContainer = document.getElementById('whatsapp-button-container');
+
             if (data.menu_override_enabled === 'true' && data.menu_override_message) {
                 // Display override message and hide the form
-                const menuContainer = document.getElementById('weekly-menu-content');
-                const orderForm = document.getElementById('whatsapp-order-form');
-                if (menuContainer && orderForm) {
-                    menuContainer.innerHTML = `<h2>Information importante</h2><p>${data.menu_override_message}</p>`;
-                    orderForm.style.display = 'none';
+                if (menuOverrideMessage) {
+                    menuOverrideMessage.querySelector('p').textContent = data.menu_override_message;
+                    menuOverrideMessage.style.display = 'block';
                 }
+                if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
+                if (whatsappButtonContainer) whatsappButtonContainer.style.display = 'none';
             } else {
                 // Populate menu content
                 document.getElementById('content-decouverte').textContent = data.menu_decouverte || '';
