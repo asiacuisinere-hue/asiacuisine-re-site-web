@@ -165,6 +165,16 @@
 
     <script src="menu.js" defer></script>
     <script>
+        // Helper function to convert DD/MM/YYYY to YYYY-MM-DD
+        function convertDateToISO(dateString) {
+            if (!dateString) return null;
+            const parts = dateString.split('/');
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return dateString; // Return original if format is unexpected
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('whatsapp-order-form');
             const cards = document.querySelectorAll('.formula-card');
@@ -352,7 +362,7 @@
                             formulaOption: formulaOption,
                             customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
                             deliveryCity: data.livraison,
-                            requestDate: data.jour,
+                            requestDate: convertDateToISO(data.jour), // Convert date format
                             recaptchaToken: recaptchaToken
                         };
 

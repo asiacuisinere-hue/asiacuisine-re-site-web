@@ -285,6 +285,16 @@ function initializeForm() {
     const bookingForm = document.getElementById('bookingForm');
     if (!bookingForm) return;
 
+    // Helper function to convert DD/MM/YYYY to YYYY-MM-DD
+    function convertDateToISO(dateString) {
+        if (!dateString) return null;
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        return dateString; // Return original if format is unexpected
+    }
+
     const individualFieldsDiv = document.getElementById('particulier-fields');
     const companyFieldsDiv = document.getElementById('entreprise-fields');
     const individualRadio = document.getElementById('customer_type_individual');
@@ -358,12 +368,12 @@ function initializeForm() {
         submitBtn.disabled = true;
 
         grecaptcha.ready(function() {
-            grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async function(recaptchaToken) {
+            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
                 const requestPayload = {
                     type: 'RESERVATION_SERVICE',
                     customerType: data.customer_type,
                     customer: customerData,
-                    requestDate: data.date,
+                    requestDate: convertDateToISO(data.date), // Convert date format
                     serviceType: data.service,
                     numberOfPeople: data.personnes,
                     customerMessage: data.message || null,
@@ -383,7 +393,8 @@ function initializeForm() {
                         showNotification('Votre demande a été envoyée avec succès !');
                         bookingForm.reset();
                         fetchAndInitializeDatepicker();
-                    } else {
+                    }
+                    else {
                         showNotification(`Erreur: ${result.error || 'Une erreur inconnue est survenue.'}`, 'error');
                     }
                 } catch (error) {
