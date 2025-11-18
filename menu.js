@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchMenuContents = async () => {
         try {
             // Use the production URL directly as this is for the public-facing site
-            const response = await fetch('https://www.asiacuisine.re/get-menus');
+            const response = await fetch('/get-menus');
             
             if (!response.ok) {
                 // Don't throw an error, just log it, so the page doesn't break if API is down

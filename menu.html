@@ -228,6 +228,14 @@
             <h1 data-i18n="menu.title">Menus de la semaine</h1>
             <p class="subtitle" data-i18n="menu.subtitle">Choisissez votre formule et remplissez vos informations pour commander.</p>
 
+            <div id="weekly-menu-content" style="margin-bottom: 2.5rem; padding: 1.5rem; background: #f9f9f9; border-left: 4px solid #d4af37; border-radius: 4px;">
+                <h2 style="text-align: left; margin-top: 0; margin-bottom: 1rem;">Contenu des formules cette semaine :</h2>
+                <p id="content-decouverte" style="margin-bottom: 0.5rem;"></p>
+                <p id="content-standard" style="margin-bottom: 0.5rem;"></p>
+                <p id="content-confort" style="margin-bottom: 0.5rem;"></p>
+                <p id="content-duo" style="margin-bottom: 0.5rem;"></p>
+            </div>
+
             <form id="whatsapp-order-form">
                 <h2 style="margin-bottom: 1.5rem;">1. Choisissez votre formule</h2>
                 
@@ -340,6 +348,7 @@
         </div>
     </main>
 
+    <script src="menu.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('whatsapp-order-form');
