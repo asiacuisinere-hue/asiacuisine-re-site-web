@@ -634,6 +634,11 @@ body {
         display: none;
     }
 }
+
+/* reCAPTCHA badge fix */
+.grecaptcha-badge {
+    z-index: 1001 !important;
+}
 * {
     margin: 0;
     padding: 0;
@@ -813,7 +818,7 @@ body {
 .service-icon { font-size: 3rem; margin-bottom: 1.5rem; display: block; }
 .service-features { list-style: none; margin-top: 1.5rem; }
 .service-features li { padding: 0.5rem 0; color: #555; position: relative; padding-left: 1.5rem; }
-.service-features li::before { content: 'Ô£ª'; position: absolute; left: 0; color: #d4af37; }
+.service-features li::before { content: 'Ô£ï¿½'; position: absolute; left: 0; color: #d4af37; }
 
 /* About Section */
 .about { background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%); color: white; }
@@ -1264,7 +1269,7 @@ body {
     }
     .footer-section {
         text-align: center;
-        margin-bottom: 2rem; /* Ajout d'un peu d'espace entre les sections empil+®es */
+        margin-bottom: 2rem; /* Ajout d'un peu d'espace entre les sections empil+ï¿½es */
     }
     .page-number {
         display: none;
