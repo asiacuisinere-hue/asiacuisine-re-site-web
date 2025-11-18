@@ -1,33 +1,47 @@
 document.addEventListener('DOMContentLoaded', () => {
     const fetchMenuContents = async () => {
         try {
-            // Use the production URL directly as this is for the public-facing site
             const response = await fetch('/get-menus');
             
             if (!response.ok) {
-                // Don't throw an error, just log it, so the page doesn't break if API is down
                 console.error('Failed to fetch menu contents:', response.statusText);
                 return;
             }
 
             const menus = await response.json();
+            const contentContainer = document.getElementById('weekly-menu-content');
 
-            const menuMapping = {
-                'menu_decouverte': { id: 'content-decouverte', label: 'Menu Découverte' },
-                'menu_standard': { id: 'content-standard', label: 'Formule Standard' },
-                'menu_confort': { id: 'content-confort', label: 'Formule Confort' },
-                'menu_duo': { id: 'content-duo', label: 'Option Duo' }
-            };
+            if (!contentContainer) return;
 
-            for (const key in menuMapping) {
-                const element = document.getElementById(menuMapping[key].id);
-                const content = menus[key];
+            // Check if the override message is enabled and has content
+            if (menus.menu_override_enabled === 'true' && menus.menu_override_message) {
+                // Display only the override message
+                contentContainer.innerHTML = `<p style="font-weight: bold; color: #c0392b;">${menus.menu_override_message}</p>`;
+            } else {
+                // Otherwise, display the regular menu details
+                const menuMapping = {
+                    'menu_decouverte': { id: 'content-decouverte', label: 'Menu Découverte' },
+                    'menu_standard': { id: 'content-standard', label: 'Formule Standard' },
+                    'menu_confort': { id: 'content-confort', label: 'Formule Confort' },
+                    'menu_duo': { id: 'content-duo', label: 'Option Duo' }
+                };
 
-                if (element && content) {
-                    element.innerHTML = `<strong>${menuMapping[key].label}:</strong> ${content}`;
-                } else if (element) {
-                    // Hide the paragraph if there's no content for it
-                    element.style.display = 'none';
+                let hasContent = false;
+                for (const key in menuMapping) {
+                    const element = document.getElementById(menuMapping[key].id);
+                    const content = menus[key];
+
+                    if (element && content) {
+                        element.innerHTML = `<strong>${menuMapping[key].label}:</strong> ${content}`;
+                        hasContent = true;
+                    } else if (element) {
+                        element.style.display = 'none';
+                    }
+                }
+
+                // If no menu content is set at all, hide the container
+                if (!hasContent) {
+                    contentContainer.style.display = 'none';
                 }
             }
 
