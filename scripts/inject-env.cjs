@@ -1,3 +1,30 @@
-console.log('--- Hello from the build script! ---');
-console.log('Build script is running.');
-process.exit(0); // Always exit with success code
+const replace = require('replace-in-file');
+
+const siteKey = process.env.RECAPTCHA_SITE_KEY;
+
+if (!siteKey) {
+    console.error('Error: RECAPTCHA_SITE_KEY environment variable not set. Build failed.');
+    process.exit(1);
+}
+
+const options = {
+    files: [
+        './index.html',
+        './menu.html',
+    ],
+    from: /%%RECAPTCHA_SITE_KEY%%/g,
+    to: siteKey,
+};
+
+async function runReplace() {
+    try {
+        const results = await replace(options);
+        console.log('Replacement results:', results);
+        console.log('Successfully injected reCAPTCHA site key.');
+    } catch (error) {
+        console.error('Error occurred during file replacement:', error);
+        process.exit(1);
+    }
+}
+
+runReplace();
