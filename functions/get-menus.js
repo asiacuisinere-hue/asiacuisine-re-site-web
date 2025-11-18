@@ -1,48 +1,44 @@
-
 import { createClient } from '@supabase/supabase-js';
 
-const addCorsHeaders = (response) => {
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    return response;
-};
-
 export async function onRequest(context) {
-    if (context.request.method === 'OPTIONS') {
-        return addCorsHeaders(new Response(null, { status: 204 }));
-    }
-
+    console.log('--- [DEBUG] get-menus function called ---');
     try {
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_KEY);
 
         const { data, error } = await supabase
             .from('settings')
             .select('key, value')
-            .like('key', 'menu_%'); // Fetch all settings where the key starts with "menu_"
+            .in('key', [
+                'menu_decouverte',
+                'menu_standard',
+                'menu_confort',
+                'menu_duo',
+                'menu_override_message',
+                'menu_override_enabled'
+            ]);
 
         if (error) {
-            console.error('Error fetching menu settings:', error);
-            throw new Error('Failed to fetch menu settings.');
+            console.error('--- [ERROR] get-menus: Supabase error ---', error);
+            throw error;
         }
 
-        // Transform the array of {key, value} into a single object {key: value}
-        const menuSettings = data.reduce((acc, setting) => {
-            acc[setting.key] = setting.value;
+        const settings = data.reduce((acc, { key, value }) => {
+            acc[key] = value;
             return acc;
         }, {});
 
-        return addCorsHeaders(new Response(JSON.stringify(menuSettings), {
+        console.log('--- [DEBUG] get-menus: Returning settings ---', settings);
+
+        return new Response(JSON.stringify(settings), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        }));
+            headers: { 'Content-Type': 'application/json' },
+        });
 
     } catch (error) {
-        console.error('--- [ERREUR] Erreur dans get-menus ---');
-        console.error('Message:', error.message);
-        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
+        console.error('--- [ERROR] get-menus: Caught exception ---', error);
+        return new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        }));
+            headers: { 'Content-Type': 'application/json' },
+        });
     }
 }
