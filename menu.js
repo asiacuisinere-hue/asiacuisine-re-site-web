@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if the override message is enabled and has content
             if (menus.menu_override_enabled === 'true' && menus.menu_override_message) {
                 // Display only the override message
-                contentContainer.innerHTML = `<p style="font-weight: bold; color: #c0392b;">${menus.menu_override_message}</p>`;
+                contentContainer.innerHTML = `<p style="font-weight: bold; color: #c0392b; white-space: pre-wrap;">${menus.menu_override_message}</p>`;
             } else {
                 // Otherwise, display the regular menu details
                 const menuMapping = {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const content = menus[key];
 
                     if (element && content) {
-                        element.innerHTML = `<strong>${menuMapping[key].label}:</strong> ${content}`;
+                        element.innerHTML = `<strong>${menuMapping[key].label}:</strong> <span style="white-space: pre-wrap;">${content}</span>`;
                         hasContent = true;
                     } else if (element) {
                         element.style.display = 'none';

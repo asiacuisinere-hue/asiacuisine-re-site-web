@@ -266,6 +266,14 @@
                     <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
                     <p class="price">59 €</p>
                     <p data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
+                    <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="radio" name="optionConfort" value="Option A"> Option A
+                        </label>
+                        <label style="display: block;">
+                            <input type="radio" name="optionConfort" value="Option B"> Option B
+                        </label>
+                    </div>
                 </div>
 
                 <div class="formula-card" id="card-duo">
@@ -556,6 +564,13 @@
                         return;
                     }
                     formulaOption = selectedOptionStandard.value;
+                } else if (data.formule.includes("Formule Confort")) {
+                    const selectedOptionConfort = document.querySelector('input[name="optionConfort"]:checked');
+                    if (!selectedOptionConfort) {
+                        alert('Veuillez choisir une option (A ou B) pour la Formule Confort.');
+                        return;
+                    }
+                    formulaOption = selectedOptionConfort.value;
                 } else if (data.formule.includes("Option Duo")) {
                     const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
                     if (!selectedOptionDuo) {
