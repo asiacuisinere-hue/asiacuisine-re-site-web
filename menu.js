@@ -230,10 +230,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentConfort = document.getElementById('content-confort');
                 const contentDuo = document.getElementById('content-duo');
 
-                if (contentDecouverte) contentDecouverte.textContent = data.menu_decouverte || '';
-                if (contentStandard) contentStandard.textContent = data.menu_standard || '';
-                if (contentConfort) contentConfort.textContent = data.menu_confort || '';
-                if (contentDuo) contentDuo.textContent = data.menu_duo || '';
+                if (contentDecouverte && data.menu_decouverte) {
+                    contentDecouverte.innerHTML = `<strong>Formule Découverte :</strong> ${data.menu_decouverte}`;
+                }
+                if (contentStandard && data.menu_standard) {
+                    contentStandard.innerHTML = `<strong>Formule Standard :</strong> ${data.menu_standard}`;
+                }
+                if (contentConfort && data.menu_confort) {
+                    contentConfort.innerHTML = `<strong>Formule Confort :</strong> ${data.menu_confort}`;
+                }
+                if (contentDuo && data.menu_duo) {
+                    contentDuo.innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo}`;
+                }
 
                 // Charger le calendrier maintenant que override est désactivé
                 fetchUnavailableDates();
