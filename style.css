@@ -277,7 +277,12 @@ body {
 .booking { background: linear-gradient(135deg, #2d1810 0%, #1a1a1a 100%); color: white; }
 .booking-form { max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 3rem; border-radius: 20px; backdrop-filter: blur(10px); }
 .form-group { margin-bottom: 2rem; }
-.form-group label { display: block; margin-bottom: 0.5rem; color: #d4af37; font-weight: bold; }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #f0f0f0; /* Couleur claire pour la lisibilité sur fond sombre */
+}
 .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 1rem; border: none; border-radius: 10px; background: rgba(255,255,255,0.9); font-size: 1rem; transition: all 0.3s ease; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
 .submit-btn { width: 100%; padding: 15px; background: linear-gradient(45deg, #d4af37, #ffd700); color: #1a1a1a; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
