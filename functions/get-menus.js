@@ -24,6 +24,7 @@ export async function onRequest(context) {
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }), origin);
     }
+    
     if (context.request.method !== 'GET') {
         return addCorsHeaders(
             new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), { 
@@ -39,26 +40,52 @@ export async function onRequest(context) {
         console.log('--- [DEBUG] get-menus function called ---');
         console.log('--- [DEBUG] Origin:', origin);
 
+        // Liste des clés à récupérer
+        const settingKeys = [
+            'menu_decouverte',
+            'menu_standard',
+            'menu_confort',
+            'menu_duo',
+            'menu_override_message',
+            'menu_override_enabled'
+        ];
+
+        // Récupérer tous les settings en une seule requête
         const { data, error } = await supabase
-            .from('menus_semaine')
-            .select('*')
-            .eq('is_active', true);
+            .from('settings')
+            .select('key, value')
+            .in('key', settingKeys);
 
         if (error) {
-            console.error('Error fetching menus:', error);
+            console.error('Error fetching menu settings:', error);
             throw error;
         }
 
-        // Return a single object with menu settings for the frontend logic
-        // This assumes you want to return a single set of menu settings,
-        // if multiple are active, this logic needs refinement.
-        const menuSettings = data.length > 0 ? data[0] : {};
+        // Transformer le tableau en objet
+        const menuSettings = {};
+        if (data) {
+            data.forEach(setting => {
+                menuSettings[setting.key] = setting.value;
+            });
+        }
+
+        // Retourner des valeurs par défaut si aucune donnée n'est trouvée pour certaines clés
+        const defaultSettings = {
+            menu_decouverte: '',
+            menu_standard: '',
+            menu_confort: '',
+            menu_duo: '',
+            menu_override_message: '',
+            menu_override_enabled: 'false'
+        };
+
+        const finalMenuSettings = { ...defaultSettings, ...menuSettings };
 
 
-        console.log('--- [DEBUG] get-menus: Returning settings ---', menuSettings);
+        console.log('--- [DEBUG] get-menus: Returning settings ---', finalMenuSettings);
         
         return addCorsHeaders(
-            new Response(JSON.stringify(menuSettings), {
+            new Response(JSON.stringify(finalMenuSettings), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },
             }), 
@@ -70,7 +97,10 @@ export async function onRequest(context) {
         console.error('Message:', error.message);
         console.error('Stack:', error.stack);
         return addCorsHeaders(
-            new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
+            new Response(JSON.stringify({ 
+                error: 'Internal Server Error', 
+                details: error.message 
+            }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
             }), 
