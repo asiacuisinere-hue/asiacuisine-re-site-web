@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let unavailableDates = [];
     let selectedDate = null;
+    let isOverrideEnabled = false; // Variable pour suivre l'état du message personnalisé
 
     // Helper function to convert DD/MM/YYYY to YYYY-MM-DD for API submission
     function convertDateToISO(dateString) {
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parts.length === 3) {
             return `${parts[2]}-${parts[1]}-${parts[0]}`;
         }
-        return dateString; // Return original if format is unexpected
+        return dateString;
     }
 
     // Fetch unavailable dates from Netlify function
@@ -26,17 +27,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            unavailableDates = data || []; // Data is already DD/MM/YYYY array
-            renderCalendar();
+            unavailableDates = data || [];
+            // Ne rendre le calendrier que si le message override n'est pas actif
+            if (!isOverrideEnabled) {
+                renderCalendar();
+            }
         } catch (error) {
             console.error('Error fetching unavailable dates:', error);
-            // Fallback: render calendar without unavailable dates if API fails
-            renderCalendar();
+            if (!isOverrideEnabled) {
+                renderCalendar();
+            }
         }
     }
 
     // Calendar rendering logic
     function renderCalendar(monthOffset = 0) {
+        // Ne pas rendre le calendrier si le message override est actif
+        if (isOverrideEnabled) {
+            return;
+        }
+
         calendarContainer.innerHTML = '';
         const calendarDiv = document.createElement('div');
         calendarDiv.className = 'calendar';
@@ -84,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= daysInMonth; i++) {
             const date = new Date(year, month, i);
             date.setHours(0, 0, 0, 0);
-            // Format date for comparison with unavailableDates (DD/MM/YYYY)
             const dateStringDDMMYYYY = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
             const dayOfWeek = date.getDay();
             const dayElement = document.createElement('div');
@@ -93,25 +102,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let isDisabled = false;
 
-            // Disable past dates
             if (date < today) {
                 isDisabled = true;
             }
 
-            // Disable non-Wednesday, Friday, Saturday (0=Sun, 1=Mon, ..., 6=Sat)
             if (dayOfWeek !== 3 && dayOfWeek !== 5 && dayOfWeek !== 6) {
                 isDisabled = true;
             }
 
-            // Disable dates from API
             if (unavailableDates.includes(dateStringDDMMYYYY)) {
                 isDisabled = true;
             }
 
-            // Calculate cut-off time for 48-hour advance booking before 11 AM
             const cutOffDate = new Date(date);
-            cutOffDate.setDate(date.getDate() - 2); // 2 days before delivery date
-            cutOffDate.setHours(11, 0, 0, 0); // Set to 11 AM
+            cutOffDate.setDate(date.getDate() - 2);
+            cutOffDate.setHours(11, 0, 0, 0);
 
             const now = new Date();
 
@@ -125,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dayElement.classList.add('available');
                 dayElement.addEventListener('click', () => {
                     selectedDate = date;
-                    jourInput.value = dateStringDDMMYYYY; // Store in DD/MM/YYYY
+                    jourInput.value = dateStringDDMMYYYY;
                     selectedDateDisplay.value = formatDateForDisplay(date);
                     renderCalendar(monthOffset);
                 });
@@ -159,41 +164,108 @@ document.addEventListener('DOMContentLoaded', () => {
             const menuOverrideMessage = document.getElementById('menu-override-message');
             const formulaCardsContainer = document.getElementById('formula-cards-container');
             const whatsappButtonContainer = document.getElementById('whatsapp-button-container');
+            const weeklyMenuContent = document.getElementById('weekly-menu-content'); // Section contenu des formules
+            const infoSection = document.querySelector('.info-section'); // Section informations
 
             if (data.menu_override_enabled === 'true' && data.menu_override_message) {
-                // Display override message and hide the form
+                // Activer le mode override
+                isOverrideEnabled = true;
+
+                // Afficher le message personnalisé
                 if (menuOverrideMessage) {
                     menuOverrideMessage.querySelector('p').textContent = data.menu_override_message;
                     menuOverrideMessage.style.display = 'block';
                 }
+
+                // Cacher TOUS les éléments de la page menu
+                if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
                 if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = 'none';
+                if (infoSection) infoSection.style.display = 'none';
+                if (calendarContainer) calendarContainer.style.display = 'none';
+                
+                // Désactiver le formulaire complètement
+                if (form) {
+                    form.style.pointerEvents = 'none';
+                    form.style.opacity = '0.5';
+                }
+
+                // Désactiver tous les cards
+                cards.forEach(card => {
+                    card.style.pointerEvents = 'none';
+                    card.style.opacity = '0.5';
+                });
+
             } else {
-                // Populate menu content
-                document.getElementById('content-decouverte').textContent = data.menu_decouverte || '';
-                document.getElementById('content-standard').textContent = data.menu_standard || '';
-                document.getElementById('content-confort').textContent = data.menu_confort || '';
-                document.getElementById('content-duo').textContent = data.menu_duo || '';
+                // Mode normal - tout est actif
+                isOverrideEnabled = false;
+
+                // Cacher le message override
+                if (menuOverrideMessage) {
+                    menuOverrideMessage.style.display = 'none';
+                }
+
+                // Afficher tous les éléments
+                if (weeklyMenuContent) weeklyMenuContent.style.display = '';
+                if (formulaCardsContainer) formulaCardsContainer.style.display = '';
+                if (whatsappButtonContainer) whatsappButtonContainer.style.display = '';
+                if (infoSection) infoSection.style.display = '';
+                if (calendarContainer) calendarContainer.style.display = '';
+
+                // Réactiver le formulaire
+                if (form) {
+                    form.style.pointerEvents = '';
+                    form.style.opacity = '';
+                }
+
+                // Réactiver les cards
+                cards.forEach(card => {
+                    card.style.pointerEvents = '';
+                    card.style.opacity = '';
+                });
+
+                // Remplir le contenu des menus
+                const contentDecouverte = document.getElementById('content-decouverte');
+                const contentStandard = document.getElementById('content-standard');
+                const contentConfort = document.getElementById('content-confort');
+                const contentDuo = document.getElementById('content-duo');
+
+                if (contentDecouverte) contentDecouverte.textContent = data.menu_decouverte || '';
+                if (contentStandard) contentStandard.textContent = data.menu_standard || '';
+                if (contentConfort) contentConfort.textContent = data.menu_confort || '';
+                if (contentDuo) contentDuo.textContent = data.menu_duo || '';
+
+                // Charger le calendrier maintenant que override est désactivé
+                fetchUnavailableDates();
             }
         } catch (error) {
             console.error('Error fetching menu content:', error);
         }
     }
 
-    // Initial calls
-    fetchUnavailableDates();
+    // Appel initial - fetchMenuContent en premier pour déterminer le mode
     fetchMenuContent();
 
+    // Gestionnaire de clic pour les cartes (seulement si non override)
     cards.forEach(card => {
         card.addEventListener('click', () => {
+            if (isOverrideEnabled) return; // Bloquer si override actif
             cards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             card.querySelector('input[type="radio"]').checked = true;
         });
     });
 
+    // Gestionnaire de soumission du formulaire
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+
+        // Bloquer la soumission si override est actif
+        if (isOverrideEnabled) {
+            alert('Les commandes sont temporairement suspendues. Veuillez consulter le message affiché.');
+            return;
+        }
+
         const submitBtn = form.querySelector('.cta-button');
         const originalText = submitBtn.textContent;
 
@@ -254,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     formulaOption: formulaOption,
                     customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
                     deliveryCity: data.livraison,
-                    requestDate: convertDateToISO(data.jour), // Convert date format
+                    requestDate: convertDateToISO(data.jour),
                     recaptchaToken: recaptchaToken
                 };
 
