@@ -279,11 +279,16 @@ body {
 .form-group { margin-bottom: 2rem; }
 .form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-weight: 600;
-    color: #ffffff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    font-size: 1rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+}
+
+.booking .form-group label,
+.booking-form .form-group label {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 1rem; border: none; border-radius: 10px; background: rgba(255,255,255,0.9); font-size: 1rem; transition: all 0.3s ease; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
