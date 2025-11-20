@@ -523,8 +523,6 @@ async function initializeWelcomePopup() {
     closeBtn.addEventListener('click', closePopup);
 }
 
-// --- SUBSCRIPTION FORM LOGIC (CORRECTED) ---
-
 function initializeSubscriptionForm() {
     console.log('Initializing subscription form...');
     const subscriptionForm = document.getElementById('subscription-form');
@@ -532,57 +530,58 @@ function initializeSubscriptionForm() {
     const subscribeButtons = document.querySelectorAll('.choose-button');
     const closeButton = document.getElementById('close-subscription-modal-btn');
 
-    console.log({
-        subscriptionFormExists: !!subscriptionForm,
-        modalExists: !!modal,
-        subscribeButtonsFound: subscribeButtons.length,
-        closeButtonFound: !!closeButton
-    });
-
     if (!modal || !subscriptionForm || subscribeButtons.length === 0) {
+        console.error('❌ One or more essential elements for the subscription form are missing!');
         return;
     }
 
-    // CORRECTED: Get formulaNameElement relative to the modal
     const formulaNameElement = modal.querySelector('#selected-formula-name');
-    const formulaInputElement = document.getElementById('form_formula'); // This one is fine as it's directly within the form, which is found via ID
+    const formulaInputElement = document.getElementById('form_formula');
     const subscriptionMessageDiv = document.getElementById('subscription-message');
 
     function openSubscriptionForm(formula) {
-        console.log('Opening form for formula:', formula);
+        console.log('Opening form with brutal style override for formula:', formula);
+        
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
-            
-            // ✅ CORRECTION: Enlève hidden et force l'affichage
-            modal.classList.remove('hidden');
-            modal.classList.add('is-visible');
-            modal.style.display = 'flex';
-            
-            document.body.style.overflow = 'hidden';
         }
+        
+        // BRUTAL OVERRIDE VERSION - Confirmed to work
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        modal.style.position = 'fixed'; // Ensure it's in the viewport
+        modal.style.zIndex = '9999';   // Ensure it's on top
+        
+        // Add class for consistency if needed, but styles are primary
+        modal.classList.remove('hidden');
+        modal.classList.add('is-visible');
+        
+        document.body.style.overflow = 'hidden';
     }
 
     function closeSubscriptionForm() {
         console.log('Closing form.');
-        modal.classList.remove('is-visible');
         
-        // ✅ CORRECTION: Attend la fin de l'animation avant de cacher
-        setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.add('hidden');
-        }, 400); // Durée de transition CSS
+        // Hide it immediately, Brutal version doesn't need animation
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
+        modal.classList.remove('is-visible');
+        modal.classList.add('hidden'); // Add hidden back for consistency
         
         document.body.style.overflow = '';
+        
         if (subscriptionMessageDiv) {
             subscriptionMessageDiv.textContent = '';
         }
     }
 
+    // Event listeners
     subscribeButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
             const formula = button.dataset.formula;
-            console.log('Subscribe button clicked for formula:', formula);
             openSubscriptionForm(formula);
         });
     });
@@ -591,7 +590,7 @@ function initializeSubscriptionForm() {
         closeButton.addEventListener('click', closeSubscriptionForm);
     }
     
-    // Close modal if clicking outside the content
+    // Close modal if clicking outside
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
             closeSubscriptionForm();
