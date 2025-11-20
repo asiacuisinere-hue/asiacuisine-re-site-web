@@ -527,10 +527,18 @@ async function initializeWelcomePopup() {
 
 function openSubscriptionForm(button) {
     const formula = button.dataset.formula;
-    document.getElementById('selected-formula-name').textContent = formula;
-    document.getElementById('form_formula').value = formula;
-    document.getElementById('subscription-form-modal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+    const formulaNameElement = document.getElementById('selected-formula-name');
+    const formulaInputElement = document.getElementById('form_formula');
+    const modalElement = document.getElementById('subscription-form-modal');
+
+    if (formulaNameElement && formulaInputElement && modalElement) {
+        formulaNameElement.textContent = formula;
+        formulaInputElement.value = formula;
+        modalElement.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+    } else {
+        console.error('Subscription form elements not found.');
+    }
 }
 
 function closeSubscriptionForm() {
