@@ -544,8 +544,12 @@ function initializeSubscriptionForm() {
         
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
-            formulaInputElement.setAttribute('value', formula); // Changed method to set value
-            console.log('formulaInputElement.value after setting:', formulaInputElement.value); // Debug: Check value immediately after setting
+            
+            // --- CRITICAL DEBUG ---
+            console.log('Attempting to set formula value to:', formula);
+            formulaInputElement.value = formula;
+            console.log('Value of hidden input AFTER setting:', formulaInputElement.value);
+            // --- END CRITICAL DEBUG ---
         }
         
         // BRUTAL OVERRIDE VERSION - Confirmed to work
@@ -609,8 +613,11 @@ function initializeSubscriptionForm() {
         const formData = new FormData(subscriptionForm);
         const data = Object.fromEntries(formData.entries());
 
-        console.log('Submitting data with keys:', Object.keys(data)); // Specific debug
-        console.log('Value of "formula" being sent:', data.formula);     // Specific debug
+        // --- CRITICAL DEBUG ---
+        console.log('--- Submitting Data ---');
+        console.log('Data keys:', Object.keys(data));
+        console.log('Formula value in submitted data:', data.formula);
+        // --- END CRITICAL DEBUG ---
 
         try {
             const response = await fetch('/create-subscription', {
