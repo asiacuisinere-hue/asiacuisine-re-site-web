@@ -525,72 +525,91 @@ async function initializeWelcomePopup() {
 
 // --- SUBSCRIPTION FORM LOGIC ---
 
-function openSubscriptionForm(button) {
-    const formula = button.dataset.formula;
-    const formulaNameElement = document.getElementById('selected-formula-name');
-    const formulaInputElement = document.getElementById('form_formula');
-    const modalElement = document.getElementById('subscription-form-modal');
-
-    if (formulaNameElement && formulaInputElement && modalElement) {
-        formulaNameElement.textContent = formula;
-        formulaInputElement.value = formula;
-        modalElement.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-    } else {
-        console.error('Subscription form elements not found.');
-    }
-}
-
-function closeSubscriptionForm() {
-    document.getElementById('subscription-form-modal').classList.add('hidden');
-    document.body.style.overflow = ''; // Restore scrolling
-    document.getElementById('subscription-message').textContent = ''; // Clear previous messages
-}
-
 function initializeSubscriptionForm() {
     const subscriptionForm = document.getElementById('subscription-form');
+    const modal = document.getElementById('subscription-form-modal');
+    const subscribeButtons = document.querySelectorAll('button[data-formula]');
+    const closeButton = modal?.querySelector('.absolute.top-3.right-3');
+
+    if (!modal || !subscriptionForm || subscribeButtons.length === 0) {
+        // Do nothing if we are not on the subscription page
+        return;
+    }
+
+    const formulaNameElement = document.getElementById('selected-formula-name');
+    const formulaInputElement = document.getElementById('form_formula');
     const subscriptionMessageDiv = document.getElementById('subscription-message');
 
-    if (subscriptionForm) {
-        subscriptionForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const submitButton = subscriptionForm.querySelector('button[type="submit"]');
-            const originalButtonText = submitButton.textContent;
-            submitButton.textContent = 'Envoi en cours...';
-            submitButton.disabled = true;
-
-            const formData = new FormData(subscriptionForm);
-            const data = Object.fromEntries(formData.entries());
-
-            try {
-                const response = await fetch('/create-subscription', { // Cloudflare convention
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    subscriptionMessageDiv.textContent = 'Votre demande d\'abonnement a été envoyée avec succès ! Nous vous contacterons bientôt.';
-                    subscriptionMessageDiv.className = 'mt-4 text-center text-green-600';
-                    subscriptionForm.reset();
-                    // Optionally close the modal after a short delay
-                    setTimeout(closeSubscriptionForm, 3000);
-                } else {
-                    throw new Error(result.error || 'Une erreur est survenue lors de l\'envoi de votre demande.');
-                }
-            } catch (error) {
-                console.error('Subscription form submission error:', error);
-                subscriptionMessageDiv.textContent = error.message;
-                subscriptionMessageDiv.className = 'mt-4 text-center text-red-600';
-            } finally {
-                submitButton.textContent = originalButtonText;
-                submitButton.disabled = false;
-            }
-        });
+    function openSubscriptionForm(formula) {
+        if (formulaNameElement && formulaInputElement) {
+            formulaNameElement.textContent = formula;
+            formulaInputElement.value = formula;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
     }
+
+    function closeSubscriptionForm() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        if (subscriptionMessageDiv) {
+            subscriptionMessageDiv.textContent = '';
+        }
+    }
+
+    subscribeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const formula = button.dataset.formula;
+            openSubscriptionForm(formula);
+        });
+    });
+
+    if (closeButton) {
+        closeButton.addEventListener('click', closeSubscriptionForm);
+    }
+    
+    // Close modal if clicking outside the content
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeSubscriptionForm();
+        }
+    });
+
+    subscriptionForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitButton = subscriptionForm.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        submitButton.textContent = 'Envoi en cours...';
+        submitButton.disabled = true;
+
+        const formData = new FormData(subscriptionForm);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/create-subscription', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                subscriptionMessageDiv.textContent = 'Votre demande d\'abonnement a été envoyée avec succès ! Nous vous contacterons bientôt.';
+                subscriptionMessageDiv.className = 'mt-4 text-center text-green-600';
+                subscriptionForm.reset();
+                setTimeout(closeSubscriptionForm, 3000);
+            } else {
+                throw new Error(result.error || 'Une erreur est survenue lors de l\'envoi de votre demande.');
+            }
+        } catch (error) {
+            console.error('Subscription form submission error:', error);
+            subscriptionMessageDiv.textContent = error.message;
+            subscriptionMessageDiv.className = 'mt-4 text-center text-red-600';
+        } finally {
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+        }
+    });
 }
