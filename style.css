@@ -293,7 +293,16 @@ body {
 .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 1rem; border: none; border-radius: 10px; background: rgba(255,255,255,0.9); font-size: 1rem; transition: all 0.3s ease; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
 .submit-btn { width: 100%; padding: 15px; background: linear-gradient(45deg, #d4af37, #ffd700); color: #1a1a1a; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
-.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4); }
+/* Ajouts pour le formulaire conditionnel */
+#particulier-fields, #entreprise-fields {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+}
+
+#bookingForm .form-group label {
+    color: #f0f0f0; /* Assure la visibilité sur fond sombre */
+}
 
 /* Testimonials */
 .testimonials { display: none; padding: 100px 0; background: #f8f8f8; }

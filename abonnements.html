@@ -73,7 +73,7 @@
                         </ul>
                         <p class="italic mb-6" data-i18n="abonnements.performance_tagline">💪 Pour celles et ceux qui veulent des résultats visibles et mesurables.</p>
                     </div>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Performance" class="choose-button font-bold py-3 px-6 rounded-full w-full inline-block text-lg mt-auto" data-i18n="abonnements.choose_cta">Choisir cette formule</a>
+                    <button class="choose-button font-bold py-3 px-6 rounded-full w-full inline-block text-lg mt-auto" data-i18n="abonnements.choose_cta" data-formula="Performance" onclick="openSubscriptionForm(this)">Choisir cette formule</button>
                 </div>
             </div>
 
@@ -93,7 +93,7 @@
                         </ul>
                         <p class="italic text-gray-600 mb-6" data-i18n="abonnements.equilibre_tagline">🥗 Pour apprendre à mieux manger sans se priver.</p>
                     </div>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Équilibre" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta">Choisir cette formule</a>
+                    <button class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta" data-formula="Équilibre" onclick="openSubscriptionForm(this)">Choisir cette formule</button>
                 </div>
 
                 <div class="card rounded-lg shadow-lg p-6 text-center">
@@ -111,8 +111,41 @@
                         </ul>
                         <p class="italic text-gray-600 mb-6" data-i18n="abonnements.premium_tagline">👨‍🍳 L’expérience d’un chef personnel, à votre écoute.</p>
                     </div>
-                    <a href="mailto:contact@asiacuisine.re?subject=Intérêt pour la formule Premium" class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta">Choisir cette formule</a>
+                    <button class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta" data-formula="Premium" onclick="openSubscriptionForm(this)">Choisir cette formule</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Subscription Form Modal (Hidden by default) -->
+        <div id="subscription-form-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full relative">
+                <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl" onclick="closeSubscriptionForm()">&times;</button>
+                <h2 class="text-2xl font-bold mb-4 text-gray-800" data-i18n="abonnements.form_title">Souscrire à la formule <span id="selected-formula-name"></span></h2>
+                <form id="subscription-form" class="space-y-4">
+                    <div>
+                        <label for="form_nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                        <input type="text" id="form_nom" name="nom" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                    </div>
+                    <div>
+                        <label for="form_prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+                        <input type="text" id="form_prenom" name="prenom" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                    </div>
+                    <div>
+                        <label for="form_email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="form_email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                    </div>
+                    <div>
+                        <label for="form_phone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+                        <input type="tel" id="form_phone" name="phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                    </div>
+                    <div>
+                        <label for="form_notes" class="block text-sm font-medium text-gray-700">Vos besoins ou questions (facultatif)</label>
+                        <textarea id="form_notes" name="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"></textarea>
+                    </div>
+                    <input type="hidden" id="form_formula" name="formula">
+                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md" data-i18n="abonnements.form_submit">Envoyer ma demande</button>
+                    <div id="subscription-message" class="mt-4 text-center text-sm"></div>
+                </form>
             </div>
         </div>
     </div>
