@@ -545,6 +545,7 @@ function initializeSubscriptionForm() {
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
+            console.log('formulaInputElement.value after setting:', formulaInputElement.value); // Debug: Check value immediately after setting
         }
         
         // BRUTAL OVERRIDE VERSION - Confirmed to work
