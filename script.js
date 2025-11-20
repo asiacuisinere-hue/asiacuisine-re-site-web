@@ -672,24 +672,3 @@ function initializeSubscriptionForm() {
     
     console.log('✅ Subscription form fully initialized');
 }
-
-            const result = await response.json();
-
-            if (response.ok) {
-                subscriptionMessageDiv.textContent = 'Votre demande d\'abonnement a été envoyée avec succès ! Nous vous contacterons bientôt.';
-                subscriptionMessageDiv.className = 'mt-4 text-center text-green-600';
-                subscriptionForm.reset();
-                setTimeout(closeSubscriptionForm, 3000);
-            } else {
-                throw new Error(result.error || 'Une erreur est survenue lors de l\'envoi de votre demande.');
-            }
-        } catch (error) {
-            console.error('Subscription form submission error:', error);
-            subscriptionMessageDiv.textContent = error.message;
-            subscriptionMessageDiv.className = 'mt-4 text-center text-red-600';
-        } finally {
-            submitButton.textContent = originalButtonText;
-            submitButton.disabled = false;
-        }
-    });
-}
