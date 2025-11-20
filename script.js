@@ -552,16 +552,17 @@ function initializeSubscriptionForm() {
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
+            modal.classList.remove('hidden'); // Remove Tailwind's hidden class
+            modal.style.removeProperty('display'); // Remove any inline display style
+            modal.style.display = 'flex'; // Explicitly set display to flex
             document.body.style.overflow = 'hidden';
         }
     }
 
     function closeSubscriptionForm() {
         console.log('Closing form.');
-        modal.classList.add('hidden');
-        modal.style.display = 'none';
+        modal.classList.add('hidden'); // Re-add Tailwind's hidden class
+        modal.style.display = 'none'; // Explicitly set display to none
         document.body.style.overflow = '';
         if (subscriptionMessageDiv) {
             subscriptionMessageDiv.textContent = '';
