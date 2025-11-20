@@ -5,10 +5,16 @@ script.js:5 DOM fully loaded and parsed
 script.js:16 Initializing i18next...
 script.js:32 Language detected from URL: fr
 i18next.min.js:1 i18next: languageChanged fr
-i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}appendNamespaceToCIMode: falseappendNamespaceToMissingKey: falsecacheInBuiltFormats: truecontextSeparator: "_"debug: truedefaultNS: ['translation']fallbackLng: ['dev']fallbackNS: falseignoreJSONStructure: trueinitAsync: trueinterpolation: {escapeValue: true, prefix: '{{', suffix: '}}', formatSeparator: ',', format: ƒ, …}joinArrays: falsekeySeparator: "."lng: "fr"load: "all"missingInterpolationHandler: falsemissingKeyHandler: falsenonExplicitSupportedLngs: falsens: ['translation']nsSeparator: ":"overloadTranslationOptionHandler: t=> {…}parseMissingKeyHandler: falsepartialBundledLanguages: falsepluralSeparator: "_"postProcess: falsepostProcessPassResolved: falsepreload: falseresources: {fr: {…}, en: {…}, zh: {…}}returnEmptyString: truereturnNull: falsereturnObjects: falsereturnedObjectHandler: falsesaveMissing: falsesaveMissingPlurals: truesaveMissingTo: "fallback"simplifyPluralSuffix: truesupportedLngs: falseupdateMissing: false[[Prototype]]: Object
+i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
 script.js:7 i18next initialized, now initializing page content.
 script.js:49 Running updateContent()...
 script.js:51 Found 46 elements to translate.
 i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_title abonnements.form_title
 i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_submit abonnements.form_submit
 script.js:67 Updating links to persist language: fr
+script.js:529 Initializing subscription form...
+script.js:535 {subscriptionFormExists: true, modalExists: true, subscribeButtonsFound: 3, closeButtonFound: true}
+script.js:551 Opening form for formula: Performance
+script.js:551 Opening form for formula: Performance
+script.js:551 Opening form for formula: Premium
+script.js:551 Opening form for formula: Équilibre
