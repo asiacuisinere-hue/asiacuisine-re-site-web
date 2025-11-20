@@ -529,8 +529,8 @@ function initializeSubscriptionForm() {
     console.log('Initializing subscription form...');
     const subscriptionForm = document.getElementById('subscription-form');
     const modal = document.getElementById('subscription-form-modal');
-    const subscribeButtons = document.querySelectorAll('.choose-button'); // Simplified selector
-    const closeButton = modal?.querySelector('button'); // Simplified selector
+    const subscribeButtons = document.querySelectorAll('.choose-button');
+    const closeButton = document.getElementById('close-subscription-modal-btn');
 
     console.log({
         subscriptionFormExists: !!subscriptionForm,
@@ -569,6 +569,7 @@ function initializeSubscriptionForm() {
     subscribeButtons.forEach(button => {
         button.addEventListener('click', () => {
             const formula = button.dataset.formula;
+            console.log('Subscribe button clicked for formula:', formula); // Added for debugging
             openSubscriptionForm(formula);
         });
     });
