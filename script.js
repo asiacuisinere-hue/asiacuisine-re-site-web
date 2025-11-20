@@ -552,24 +552,14 @@ function initializeSubscriptionForm() {
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
-            
-            console.log('--- DEBUG ---');
-            console.log('Modal display before change:', modal.style.display);
-            console.log('Modal element:', modal);
-            
-            modal.style.display = 'flex';
-            modal.style.border = '5px solid red'; // For visual debugging
-            
-            console.log('Modal display after change:', modal.style.display);
-            console.log('--- END DEBUG ---');
-
+            modal.classList.add('is-visible');
             document.body.style.overflow = 'hidden';
         }
     }
 
     function closeSubscriptionForm() {
         console.log('Closing form.');
-        modal.style.display = 'none'; // Direct style manipulation
+        modal.classList.remove('is-visible');
         document.body.style.overflow = '';
         if (subscriptionMessageDiv) {
             subscriptionMessageDiv.textContent = '';
