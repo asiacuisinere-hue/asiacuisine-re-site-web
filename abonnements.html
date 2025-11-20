@@ -56,9 +56,27 @@
             <p data-i18n="abonnements.intro3">Goût, équilibre et transparence — sans avoir à calculer chaque jour, je le fais pour vous.</p>
         </div>
 
-        <div class="flex flex-col items-center gap-8">
-            <!-- Carte du haut (Performance) -->
-            <div class="w-full md:w-2/3 lg:w-1/2">
+        <div class="grid lg:grid-cols-3 gap-8 items-start">
+            <!-- Formule Équilibre (Order 1 on mobile) -->
+            <div class="card rounded-lg shadow-lg p-6 text-center w-full h-full">
+                <div class="card-content">
+                    <h2 class="text-2xl font-bold mb-2">🌿 <span data-i18n="abonnements.equilibre_title">Formule Équilibre</span></h2>
+                    <p class="text-gray-500 mb-4" data-i18n="abonnements.equilibre_subtitle">4 plats personnalisés / semaine</p>
+                    <p class="text-4xl font-extrabold" data-i18n="abonnements.equilibre_price">à partir de 180€/mois</p>
+                    <p class="text-gray-400 mb-4 text-sm" data-i18n="abonnements.equilibre_price_week">(soit environ 45 €/semaine)</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li data-i18n="abonnements.equilibre_item1">✔️ 16 plats personnalisés par mois</li>
+                        <li data-i18n="abonnements.equilibre_item2">✔️ Calcul précis des calories et macronutriments</li>
+                        <li data-i18n="abonnements.equilibre_item3">✔️ Accès à notre calculateur nutritionnel</li>
+                        <li data-i18n="abonnements.equilibre_item4">✔️ Idéal pour un rééquilibrage simple et durable</li>
+                    </ul>
+                    <p class="italic text-gray-600 mb-6" data-i18n="abonnements.equilibre_tagline">🥗 Pour apprendre à mieux manger sans se priver.</p>
+                </div>
+                <button class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta" data-formula="Équilibre">Choisir cette formule</button>
+            </div>
+
+            <!-- Formule Performance (Order 2 on mobile, raised on desktop) -->
+            <div class="w-full lg:-translate-y-6">
                 <div class="card-highlight rounded-lg shadow-2xl p-8 text-center transform hover:scale-105 transition-transform duration-300">
                     <div class="card-content">
                         <h2 class="text-3xl font-bold mb-2">🔥 <span data-i18n="abonnements.performance_title">Formule Performance</span></h2>
@@ -77,42 +95,23 @@
                 </div>
             </div>
 
-            <!-- Cartes du bas (Équilibre et Premium) -->
-            <div class="w-full grid md:grid-cols-2 gap-8">
-                <div class="card rounded-lg shadow-lg p-6 text-center">
-                    <div class="card-content">
-                        <h2 class="text-2xl font-bold mb-2">🌿 <span data-i18n="abonnements.equilibre_title">Formule Équilibre</span></h2>
-                        <p class="text-gray-500 mb-4" data-i18n="abonnements.equilibre_subtitle">4 plats personnalisés / semaine</p>
-                        <p class="text-4xl font-extrabold" data-i18n="abonnements.equilibre_price">à partir de 180€/mois</p>
-                        <p class="text-gray-400 mb-4 text-sm" data-i18n="abonnements.equilibre_price_week">(soit environ 45 €/semaine)</p>
-                        <ul class="text-left mb-6 space-y-2">
-                            <li data-i18n="abonnements.equilibre_item1">✔️ 16 plats personnalisés par mois</li>
-                            <li data-i18n="abonnements.equilibre_item2">✔️ Calcul précis des calories et macronutriments</li>
-                            <li data-i18n="abonnements.equilibre_item3">✔️ Accès à notre calculateur nutritionnel</li>
-                            <li data-i18n="abonnements.equilibre_item4">✔️ Idéal pour un rééquilibrage simple et durable</li>
-                        </ul>
-                        <p class="italic text-gray-600 mb-6" data-i18n="abonnements.equilibre_tagline">🥗 Pour apprendre à mieux manger sans se priver.</p>
-                    </div>
-                    <button class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta" data-formula="Équilibre">Choisir cette formule</button>
+            <!-- Formule Premium (Order 3 on mobile) -->
+            <div class="card rounded-lg shadow-lg p-6 text-center w-full h-full">
+                <div class="card-content">
+                    <h2 class="text-2xl font-bold mb-2">✨ <span data-i18n="abonnements.premium_title">Formule Premium</span></h2>
+                    <p class="text-gray-500 mb-4" data-i18n="abonnements.premium_subtitle">5 plats personnalisés / semaine + suivi complet</p>
+                    <p class="text-4xl font-extrabold" data-i18n="abonnements.premium_price">à partir de 360€/mois</p>
+                    <p class="text-gray-400 mb-4 text-sm" data-i18n="abonnements.premium_price_week">(soit environ 90 €/semaine)</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li data-i18n="abonnements.premium_item1">✔️ Tout ce qui est inclus dans la formule Performance</li>
+                        <li datai18n="abonnements.premium_item2">✔️ Recettes entièrement adaptées à vos goûts</li>
+                        <li data-i18n="abonnements.premium_item3">✔️ Ajustement hebdomadaire des portions</li>
+                        <li data-i18n="abonnements.premium_item4">✔️ Livraison incluse</li>
+                        <li data-i18n="abonnements.premium_item5">✔️ Conseils repas et collations personnalisés</li>
+                    </ul>
+                    <p class="italic text-gray-600 mb-6" data-i18n="abonnements.premium_tagline">👨‍🍳 L’expérience d’un chef personnel, à votre écoute.</p>
                 </div>
-
-                <div class="card rounded-lg shadow-lg p-6 text-center">
-                    <div class="card-content">
-                        <h2 class="text-2xl font-bold mb-2">✨ <span data-i18n="abonnements.premium_title">Formule Premium</span></h2>
-                        <p class="text-gray-500 mb-4" data-i18n="abonnements.premium_subtitle">5 plats personnalisés / semaine + suivi complet</p>
-                        <p class="text-4xl font-extrabold" data-i18n="abonnements.premium_price">à partir de 360€/mois</p>
-                        <p class="text-gray-400 mb-4 text-sm" data-i18n="abonnements.premium_price_week">(soit environ 90 €/semaine)</p>
-                        <ul class="text-left mb-6 space-y-2">
-                            <li data-i18n="abonnements.premium_item1">✔️ Tout ce qui est inclus dans la formule Performance</li>
-                            <li data-i18n="abonnements.premium_item2">✔️ Recettes entièrement adaptées à vos goûts</li>
-                            <li data-i18n="abonnements.premium_item3">✔️ Ajustement hebdomadaire des portions</li>
-                            <li data-i18n="abonnements.premium_item4">✔️ Livraison incluse</li>
-                            <li data-i18n="abonnements.premium_item5">✔️ Conseils repas et collations personnalisés</li>
-                        </ul>
-                        <p class="italic text-gray-600 mb-6" data-i18n="abonnements.premium_tagline">👨‍🍳 L’expérience d’un chef personnel, à votre écoute.</p>
-                    </div>
-                    <button class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta" data-formula="Premium">Choisir cette formule</button>
-                </div>
+                <button class="choose-button font-bold py-2 px-4 rounded-full w-full inline-block mt-auto" data-i18n="abonnements.choose_cta" data-formula="Premium">Choisir cette formule</button>
             </div>
         </div>
 
