@@ -532,7 +532,8 @@ function initializeSubscriptionForm() {
     const closeButton = modal?.querySelector('.absolute.top-3.right-3');
 
     if (!modal || !subscriptionForm || subscribeButtons.length === 0) {
-        // Do nothing if we are not on the subscription page
+        console.log('Subscription form elements not found, exiting initialization.');
+        console.log({ modal, subscriptionForm, subscribeButtons: subscribeButtons.length });
         return;
     }
 
