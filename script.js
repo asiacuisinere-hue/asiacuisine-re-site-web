@@ -523,58 +523,69 @@ async function initializeWelcomePopup() {
     closeBtn.addEventListener('click', closePopup);
 }
 
+// --- SUBSCRIPTION FORM LOGIC ---
+
 function initializeSubscriptionForm() {
-    console.log('Initializing subscription form...');
+    console.log('🔧 Initializing subscription form...');
+    
     const subscriptionForm = document.getElementById('subscription-form');
     const modal = document.getElementById('subscription-form-modal');
     const subscribeButtons = document.querySelectorAll('.choose-button');
     const closeButton = document.getElementById('close-subscription-modal-btn');
 
+    console.log('=== VERIFICATION ===');
+    console.log('Form exists:', !!subscriptionForm);
+    console.log('Modal exists:', !!modal);
+    console.log('Buttons found:', subscribeButtons.length);
+    console.log('Close button exists:', !!closeButton);
+
     if (!modal || !subscriptionForm || subscribeButtons.length === 0) {
-        console.error('❌ One or more essential elements for the subscription form are missing!');
+        console.error('❌ Missing required elements!');
         return;
     }
 
-    const formulaNameElement = modal.querySelector('#selected-formula-name');
+    const formulaNameElement = modal.querySelector('#selected-formula-name'); // Corrected selector
     const formulaInputElement = document.getElementById('form_formula');
     const subscriptionMessageDiv = document.getElementById('subscription-message');
+    
+    // ✅ NOUVELLE SOLUTION: Stocker la formule sélectionnée dans une variable
+    let selectedFormula = '';
 
     function openSubscriptionForm(formula) {
-        console.log('Opening form with brutal style override for formula:', formula);
+        console.log('🟢 Opening modal for formula:', formula);
         
-        if (formulaNameElement && formulaInputElement) {
+        // Stocke la formule dans la variable
+        selectedFormula = formula;
+        
+        if (formulaNameElement) {
             formulaNameElement.textContent = formula;
-            
-            // --- CRITICAL DEBUG ---
-            console.log('Attempting to set formula value to:', formula);
-            formulaInputElement.value = formula;
-            console.log('Value of hidden input AFTER setting:', formulaInputElement.value);
-            // --- END CRITICAL DEBUG ---
         }
         
-        // BRUTAL OVERRIDE VERSION - Confirmed to work
+        // Force modal display with inline styles (brutal version)
         modal.style.display = 'flex';
         modal.style.opacity = '1';
         modal.style.visibility = 'visible';
-        modal.style.position = 'fixed'; // Ensure it's in the viewport
-        modal.style.zIndex = '9999';   // Ensure it's on top
-        
-        // Add class for consistency if needed, but styles are primary
-        modal.classList.remove('hidden');
-        modal.classList.add('is-visible');
+        modal.classList.remove('hidden'); // Remove hidden class if present
+        modal.classList.add('is-visible'); // Add is-visible for potential animations
         
         document.body.style.overflow = 'hidden';
+        
+        console.log('✅ Modal opened with formula:', selectedFormula);
     }
 
     function closeSubscriptionForm() {
-        console.log('Closing form.');
+        console.log('🔴 Closing modal');
         
-        // Hide it immediately, Brutal version doesn't need animation
-        modal.style.display = 'none';
-        modal.style.opacity = '0';
-        modal.style.visibility = 'hidden';
-        modal.classList.remove('is-visible');
-        modal.classList.add('hidden'); // Add hidden back for consistency
+        modal.classList.remove('is-visible'); // Remove is-visible to trigger fade-out
+        
+        // Use a timeout to match potential CSS transition duration for smooth closing
+        // This effectively hides it immediately in the "brutal" version, but allows for transition if reinstated
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.style.opacity = '0';
+            modal.style.visibility = 'hidden';
+            modal.classList.add('hidden'); // Re-add hidden class for initial state
+        }, 400); // Should match CSS transition duration
         
         document.body.style.overflow = '';
         
@@ -583,25 +594,35 @@ function initializeSubscriptionForm() {
         }
     }
 
-    // Event listeners
-    subscribeButtons.forEach(button => {
+    // Attach event listeners - ONLY inside event handlers
+    subscribeButtons.forEach((button, index) => {
+        console.log(`Attaching listener to button ${index}`, button.dataset.formula);
+        
         button.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
             const formula = button.dataset.formula;
+            console.log(`🖱️ Button ${index} clicked, formula:`, formula);
             openSubscriptionForm(formula);
         });
     });
 
     if (closeButton) {
-        closeButton.addEventListener('click', closeSubscriptionForm);
+        closeButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSubscriptionForm();
+        });
     }
     
-    // Close modal if clicking outside
+    // Close on outside click
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
             closeSubscriptionForm();
         }
     });
 
+    // Form submission
     subscriptionForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -610,14 +631,17 @@ function initializeSubscriptionForm() {
         submitButton.textContent = 'Envoi en cours...';
         submitButton.disabled = true;
 
+        // ✅ CRITIQUE: Ajouter la formule JUSTE AVANT de récupérer les données
+        if (formulaInputElement) {
+            formulaInputElement.value = selectedFormula;
+            console.log('🔥 Formula set to:', selectedFormula);
+        }
+
         const formData = new FormData(subscriptionForm);
         const data = Object.fromEntries(formData.entries());
 
-        // --- CRITICAL DEBUG ---
-        console.log('--- Submitting Data ---');
-        console.log('Data keys:', Object.keys(data));
-        console.log('Formula value in submitted data:', data.formula);
-        // --- END CRITICAL DEBUG ---
+        console.log('📤 Submitting subscription:', data);
+        console.log('📋 Formula in data:', data.formula);
 
         try {
             const response = await fetch('/create-subscription', {
@@ -625,6 +649,29 @@ function initializeSubscriptionForm() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                subscriptionMessageDiv.textContent = 'Votre demande d\'abonnement a été envoyée avec succès ! Nous vous contacterons bientôt.';
+                subscriptionMessageDiv.className = 'mt-4 text-center text-green-600';
+                subscriptionForm.reset();
+                setTimeout(closeSubscriptionForm, 3000);
+            } else {
+                throw new Error(result.error || 'Une erreur est survenue lors de l\'envoi de votre demande.');
+            }
+        } catch (error) {
+            console.error('❌ Subscription error:', error);
+            subscriptionMessageDiv.textContent = error.message;
+            subscriptionMessageDiv.className = 'mt-4 text-center text-red-600';
+        } finally {
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+        }
+    });
+    
+    console.log('✅ Subscription form fully initialized');
+}
 
             const result = await response.json();
 
