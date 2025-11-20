@@ -523,7 +523,7 @@ async function initializeWelcomePopup() {
     closeBtn.addEventListener('click', closePopup);
 }
 
-// --- SUBSCRIPTION FORM LOGIC (VERSION ULTRA-SIMPLE POUR DEBUG) ---
+// --- SUBSCRIPTION FORM LOGIC (CORRECTED) ---
 
 function initializeSubscriptionForm() {
     console.log('Initializing subscription form...');
@@ -532,100 +532,68 @@ function initializeSubscriptionForm() {
     const subscribeButtons = document.querySelectorAll('.choose-button');
     const closeButton = document.getElementById('close-subscription-modal-btn');
 
-    console.log('=== VERIFICATION COMPLETE ===');
-    console.log('subscriptionForm:', subscriptionForm);
-    console.log('modal:', modal);
-    console.log('subscribeButtons:', subscribeButtons);
-    console.log('closeButton:', closeButton);
+    console.log({
+        subscriptionFormExists: !!subscriptionForm,
+        modalExists: !!modal,
+        subscribeButtonsFound: subscribeButtons.length,
+        closeButtonFound: !!closeButton
+    });
 
     if (!modal || !subscriptionForm || subscribeButtons.length === 0) {
-        console.error('❌ ELEMENTS MANQUANTS!');
         return;
     }
 
-    const formulaNameElement = document.getElementById('selected-formula-name');
-    const formulaInputElement = document.getElementById('form_formula');
+    // CORRECTED: Get formulaNameElement relative to the modal
+    const formulaNameElement = modal.querySelector('#selected-formula-name');
+    const formulaInputElement = document.getElementById('form_formula'); // This one is fine as it's directly within the form, which is found via ID
     const subscriptionMessageDiv = document.getElementById('subscription-message');
 
-    console.log('formulaNameElement:', formulaNameElement);
-    console.log('formulaInputElement:', formulaInputElement);
-
     function openSubscriptionForm(formula) {
-        console.log('🔵 openSubscriptionForm appelée avec:', formula);
-        
+        console.log('Opening form for formula:', formula);
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
+            
+            // ✅ CORRECTION: Enlève hidden et force l'affichage
+            modal.classList.remove('hidden');
+            modal.classList.add('is-visible');
+            modal.style.display = 'flex';
+            
+            document.body.style.overflow = 'hidden';
         }
-        
-        // VERSION BRUTALE - Force TOUT
-        modal.style.display = 'flex';
-        modal.style.opacity = '1';
-        modal.style.visibility = 'visible';
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.zIndex = '9999';
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.75)';
-        
-        // Enlève toutes les classes qui pourraient cacher
-        modal.classList.remove('hidden');
-        modal.classList.add('is-visible');
-        
-        document.body.style.overflow = 'hidden';
-        
-        console.log('✅ Modal devrait être visible maintenant');
-        console.log('Styles appliqués:', {
-            display: modal.style.display,
-            opacity: modal.style.opacity,
-            visibility: modal.style.visibility,
-            zIndex: modal.style.zIndex
-        });
     }
 
     function closeSubscriptionForm() {
-        console.log('🔴 closeSubscriptionForm appelée');
-        
-        modal.style.display = 'none';
-        modal.style.opacity = '0';
-        modal.style.visibility = 'hidden';
+        console.log('Closing form.');
         modal.classList.remove('is-visible');
         
-        document.body.style.overflow = '';
+        // ✅ CORRECTION: Attend la fin de l'animation avant de cacher
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
+        }, 400); // Durée de transition CSS
         
+        document.body.style.overflow = '';
         if (subscriptionMessageDiv) {
             subscriptionMessageDiv.textContent = '';
         }
     }
 
-    // Event listeners
-    subscribeButtons.forEach((button, index) => {
-        console.log(`Attaching listener to button ${index}:`, button, 'Formula:', button.dataset.formula);
-        
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
+    subscribeButtons.forEach(button => {
+        button.addEventListener('click', () => {
             const formula = button.dataset.formula;
-            console.log(`🖱️ CLICK détecté sur bouton ${index}, formule:`, formula);
+            console.log('Subscribe button clicked for formula:', formula);
             openSubscriptionForm(formula);
         });
     });
 
     if (closeButton) {
-        closeButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeSubscriptionForm();
-        });
+        closeButton.addEventListener('click', closeSubscriptionForm);
     }
     
-    // Close modal if clicking outside
+    // Close modal if clicking outside the content
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
-            console.log('Click en dehors du contenu détecté');
             closeSubscriptionForm();
         }
     });
@@ -667,6 +635,4 @@ function initializeSubscriptionForm() {
             submitButton.disabled = false;
         }
     });
-    
-    console.log('✅ Subscription form initialization complete');
 }
