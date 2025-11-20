@@ -12,11 +12,10 @@ script.js:51 Found 46 elements to translate.
 i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_title abonnements.form_title
 i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_submit abonnements.form_submit
 script.js:67 Updating links to persist language: fr
-script.js:529 Initializing subscription form...
-script.js:535 {subscriptionFormExists: true, modalExists: true, subscribeButtonsFound: 3, closeButtonFound: true}
-script.js:572 Subscribe button clicked for formula: Performance
-script.js:551 Opening form for formula: Performance
-script.js:572 Subscribe button clicked for formula: Équilibre
-script.js:551 Opening form for formula: Équilibre
-script.js:572 Subscribe button clicked for formula: Premium
-script.js:551 Opening form for formula: Premium
+script.js:527 Initializing subscription form...
+script.js:543 Opening form with brutal style override for formula: Performance
+script.js:612  POST https://www.asiacuisine.re/create-subscription 400 (Bad Request)
+(anonymous) @ script.js:612
+script.js:629 Subscription form submission error: Error: Missing required fields (nom, prenom, email, phone, formula)
+    at HTMLFormElement.<anonymous> (script.js:626:23)
+(anonymous) @ script.js:629

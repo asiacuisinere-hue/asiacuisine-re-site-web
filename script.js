@@ -608,6 +608,8 @@ function initializeSubscriptionForm() {
         const formData = new FormData(subscriptionForm);
         const data = Object.fromEntries(formData.entries());
 
+        console.log('Submitting data to /create-subscription:', data); // DEBUG: Log the data being sent
+
         try {
             const response = await fetch('/create-subscription', {
                 method: 'POST',
