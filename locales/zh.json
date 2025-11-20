@@ -174,7 +174,12 @@
       "premium_tagline": "👨‍🍳 私人厨师的体验，随时为您服务。",
       "choose_cta": "选择此计划",
       "form_title": "订阅套餐",
-      "form_submit": "发送请求"
+      "form_submit": "发送请求",
+      "form_label_nom": "姓名",
+      "form_label_prenom": "名字",
+      "form_label_email": "邮箱",
+      "form_label_phone": "电话",
+      "form_label_notes": "您的需求或问题 (可选)"
     },
     "legal": {
       "page_title": "法律声明 - Asiacuisine.re",

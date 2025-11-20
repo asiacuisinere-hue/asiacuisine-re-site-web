@@ -164,7 +164,12 @@
       "premium_tagline": "👨‍🍳 L’expérience d’un chef personnel, à votre écoute.",
       "choose_cta": "Choisir cette formule",
       "form_title": "Souscrire à la formule",
-      "form_submit": "Envoyer ma demande"
+      "form_submit": "Envoyer ma demande",
+      "form_label_nom": "Nom",
+      "form_label_prenom": "Prénom",
+      "form_label_email": "Email",
+      "form_label_phone": "Téléphone",
+      "form_label_notes": "Vos besoins ou questions (facultatif)"
     },
     "legal": {
       "page_title": "Mentions Légales - Asiacuisine.re",

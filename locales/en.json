@@ -164,7 +164,12 @@
       "premium_tagline": "👨‍🍳 The experience of a personal chef, at your service.",
       "choose_cta": "Choose this plan",
       "form_title": "Subscribe to plan",
-      "form_submit": "Send my request"
+      "form_submit": "Send my request",
+      "form_label_nom": "Name",
+      "form_label_prenom": "First Name",
+      "form_label_email": "Email",
+      "form_label_phone": "Phone",
+      "form_label_notes": "Your needs or questions (optional)"
     },
     "legal": {
       "page_title": "Legal Notice - Asiacuisine.re",
