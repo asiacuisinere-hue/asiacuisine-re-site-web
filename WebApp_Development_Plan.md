@@ -68,21 +68,21 @@
 ## Phase 8: Paramètres Avancés et Contenu Dynamique
 *Objectif : Rendre le site administrable depuis le dashboard pour réduire le besoin de redéploiements.*
 
-*   [ ] **8.1. Gestion du Calendrier :**
-    *   [ ] Créer une table `indisponibilites` dans Supabase pour stocker les dates bloquées.
-    *   [ ] Dans le dashboard, créer une page "Paramètres > Calendrier" avec une interface visuelle pour sélectionner/désélectionner des dates.
-    *   [ ] Permettre de bloquer des jours de la semaine de manière récurrente (ex: tous les dimanches et lundis).
-    *   [ ] Mettre à jour la fonction `/functions/disponibilites` pour qu'elle lise cette table et retourne la liste complète des jours non disponibles.
+*   [x] **8.1. Gestion du Calendrier :**
+    *   [x] Créer une table `indisponibilites` dans Supabase pour stocker les dates bloquées.
+    *   [x] Dans le dashboard, créer une page "Paramètres > Calendrier" avec une interface visuelle pour sélectionner/désélectionner des dates.
+    *   [x] Permettre de bloquer des jours de la semaine de manière récurrente (ex: tous les dimanches et lundis).
+    *   [x] Mettre à jour la fonction `/functions/disponibilites` pour qu'elle lise cette table et retourne la liste complète des jours non disponibles.
 
 *   [ ] **8.2. Gestion des Menus Hebdomadaires :**
     *   [ ] Créer une table `menus_semaine` dans Supabase pour stocker les détails des formules (nom, prix, description, plats inclus).
     *   [ ] Dans le dashboard, créer une page "Paramètres > Menus" pour éditer ces formules.
     *   [ ] Modifier la page `menu.html` pour qu'elle charge dynamiquement les informations des formules depuis une nouvelle fonction serveur, au lieu d'être statique.
 
-*   [ ] **8.3. Gestion du Popup d'Accueil :**
-    *   [ ] Créer une table `contenu_dynamique` (ou utiliser une table de configuration générale) pour stocker le titre et le message du popup.
-    *   [ ] Dans le dashboard, créer une section "Paramètres > Page d'accueil" avec des champs pour modifier le contenu du popup.
-    *   [ ] Modifier le `script.js` du site principal pour récupérer ce contenu via une fonction serveur et l'afficher dans le popup.
+*   [x] **8.3. Gestion du Popup d'Accueil :**
+    *   [x] Créer une table `contenu_dynamique` (ou utiliser une table de configuration générale) pour stocker le titre et le message du popup.
+    *   [x] Dans le dashboard, créer une section "Paramètres > Page d'accueil" avec des champs pour modifier le contenu du popup.
+    *   [x] Modifier le `script.js` du site principal pour récupérer ce contenu via une fonction serveur et l'afficher dans le popup.
 
 *   [ ] **8.4. Gestion du Compte Administrateur :**
     *   [ ] Permettre à l'administrateur de changer son mot de passe directement depuis le dashboard.

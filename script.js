@@ -526,14 +526,20 @@ async function initializeWelcomePopup() {
 // --- SUBSCRIPTION FORM LOGIC ---
 
 function initializeSubscriptionForm() {
+    console.log('Initializing subscription form...');
     const subscriptionForm = document.getElementById('subscription-form');
     const modal = document.getElementById('subscription-form-modal');
-    const subscribeButtons = document.querySelectorAll('button[data-formula]');
-    const closeButton = modal?.querySelector('.absolute.top-3.right-3');
+    const subscribeButtons = document.querySelectorAll('.choose-button'); // Simplified selector
+    const closeButton = modal?.querySelector('button'); // Simplified selector
+
+    console.log({
+        subscriptionFormExists: !!subscriptionForm,
+        modalExists: !!modal,
+        subscribeButtonsFound: subscribeButtons.length,
+        closeButtonFound: !!closeButton
+    });
 
     if (!modal || !subscriptionForm || subscribeButtons.length === 0) {
-        console.log('Subscription form elements not found, exiting initialization.');
-        console.log({ modal, subscriptionForm, subscribeButtons: subscribeButtons.length });
         return;
     }
 
@@ -542,6 +548,7 @@ function initializeSubscriptionForm() {
     const subscriptionMessageDiv = document.getElementById('subscription-message');
 
     function openSubscriptionForm(formula) {
+        console.log('Opening form for formula:', formula);
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
@@ -551,6 +558,7 @@ function initializeSubscriptionForm() {
     }
 
     function closeSubscriptionForm() {
+        console.log('Closing form.');
         modal.classList.add('hidden');
         document.body.style.overflow = '';
         if (subscriptionMessageDiv) {
