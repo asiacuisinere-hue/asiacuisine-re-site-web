@@ -552,14 +552,14 @@ function initializeSubscriptionForm() {
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
-            modal.classList.remove('hidden');
+            modal.style.display = 'flex'; // Direct style manipulation
             document.body.style.overflow = 'hidden';
         }
     }
 
     function closeSubscriptionForm() {
         console.log('Closing form.');
-        modal.classList.add('hidden');
+        modal.style.display = 'none'; // Direct style manipulation
         document.body.style.overflow = '';
         if (subscriptionMessageDiv) {
             subscriptionMessageDiv.textContent = '';

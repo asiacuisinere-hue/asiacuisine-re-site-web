@@ -14,6 +14,9 @@ i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form
 script.js:67 Updating links to persist language: fr
 script.js:529 Initializing subscription form...
 script.js:535 {subscriptionFormExists: true, modalExists: true, subscribeButtonsFound: 3, closeButtonFound: true}
+script.js:572 Subscribe button clicked for formula: Performance
 script.js:551 Opening form for formula: Performance
-script.js:551 Opening form for formula: Premium
+script.js:572 Subscribe button clicked for formula: Équilibre
 script.js:551 Opening form for formula: Équilibre
+script.js:572 Subscribe button clicked for formula: Premium
+script.js:551 Opening form for formula: Premium
