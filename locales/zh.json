@@ -172,7 +172,9 @@
       "premium_item4": "✔️ 包含送餐服务",
       "premium_item5": "✔️ 个性化膳食和零食建议",
       "premium_tagline": "👨‍🍳 私人厨师的体验，随时为您服务。",
-      "choose_cta": "选择此计划"
+      "choose_cta": "选择此计划",
+      "form_title": "订阅套餐",
+      "form_submit": "发送请求"
     },
     "legal": {
       "page_title": "法律声明 - Asiacuisine.re",

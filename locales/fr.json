@@ -162,7 +162,9 @@
       "premium_item4": "✔️ Livraison incluse",
       "premium_item5": "✔️ Conseils repas et collations personnalisés",
       "premium_tagline": "👨‍🍳 L’expérience d’un chef personnel, à votre écoute.",
-      "choose_cta": "Choisir cette formule"
+      "choose_cta": "Choisir cette formule",
+      "form_title": "Souscrire à la formule",
+      "form_submit": "Envoyer ma demande"
     },
     "legal": {
       "page_title": "Mentions Légales - Asiacuisine.re",

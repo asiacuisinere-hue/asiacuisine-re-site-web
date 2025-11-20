@@ -162,7 +162,9 @@
       "premium_item4": "✔️ Delivery included",
       "premium_item5": "✔️ Personalized meal and snack advice",
       "premium_tagline": "👨‍🍳 The experience of a personal chef, at your service.",
-      "choose_cta": "Choose this plan"
+      "choose_cta": "Choose this plan",
+      "form_title": "Subscribe to plan",
+      "form_submit": "Send my request"
     },
     "legal": {
       "page_title": "Legal Notice - Asiacuisine.re",

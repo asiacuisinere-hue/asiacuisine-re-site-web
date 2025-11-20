@@ -12,10 +12,20 @@ script.js:51 Found 46 elements to translate.
 i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_title abonnements.form_title
 i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_submit abonnements.form_submit
 script.js:67 Updating links to persist language: fr
-script.js:527 Initializing subscription form...
-script.js:543 Opening form with brutal style override for formula: Performance
-script.js:612  POST https://www.asiacuisine.re/create-subscription 400 (Bad Request)
-(anonymous) @ script.js:612
-script.js:629 Subscription form submission error: Error: Missing required fields (nom, prenom, email, phone, formula)
-    at HTMLFormElement.<anonymous> (script.js:626:23)
-(anonymous) @ script.js:629
+script.js:529 🔧 Initializing subscription form...
+script.js:536 === VERIFICATION ===
+script.js:537 Form exists: true
+script.js:538 Modal exists: true
+script.js:539 Buttons found: 3
+script.js:540 Close button exists: true
+script.js:599 Attaching listener to button 0 Performance
+script.js:599 Attaching listener to button 1 Équilibre
+script.js:599 Attaching listener to button 2 Premium
+script.js:673 ✅ Subscription form fully initialized
+script.js:606 🖱️ Button 0 clicked, formula: Performance
+script.js:555 🟢 Opening modal for formula: Performance
+script.js:573 ✅ Modal opened with formula: Performance
+script.js:637 🔥 Formula set to: Performance
+script.js:643 📤 Submitting subscription: {nom: 'kischenin', prenom: 'jean', email: 'heixinlong@gmail.com', phone: '1234', notes: 'simple', …}
+script.js:644 📋 Formula in data: Performance
+script.js:577 🔴 Closing modal
