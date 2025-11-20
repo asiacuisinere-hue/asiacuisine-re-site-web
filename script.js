@@ -523,7 +523,7 @@ async function initializeWelcomePopup() {
     closeBtn.addEventListener('click', closePopup);
 }
 
-// --- SUBSCRIPTION FORM LOGIC ---
+// --- SUBSCRIPTION FORM LOGIC (CORRECTED) ---
 
 function initializeSubscriptionForm() {
     console.log('Initializing subscription form...');
@@ -552,7 +552,12 @@ function initializeSubscriptionForm() {
         if (formulaNameElement && formulaInputElement) {
             formulaNameElement.textContent = formula;
             formulaInputElement.value = formula;
+            
+            // ✅ CORRECTION: Enlève hidden et force l'affichage
+            modal.classList.remove('hidden');
             modal.classList.add('is-visible');
+            modal.style.display = 'flex';
+            
             document.body.style.overflow = 'hidden';
         }
     }
@@ -560,16 +565,24 @@ function initializeSubscriptionForm() {
     function closeSubscriptionForm() {
         console.log('Closing form.');
         modal.classList.remove('is-visible');
+        
+        // ✅ CORRECTION: Attend la fin de l'animation avant de cacher
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
+        }, 400); // Durée de transition CSS
+        
         document.body.style.overflow = '';
         if (subscriptionMessageDiv) {
             subscriptionMessageDiv.textContent = '';
         }
     }
 
+    // ✅ Event listeners corrects (avec fonction fléchée)
     subscribeButtons.forEach(button => {
         button.addEventListener('click', () => {
             const formula = button.dataset.formula;
-            console.log('Subscribe button clicked for formula:', formula); // Added for debugging
+            console.log('Subscribe button clicked for formula:', formula);
             openSubscriptionForm(formula);
         });
     });
