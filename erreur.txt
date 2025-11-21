@@ -1,27 +1,16 @@
 supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
 supabaseClient.js:7 Has API Key: true
-DemandesEnCours.js:42 --- [DEBUG] Demandes en cours reçues: [{…}]
-Devis.js:121 --- [DEBUG] handleGenerateQuote: Démarrage
-Devis.js:135 --- [DEBUG] handleGenerateQuote: Valeur de selectedCustomer: {id: '051df2a5-13c9-4fc9-98f9-4dd77a0339a4', created_at: '2025-11-21T06:22:53.32459+00:00', type: 'client', first_name: null, last_name: 'jean kischenin', …}
-Devis.js:138 --- [DEBUG] handleGenerateQuote: Début du try/catch
-Devis.js:157 --- [DEBUG] handleGenerateQuote: Payload envoyé: {customer: {…}, items: Array(1), total: 120, type: 'service_reservation'}
-Devis.js:159  POST https://asiacuisine.re/api/create-booking-quote net::ERR_CONNECTION_CLOSED
-onClick @ Devis.js:159
+Devis.js:146  POST https://zgniojabjywrnwovlmaf.supabase.co/functions/v1/generate-quote 500 (Internal Server Error)
+onClick @ Devis.js:146
 Ku @ react-dom-client.production.js:12317
 (anonymous) @ react-dom-client.production.js:12867
 Ft @ react-dom-client.production.js:1498
 td @ react-dom-client.production.js:12455
 Sh @ react-dom-client.production.js:15306
 bh @ react-dom-client.production.js:15274
-Devis.js:195 --- [ERROR] handleGenerateQuote: TypeError: Failed to fetch
-    at onClick (Devis.js:159:36)
-    at Ku (react-dom-client.production.js:12317:13)
-    at react-dom-client.production.js:12867:5
-    at Ft (react-dom-client.production.js:1498:36)
-    at td (react-dom-client.production.js:12455:3)
-    at Sh (react-dom-client.production.js:15306:7)
-    at bh (react-dom-client.production.js:15274:7)
-onClick @ Devis.js:195
+Devis.js:185 --- [ERROR] handleGenerateQuote: Error: Erreur sauvegarde devis: Could not find the 'type' column of 'quotes' in the schema cache
+    at onClick (Devis.js:160:19)
+onClick @ Devis.js:185
 await in onClick
 Ku @ react-dom-client.production.js:12317
 (anonymous) @ react-dom-client.production.js:12867
