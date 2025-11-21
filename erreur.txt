@@ -3,9 +3,6 @@ supabaseClient.js:7 Has API Key: true
 DemandesEnCours.js:42 --- [DEBUG] Demandes en cours reçues: [{…}]
 Devis.js:115 --- [DEBUG] handleGenerateQuote: Démarrage
 Devis.js:116 --- [DEBUG] handleGenerateQuote: Valeur de selectedCustomer: {id: '051df2a5-13c9-4fc9-98f9-4dd77a0339a4', created_at: '2025-11-21T06:22:53.32459+00:00', type: 'client', first_name: null, last_name: 'jean kischenin', …}
-Devis.js:124 --- [DEBUG] handleGenerateQuote: Pas de services dans le devis
-Devis.js:115 --- [DEBUG] handleGenerateQuote: Démarrage
-Devis.js:116 --- [DEBUG] handleGenerateQuote: Valeur de selectedCustomer: {id: '051df2a5-13c9-4fc9-98f9-4dd77a0339a4', created_at: '2025-11-21T06:22:53.32459+00:00', type: 'client', first_name: null, last_name: 'jean kischenin', …}
 Devis.js:129 --- [DEBUG] handleGenerateQuote: Début du try/catch
 Devis.js:141 --- [DEBUG] handleGenerateQuote: Payload envoyé: {
   "customer": {
@@ -24,7 +21,7 @@ Devis.js:141 --- [DEBUG] handleGenerateQuote: Payload envoyé: {
   },
   "items": [
     {
-      "id": 1763706247683,
+      "id": 1763706752080,
       "service_id": "721698e9-3977-4060-9da0-86f8b88ba054",
       "name": "Chef à domicile",
       "description": "Cuisine chez le client",
