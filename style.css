@@ -304,6 +304,10 @@ body {
     color: #f0f0f0; /* Assure la visibilité sur fond sombre */
 }
 
+#bookingForm .form-group label {
+    color: #f0f0f0; /* Assure la visibilité sur fond sombre */
+}
+
 /* Testimonials */
 .testimonials { display: none; padding: 100px 0; background: #f8f8f8; }
 

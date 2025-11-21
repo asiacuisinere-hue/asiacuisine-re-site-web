@@ -1,31 +1,56 @@
-(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
-(anonymous) @ (index):64
-(anonymous) @ (index):64
-script.js:5 DOM fully loaded and parsed
-script.js:16 Initializing i18next...
-script.js:32 Language detected from URL: fr
-i18next.min.js:1 i18next: languageChanged fr
-i18next.min.js:1 i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1), …}
-script.js:7 i18next initialized, now initializing page content.
-script.js:49 Running updateContent()...
-script.js:51 Found 46 elements to translate.
-i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_title abonnements.form_title
-i18next.min.js:1 i18next::translator: missingKey fr translation abonnements.form_submit abonnements.form_submit
-script.js:67 Updating links to persist language: fr
-script.js:529 🔧 Initializing subscription form...
-script.js:536 === VERIFICATION ===
-script.js:537 Form exists: true
-script.js:538 Modal exists: true
-script.js:539 Buttons found: 3
-script.js:540 Close button exists: true
-script.js:599 Attaching listener to button 0 Performance
-script.js:599 Attaching listener to button 1 Équilibre
-script.js:599 Attaching listener to button 2 Premium
-script.js:673 ✅ Subscription form fully initialized
-script.js:606 🖱️ Button 0 clicked, formula: Performance
-script.js:555 🟢 Opening modal for formula: Performance
-script.js:573 ✅ Modal opened with formula: Performance
-script.js:637 🔥 Formula set to: Performance
-script.js:643 📤 Submitting subscription: {nom: 'kischenin', prenom: 'jean', email: 'heixinlong@gmail.com', phone: '1234', notes: 'simple', …}
-script.js:644 📋 Formula in data: Performance
-script.js:577 🔴 Closing modal
+supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
+supabaseClient.js:7 Has API Key: true
+DemandesEnCours.js:42 --- [DEBUG] Demandes en cours reçues: [{…}]
+Devis.js:115 --- [DEBUG] handleGenerateQuote: Démarrage
+Devis.js:116 --- [DEBUG] handleGenerateQuote: Valeur de selectedCustomer: {id: '051df2a5-13c9-4fc9-98f9-4dd77a0339a4', created_at: '2025-11-21T06:22:53.32459+00:00', type: 'client', first_name: null, last_name: 'jean kischenin', …}
+Devis.js:124 --- [DEBUG] handleGenerateQuote: Pas de services dans le devis
+Devis.js:115 --- [DEBUG] handleGenerateQuote: Démarrage
+Devis.js:116 --- [DEBUG] handleGenerateQuote: Valeur de selectedCustomer: {id: '051df2a5-13c9-4fc9-98f9-4dd77a0339a4', created_at: '2025-11-21T06:22:53.32459+00:00', type: 'client', first_name: null, last_name: 'jean kischenin', …}
+Devis.js:129 --- [DEBUG] handleGenerateQuote: Début du try/catch
+Devis.js:141 --- [DEBUG] handleGenerateQuote: Payload envoyé: {
+  "customer": {
+    "id": "051df2a5-13c9-4fc9-98f9-4dd77a0339a4",
+    "created_at": "2025-11-21T06:22:53.32459+00:00",
+    "type": "client",
+    "first_name": null,
+    "last_name": "jean kischenin",
+    "company_name": null,
+    "siret": null,
+    "email": "heixinlong@gmail.com",
+    "phone": "123",
+    "address": null,
+    "notes": null,
+    "client_id": "SIE4QP"
+  },
+  "items": [
+    {
+      "id": 1763706247683,
+      "service_id": "721698e9-3977-4060-9da0-86f8b88ba054",
+      "name": "Chef à domicile",
+      "description": "Cuisine chez le client",
+      "price": 120,
+      "quantity": 1
+    }
+  ],
+  "total": 120,
+  "type": "service_reservation"
+}
+Devis.js:143  POST https://gestion.asiacuisine.re/api/create-quote 405 (Method Not Allowed)
+onClick @ Devis.js:143
+Ku @ react-dom-client.production.js:12317
+(anonymous) @ react-dom-client.production.js:12867
+Ft @ react-dom-client.production.js:1498
+td @ react-dom-client.production.js:12455
+Sh @ react-dom-client.production.js:15306
+bh @ react-dom-client.production.js:15274
+Devis.js:149 --- [DEBUG] handleGenerateQuote: Réponse reçue du serveur, statut: 405
+Devis.js:168 --- [ERREUR] handleGenerateQuote: Erreur capturée dans le catch SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    at onClick (Devis.js:152:50)
+onClick @ Devis.js:168
+await in onClick
+Ku @ react-dom-client.production.js:12317
+(anonymous) @ react-dom-client.production.js:12867
+Ft @ react-dom-client.production.js:1498
+td @ react-dom-client.production.js:12455
+Sh @ react-dom-client.production.js:15306
+bh @ react-dom-client.production.js:15274
