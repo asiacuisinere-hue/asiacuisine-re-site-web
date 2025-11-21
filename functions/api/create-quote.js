@@ -3,51 +3,87 @@ import { Resend } from 'resend';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import QRCode from 'qrcode';
 
-// --- CORS Headers ---
-const addCorsHeaders = (response) => {
-    response.headers.set('Access-Control-Allow-Origin', '*'); // Allow all origins, you can restrict this in production
-    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    return response;
-};
+// --- CORS Headers Helper ---
+function corsHeaders() {
+    return {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Content-Type': 'application/json'
+    };
+}
 
+// --- Handle OPTIONS (CORS Preflight) ---
+export async function onRequestOptions() {
+    console.log('--- [DEBUG] create-quote: OPTIONS request received');
+    return new Response(null, {
+        status: 204,
+        headers: corsHeaders()
+    });
+}
 
-// --- Main Function Handler ---
-export async function onRequest(context) {
-    console.log('--- [DEBUG] create-quote function called ---');
-
-    if (context.request.method === 'OPTIONS') {
-        return addCorsHeaders(new Response(null, { status: 204 }));
-    }
-    if (context.request.method !== 'POST') {
-        return addCorsHeaders(new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), { status: 405, headers: { 'Allow': 'POST' } }));
-    }
+// --- Handle POST Requests ---
+export async function onRequestPost(context) {
+    console.log('--- [DEBUG] create-quote: POST request received');
 
     try {
+        // --- Authentication ---
         console.log('--- [DEBUG] create-quote: Authenticating request...');
-        // --- Authentication (Example: checking for a simple password or token) ---
-        // IMPORTANT: Replace with your actual authentication logic (e.g., JWT verification)
         const authHeader = context.request.headers.get('Authorization');
-        if (!authHeader || authHeader !== `Bearer ${context.env.ADMIN_PASSWORD}`) {
-            console.error('--- [ERROR] create-quote: Authentication failed.');
-            return addCorsHeaders(new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }));
+        
+        if (!authHeader) {
+            console.error('--- [ERROR] create-quote: No Authorization header');
+            return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+                status: 401,
+                headers: corsHeaders()
+            });
         }
-        console.log('--- [DEBUG] create-quote: Authentication successful.');
 
+        if (authHeader !== `Bearer ${context.env.ADMIN_PASSWORD}`) {
+            console.error('--- [ERROR] create-quote: Invalid credentials');
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+                status: 401,
+                headers: corsHeaders()
+            });
+        }
+        
+        console.log('--- [DEBUG] create-quote: Authentication successful');
 
-        const { customer, items, total, type } = await context.request.json();
+        // --- Parse Request Body ---
+        let body;
+        try {
+            body = await context.request.json();
+        } catch (e) {
+            console.error('--- [ERROR] create-quote: Invalid JSON in request body');
+            return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
+                status: 400,
+                headers: corsHeaders()
+            });
+        }
+
+        const { customer, items, total, type } = body;
         console.log('--- [DEBUG] create-quote: Received data:', { customer, items, total, type });
 
-
+        // --- Validate Required Fields ---
         if (!customer || !customer.id || !items || items.length === 0 || !total || !type) {
-            console.error('--- [ERROR] create-quote: Missing required fields.');
-            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 }));
+            console.error('--- [ERROR] create-quote: Missing required fields');
+            return new Response(JSON.stringify({ 
+                error: 'Missing required fields',
+                required: ['customer.id', 'items', 'total', 'type']
+            }), {
+                status: 400,
+                headers: corsHeaders()
+            });
         }
 
-        const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
-        console.log('--- [DEBUG] create-quote: Supabase client created.');
+        // --- Initialize Supabase ---
+        const supabase = createClient(
+            context.env.SUPABASE_URL, 
+            context.env.SUPABASE_SERVICE_ROLE_KEY
+        );
+        console.log('--- [DEBUG] create-quote: Supabase client created');
 
-        // 1. Insert the quote to get its ID
+        // --- 1. Insert Quote ---
         const { data: quoteData, error: quoteError } = await supabase
             .from('quotes')
             .insert({
@@ -59,11 +95,14 @@ export async function onRequest(context) {
             .select()
             .single();
 
-        if (quoteError) throw quoteError;
+        if (quoteError) {
+            console.error('--- [ERROR] create-quote: Failed to insert quote:', quoteError);
+            throw quoteError;
+        }
+        
         console.log('--- [DEBUG] create-quote: Quote inserted, ID:', quoteData.id);
 
-
-        // 2. Insert quote items
+        // --- 2. Insert Quote Items ---
         const quoteItems = items.map(item => ({
             quote_id: quoteData.id,
             service_id: item.service_id,
@@ -72,34 +111,44 @@ export async function onRequest(context) {
             unit_price: item.price,
         }));
 
-        const { error: itemsError } = await supabase.from('quote_items').insert(quoteItems);
-        if (itemsError) throw itemsError;
-        console.log('--- [DEBUG] create-quote: Quote items inserted.');
-
+        const { error: itemsError } = await supabase
+            .from('quote_items')
+            .insert(quoteItems);
+            
+        if (itemsError) {
+            console.error('--- [ERROR] create-quote: Failed to insert items:', itemsError);
+            throw itemsError;
+        }
         
-        // 3. Generate PDF
+        console.log('--- [DEBUG] create-quote: Quote items inserted');
+
+        // --- 3. Generate PDF ---
         console.log('--- [DEBUG] create-quote: Generating PDF...');
         const pdfBytes = await generateQuotePDF(quoteData, customer, items, total);
-        console.log('--- [DEBUG] create-quote: PDF generated.');
+        console.log('--- [DEBUG] create-quote: PDF generated successfully');
 
-        // 4. (Optional) Send email with Resend
-        // ... (email sending logic can be added here) ...
-
-
-        return addCorsHeaders(new Response(pdfBytes, {
+        // --- Return PDF ---
+        return new Response(pdfBytes, {
             status: 200,
-            headers: { 
+            headers: {
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename="devis-${quoteData.id}.pdf"`
-            },
-        }));
+                'Content-Disposition': `attachment; filename="devis-${quoteData.id}.pdf"`,
+                'Access-Control-Allow-Origin': '*'
+            }
+        });
 
     } catch (error) {
         console.error('--- [ERROR] create-quote: Caught exception:', error);
-        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), { status: 500 }));
+        return new Response(JSON.stringify({ 
+            error: 'Internal Server Error', 
+            details: error.message,
+            stack: error.stack
+        }), {
+            status: 500,
+            headers: corsHeaders()
+        });
     }
 }
-
 
 // --- PDF Generation Helper ---
 async function generateQuotePDF(quote, customer, items, total) {
@@ -122,9 +171,9 @@ async function generateQuotePDF(quote, customer, items, total) {
     y -= 40;
     page.drawText('Client:', { x: 50, y, font: boldFont, size: 14 });
     y -= 20;
-    page.drawText(customer.last_name, { x: 50, y, font, size: 12 });
+    page.drawText(customer.last_name || 'N/A', { x: 50, y, font, size: 12 });
     y -= 15;
-    page.drawText(customer.email, { x: 50, y, font, size: 12 });
+    page.drawText(customer.email || 'N/A', { x: 50, y, font, size: 12 });
     if (customer.phone) {
         y -= 15;
         page.drawText(customer.phone, { x: 50, y, font, size: 12 });
