@@ -190,7 +190,7 @@ async function generateQuotePDF(quote, customer, items, total) {
     y -= 20;
 
     items.forEach(item => {
-        page.drawText(item.description, { x: 50, y, font, size: 10 });
+        page.drawText(item.description || '', { x: 50, y, font, size: 10 });
         page.drawText(item.quantity.toString(), { x: 350, y, font, size: 10 });
         page.drawText(`${item.price.toFixed(2)} €`, { x: 400, y, font, size: 10 });
         page.drawText(`${(item.price * item.quantity).toFixed(2)} €`, { x: 480, y, font, size: 10 });
