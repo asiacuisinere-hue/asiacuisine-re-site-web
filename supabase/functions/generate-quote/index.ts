@@ -6,6 +6,7 @@ import { format } from "https://deno.land/std@0.168.0/datetime/mod.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Expose-Headers": "X-Document-Number",
 };
 
 // --- Helper Functions ---
@@ -60,6 +61,7 @@ serve(async (req) => {
     const { customer, items, total, type } = await req.json();
 
     // --- 1. Générer le numéro de document ---
+    console.log("--- DOCUMENT NUMBER DEBUGGING ---");
     const now = new Date();
     const year = format(now, "yyyy");
     const month = format(now, "MM");
@@ -86,7 +88,16 @@ serve(async (req) => {
     const paddedOrderNumber = String(orderNumber).padStart(4, "0");
     const randomCode = randomString(6);
     
+    console.log(`Year: ${year}`);
+    console.log(`Month: ${month}`);
+    console.log(`Week: ${week}`);
+    console.log(`Day of Week: ${dayOfWeek}`);
+    console.log(`Padded Order Number: ${paddedOrderNumber}`);
+    console.log(`Random Code: ${randomCode}`);
+
     const documentNumber = `DR_${year}_${month}_${week}_${dayOfWeek}_${paddedOrderNumber}_${randomCode}`;
+    console.log(`Final Document Number: ${documentNumber}`);
+    console.log("--- END DEBUGGING ---");
 
     // --- 2. Sauvegarder le devis ---
     const quoteData = {

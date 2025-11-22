@@ -1,20 +1,13 @@
 supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
 supabaseClient.js:7 Has API Key: true
-Devis.js:146  POST https://zgniojabjywrnwovlmaf.supabase.co/functions/v1/generate-quote 500 (Internal Server Error)
-onClick @ Devis.js:146
-Ku @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
-Devis.js:185 --- [ERROR] handleGenerateQuote: Error: Erreur sauvegarde devis: Could not find the 'type' column of 'quotes' in the schema cache
-    at onClick (Devis.js:160:19)
-onClick @ Devis.js:185
-await in onClick
-Ku @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
+DemandesEnCours.js:42 --- [DEBUG] Demandes en cours reçues: (2) [{…}, {…}]
+fetch.ts:15  PATCH https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/company_settings?id=eq.null 400 (Bad Request)
+(anonymous) @ fetch.ts:15
+(anonymous) @ fetch.ts:46
+await in (anonymous)
+then @ PostgrestBuilder.ts:113
+fetch.ts:15  PATCH https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/company_settings?id=eq.null 400 (Bad Request)
+(anonymous) @ fetch.ts:15
+(anonymous) @ fetch.ts:46
+await in (anonymous)
+then @ PostgrestBuilder.ts:113
