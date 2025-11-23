@@ -183,11 +183,19 @@ async function generatePDF(quote: any, customer: any, items: any[], total: numbe
   page.drawText("DEVIS", { x: 472, y: height - 48, size: 18, font: fontBold, color: white });
 
   let yRight = height - 95;
-  page.drawText(`N°: ${quote.document_number || ''}`, { x: 460, y: yRight, size: 10, font: fontBold, color: black });
+  const docNumberText = `N°: ${quote.document_number || ''}`;
+  const docNumberWidth = fontBold.widthOfTextAtSize(docNumberText, 10);
+  page.drawText(docNumberText, { x: 545 - docNumberWidth, y: yRight, size: 10, font: fontBold, color: black });
   yRight -= 14;
-  page.drawText(`Date: ${new Date(quote.created_at).toLocaleDateString("fr-FR")}`, { x: 460, y: yRight, size: 9, font, color: gray });
+  
+  const dateText = `Date: ${new Date(quote.created_at).toLocaleDateString("fr-FR")}`;
+  const dateTextWidth = font.widthOfTextAtSize(dateText, 9);
+  page.drawText(dateText, { x: 545 - dateTextWidth, y: yRight, size: 9, font, color: gray });
   yRight -= 14;
-  page.drawText("Validité: 30 jours", { x: 460, y: yRight, size: 9, font, color: gray });
+
+  const validityText = "Validité: 30 jours";
+  const validityTextWidth = font.widthOfTextAtSize(validityText, 9);
+  page.drawText(validityText, { x: 545 - validityTextWidth, y: yRight, size: 9, font, color: gray });
 
   y -= 25;
   page.drawLine({ start: { x: 50, y }, end: { x: 545, y }, thickness: 2, color: gold });
