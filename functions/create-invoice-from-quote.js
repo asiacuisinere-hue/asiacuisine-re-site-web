@@ -16,14 +16,19 @@ export async function onRequest(context) {
     }
 
     try {
+        console.log('--- [DEBUG] create-invoice-from-quote: Démarrage');
         const { quoteId } = await context.request.json();
+        console.log(`--- [DEBUG] create-invoice-from-quote: Devis ID reçu: ${quoteId}`);
+
         if (!quoteId) {
+            console.error('--- [ERREUR] create-invoice-from-quote: Missing quoteId');
             return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing quoteId' }), { status: 400 }));
         }
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
         // 1. Fetch the quote and its items
+        console.log('--- [DEBUG] create-invoice-from-quote: Récupération du devis et de ses lignes...');
         const { data: quote, error: quoteError } = await supabase
             .from('quotes')
             .select(`
@@ -35,8 +40,10 @@ export async function onRequest(context) {
 
         if (quoteError) throw new Error(`Failed to fetch quote: ${quoteError.message}`);
         if (!quote) throw new Error('Quote not found');
+        console.log('--- [DEBUG] create-invoice-from-quote: Devis trouvé:', quote);
 
         // 2. Check if an invoice already exists for this quote
+        console.log('--- [DEBUG] create-invoice-from-quote: Vérification si une facture existe déjà...');
         const { data: existingInvoice, error: existingInvoiceError } = await supabase
             .from('invoices')
             .select('id')
@@ -46,6 +53,7 @@ export async function onRequest(context) {
         if (existingInvoice) {
             throw new Error(`An invoice already exists for quote ${quoteId}`);
         }
+        console.log('--- [DEBUG] create-invoice-from-quote: Aucune facture existante trouvée.');
 
         // 3. Create the new invoice
         const invoicePayload = {
@@ -55,6 +63,7 @@ export async function onRequest(context) {
             total_amount: quote.total_amount,
             status: 'pending', // Initial status for a new invoice
         };
+        console.log('--- [DEBUG] create-invoice-from-quote: Payload de la nouvelle facture:', invoicePayload);
 
         const { data: newInvoice, error: invoiceError } = await supabase
             .from('invoices')
@@ -63,6 +72,7 @@ export async function onRequest(context) {
             .single();
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
+        console.log('--- [DEBUG] create-invoice-from-quote: Nouvelle facture créée:', newInvoice);
 
         // 4. Copy quote items to invoice items
         const invoiceItemsPayload = quote.quote_items.map(item => ({
@@ -73,12 +83,14 @@ export async function onRequest(context) {
             quantity: item.quantity,
             unit_price: item.unit_price,
         }));
+        console.log('--- [DEBUG] create-invoice-from-quote: Payload des lignes de la facture:', invoiceItemsPayload);
 
         const { error: invoiceItemsError } = await supabase
             .from('invoice_items')
             .insert(invoiceItemsPayload);
 
         if (invoiceItemsError) throw new Error(`Failed to create invoice items: ${invoiceItemsError.message}`);
+        console.log('--- [DEBUG] create-invoice-from-quote: Lignes de la facture créées avec succès.');
 
         return addCorsHeaders(new Response(JSON.stringify({ success: true, invoiceId: newInvoice.id }), {
             status: 201,
