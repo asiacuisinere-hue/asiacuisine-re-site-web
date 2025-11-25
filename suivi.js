@@ -4,19 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const demandId = params.get('id');
 
     if (!demandId) {
-        statusContainer.innerHTML = '<p style="color: red;">Aucun ID de commande fourni.</p>';
+        statusContainer.innerHTML = '<p style="color: red;">ID de commande non trouvé dans l'URL.</p>';
         return;
     }
 
-    fetch(`/api/get-demande-status?id=${demandId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                throw new Error(data.error);
-            }
-            statusContainer.innerHTML = `<p>Le statut de votre commande est : <strong>${data.status}</strong></p>`;
-        })
-        .catch(error => {
-            statusContainer.innerHTML = `<p style="color: red;">Erreur lors de la récupération du statut : ${error.message}</p>`;
-        });
+    // Redirect to the admin validation page with the demand ID
+    const validationUrl = `https://gestion.asiacuisine.re/validation?id=${demandId}`;
+    
+    statusContainer.innerHTML = `<p>Redirection vers la page de validation...</p><p><a href="${validationUrl}">Cliquez ici si vous n'êtes pas redirigé.</a></p>`;
+
+    window.location.href = validationUrl;
 });
