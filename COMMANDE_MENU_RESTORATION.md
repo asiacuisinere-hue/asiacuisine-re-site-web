@@ -33,7 +33,7 @@ Restaurer le flux complet de traitement d'une "COMMANDE_MENU" tel que décrit pa
         *   Mettre à jour le statut de la demande à `'En attente de préparation'`.
         *   Appeler la fonction backend `send-qrcode.js` pour envoyer le QR code au client.
     3.  Modifier le composant `DemandeDetail.js` pour afficher ce bouton et gérer son action.
-- **Statut:** PENDING
+- **Statut:** COMPLETED
 
 ### Étape 3 : Flux de Livraison
 - **Description:** Gérer les actions liées à la préparation et la livraison le jour J.
