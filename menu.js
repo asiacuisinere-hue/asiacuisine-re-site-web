@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch unavailable dates from Netlify function
     async function fetchUnavailableDates() {
         try {
-            const response = await fetch('/disponibilites');
+            const response = await fetch('/disponibilites?service_type=COMMANDE_MENU');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

@@ -179,7 +179,7 @@ async function fetchAndInitializeDatepicker() {
     if (!dateInput) return;
 
     try {
-        const response = await fetch('/disponibilites');
+        const response = await fetch('/disponibilites?service_type=RESERVATION_SERVICE');
         if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         
         const data = await response.json();

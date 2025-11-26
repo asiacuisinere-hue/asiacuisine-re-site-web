@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 const addCorsHeaders = (response) => {
-    response.headers.set('Access-Control-Allow-Origin', '*'); // Allow all origins for this public function
+    response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
     return response;
@@ -12,61 +12,58 @@ export async function onRequest(context) {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
     if (context.request.method !== 'GET') {
-        return addCorsHeaders(new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), { status: 405, headers: { 'Allow': 'GET' } }));
+        return addCorsHeaders(new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 }));
     }
 
     try {
+        const url = new URL(context.request.url);
+        const serviceType = url.searchParams.get('service_type');
+
+        if (!serviceType) {
+            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing service_type parameter' }), { status: 400 }));
+        }
+        
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_KEY);
-
         const unavailableDates = new Set();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        // 1. Fetch dates from 'demandes' table (existing logic)
+        // 1. Fetch dates from 'demandes' table, filtered by service_type
         const { data: demandes, error: demandesError } = await supabase
             .from('demandes')
             .select('request_date')
-            .in('status', ['En attente de traitement', 'En attente de validation de devis', 'En attente de paiement', 'En attente de préparation', 'Préparation en cours', 'Confirmée']);
+            .eq('type', serviceType) // <-- FILTER ADDED
+            .in('status', ['En attente de traitement', 'confirmed', 'En attente de validation de devis', 'En attente de paiement', 'En attente de préparation', 'Préparation en cours']);
 
-        if (demandesError) {
-            console.error('Error fetching demandes for unavailable dates:', demandesError);
-            throw demandesError;
-        }
+        if (demandesError) throw demandesError;
 
         demandes.forEach(demande => {
             const date = new Date(demande.request_date);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const year = date.getFullYear();
-            unavailableDates.add(`${day}/${month}/${year}`);
+            if (date >= today) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                unavailableDates.add(`${day}/${month}/${year}`);
+            }
         });
 
-        // 2. Fetch dates from 'indisponibilites' table (new logic)
+        // 2. Fetch dates from 'indisponibilites' table, filtered by service_type
         const { data: indisponibilites, error: indisponibilitesError } = await supabase
             .from('indisponibilites')
-            .select('*');
+            .select('*')
+            .eq('service_type', serviceType); // <-- FILTER ADDED
 
-        if (indisponibilitesError) {
-            console.error('Error fetching indisponibilites:', indisponibilitesError);
-            throw indisponibilitesError;
-        }
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Normalize to start of day
+        if (indisponibilitesError) throw indisponibilitesError;
 
         indisponibilites.forEach(item => {
             if (item.date) {
-                // Specific date blocked, convert YYYY-MM-DD to DD/MM/YYYY
-                const dateParts = item.date.split('-'); // [YYYY, MM, DD]
+                const dateParts = item.date.split('-');
                 const blockedDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
                 
-                if (blockedDate >= today) { // Only add future or current dates
-                    const day = dateParts[2];
-                    const month = dateParts[1];
-                    const year = dateParts[0];
-                    unavailableDates.add(`${day}/${month}/${year}`);
+                if (blockedDate >= today) {
+                    unavailableDates.add(`${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`);
                 }
             } else if (item.day_of_week !== null) {
-                // Recurring day of week blocked
-                // Add all future occurrences of this day of week for the next year
                 for (let i = 0; i < 365; i++) {
                     const futureDate = new Date();
                     futureDate.setDate(today.getDate() + i);
@@ -92,12 +89,7 @@ export async function onRequest(context) {
         }));
 
     } catch (error) {
-        console.error('--- [ERREUR] Erreur capturée dans disponibilites ---');
-        console.error('Message:', error.message);
-        console.error('Stack:', error.stack);
-        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        }));
+        console.error('Error in disponibilites function:', error);
+        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 }));
     }
 }
