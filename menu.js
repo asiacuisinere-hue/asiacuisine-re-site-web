@@ -106,11 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isDisabled = true;
             }
 
-            if (dayOfWeek !== 3 && dayOfWeek !== 5 && dayOfWeek !== 6) {
-                isDisabled = true;
-            }
-
-            if (unavailableDates.includes(dateStringDDMMYYYY)) {
+if (unavailableDates.includes(dateStringDDMMYYYY)) {
                 isDisabled = true;
             }
 
