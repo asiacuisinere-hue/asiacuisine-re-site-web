@@ -191,7 +191,7 @@ async function fetchAndInitializeDatepicker() {
             language: 'fr',
             autohide: true,
             datesDisabled: unavailableDates,
-            minDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+            minDate: new Date(new Date().setDate(new Date().getDate() + 7)), // 1 week minimum deadline
             showDaysInNextAndPreviousMonths: false
         });
 
@@ -579,96 +579,4 @@ function initializeSubscriptionForm() {
         modal.classList.remove('is-visible'); // Remove is-visible to trigger fade-out
         
         // Use a timeout to match potential CSS transition duration for smooth closing
-        // This effectively hides it immediately in the "brutal" version, but allows for transition if reinstated
-        setTimeout(() => {
-            modal.style.display = 'none';
-            modal.style.opacity = '0';
-            modal.style.visibility = 'hidden';
-            modal.classList.add('hidden'); // Re-add hidden class for initial state
-        }, 400); // Should match CSS transition duration
-        
-        document.body.style.overflow = '';
-        
-        if (subscriptionMessageDiv) {
-            subscriptionMessageDiv.textContent = '';
-        }
-    }
-
-    // Attach event listeners - ONLY inside event handlers
-    subscribeButtons.forEach((button, index) => {
-        console.log(`Attaching listener to button ${index}`, button.dataset.formula);
-        
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const formula = button.dataset.formula;
-            console.log(`🖱️ Button ${index} clicked, formula:`, formula);
-            openSubscriptionForm(formula);
-        });
-    });
-
-    if (closeButton) {
-        closeButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeSubscriptionForm();
-        });
-    }
-    
-    // Close on outside click
-    modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            closeSubscriptionForm();
-        }
-    });
-
-    // Form submission
-    subscriptionForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        const submitButton = subscriptionForm.querySelector('button[type="submit"]');
-        const originalButtonText = submitButton.textContent;
-        submitButton.textContent = 'Envoi en cours...';
-        submitButton.disabled = true;
-
-        // ✅ CRITIQUE: Ajouter la formule JUSTE AVANT de récupérer les données
-        if (formulaInputElement) {
-            formulaInputElement.value = selectedFormula;
-            console.log('🔥 Formula set to:', selectedFormula);
-        }
-
-        const formData = new FormData(subscriptionForm);
-        const data = Object.fromEntries(formData.entries());
-
-        console.log('📤 Submitting subscription:', data);
-        console.log('📋 Formula in data:', data.formula);
-
-        try {
-            const response = await fetch('/create-subscription', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                subscriptionMessageDiv.textContent = 'Votre demande d\'abonnement a été envoyée avec succès ! Nous vous contacterons bientôt.';
-                subscriptionMessageDiv.className = 'mt-4 text-center text-green-600';
-                subscriptionForm.reset();
-                setTimeout(closeSubscriptionForm, 3000);
-            } else {
-                throw new Error(result.error || 'Une erreur est survenue lors de l\'envoi de votre demande.');
-            }
-        } catch (error) {
-            console.error('❌ Subscription error:', error);
-            subscriptionMessageDiv.textContent = error.message;
-            subscriptionMessageDiv.className = 'mt-4 text-center text-red-600';
-        } finally {
-            submitButton.textContent = originalButtonText;
-            submitButton.disabled = false;
-        }
-    });
-    
-    console.log('✅ Subscription form fully initialized');
-}
+        // This effectively hides it immediately in the
