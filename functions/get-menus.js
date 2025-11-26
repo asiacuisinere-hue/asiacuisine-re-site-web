@@ -9,7 +9,6 @@ const addCorsHeaders = (response, origin) => {
     if (allowedOrigins.includes(origin)) {
         response.headers.set('Access-Control-Allow-Origin', origin);
     } else {
-        // Fallback or default to avoid blocking all if origin is not in list
         response.headers.set('Access-Control-Allow-Origin', 'https://www.asiacuisine.re');
     }
     
@@ -40,47 +39,57 @@ export async function onRequest(context) {
         console.log('--- [DEBUG] get-menus function called ---');
         console.log('--- [DEBUG] Origin:', origin);
 
-        // Liste des clés à récupérer
+        // 1. Récupérer les settings de menu de la table 'settings'
         const settingKeys = [
-            'menu_decouverte',
-            'menu_standard',
-            'menu_confort',
-            'menu_duo',
-            'menu_override_message',
-            'menu_override_enabled'
+            'menu_decouverte', 'menu_standard', 'menu_confort', 'menu_duo',
+            'menu_override_message', 'menu_override_enabled'
         ];
-
-        // Récupérer tous les settings en une seule requête
-        const { data, error } = await supabase
+        const { data: menuSettingsData, error: settingsError } = await supabase
             .from('settings')
             .select('key, value')
             .in('key', settingKeys);
 
-        if (error) {
-            console.error('Error fetching menu settings:', error);
-            throw error;
+        if (settingsError) {
+            console.error('Error fetching menu settings:', settingsError);
+            throw settingsError;
         }
 
-        // Transformer le tableau en objet
         const menuSettings = {};
-        if (data) {
-            data.forEach(setting => {
+        if (menuSettingsData) {
+            menuSettingsData.forEach(setting => {
                 menuSettings[setting.key] = setting.value;
             });
         }
 
-        // Retourner des valeurs par défaut si aucune donnée n'est trouvée pour certaines clés
+        // 2. Récupérer les paramètres de délai de commande de la table 'company_settings'
+        const { data: companyData, error: companyError } = await supabase
+            .from('company_settings')
+            .select('order_cutoff_days, order_cutoff_hour')
+            .limit(1)
+            .single();
+
+        if (companyError) {
+            console.error('Error fetching company settings for cutoff dates:', companyError);
+            // Ne pas bloquer l'exécution si ces paramètres manquent, utiliser des valeurs par défaut
+        }
+
+        // Valeurs par défaut
         const defaultSettings = {
             menu_decouverte: '',
             menu_standard: '',
             menu_confort: '',
             menu_duo: '',
             menu_override_message: '',
-            menu_override_enabled: 'false'
+            menu_override_enabled: 'false',
+            order_cutoff_days: 2, // Valeur par défaut
+            order_cutoff_hour: 11  // Valeur par défaut
         };
 
-        const finalMenuSettings = { ...defaultSettings, ...menuSettings };
-
+        const finalMenuSettings = { 
+            ...defaultSettings, 
+            ...menuSettings,
+            ...companyData // Surcharge les valeurs par défaut si elles existent dans company_settings
+        };
 
         console.log('--- [DEBUG] get-menus: Returning settings ---', finalMenuSettings);
         

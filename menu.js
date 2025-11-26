@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let unavailableDates = [];
     let selectedDate = null;
     let isOverrideEnabled = false; // Variable pour suivre l'état du message personnalisé
+    let orderCutoffDays = 2;
+    let orderCutoffHour = 11;
 
     // Helper function to convert DD/MM/YYYY to YYYY-MM-DD for API submission
     function convertDateToISO(dateString) {
@@ -111,8 +113,8 @@ if (unavailableDates.includes(dateStringDDMMYYYY)) {
             }
 
             const cutOffDate = new Date(date);
-            cutOffDate.setDate(date.getDate() - 2);
-            cutOffDate.setHours(11, 0, 0, 0);
+            cutOffDate.setDate(date.getDate() - orderCutoffDays);
+            cutOffDate.setHours(orderCutoffHour, 0, 0, 0);
 
             const now = new Date();
 
@@ -156,6 +158,10 @@ if (unavailableDates.includes(dateStringDDMMYYYY)) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
+
+            // Set cutoff values from fetched data
+            orderCutoffDays = data.order_cutoff_days || 2;
+            orderCutoffHour = data.order_cutoff_hour || 11;
 
             const menuOverrideMessage = document.getElementById('menu-override-message');
             const formulaCardsContainer = document.getElementById('formula-cards-container');
