@@ -29,20 +29,17 @@ export async function onRequest(context) {
         today.setHours(0, 0, 0, 0);
 
         // La seule source d'indisponibilité est maintenant la table 'indisponibilites'
-        // que l'administrateur gère manuellement.
         const { data: indisponibilites, error: indisponibilitesError } = await supabase
             .from('indisponibilites')
             .select('*')
-            .eq('service_type', serviceType); // On filtre toujours par type de service
+            .eq('service_type', serviceType);
 
         if (indisponibilitesError) throw indisponibilitesError;
 
         indisponibilites.forEach(item => {
-            // Logique pour les dates spécifiques
             if (item.date && new Date(item.date) >= today) {
                 unavailableDates.add(item.date); // Format YYYY-MM-DD
             } 
-            // Logique pour les jours récurrents
             else if (item.day_of_week !== null) {
                 for (let i = 0; i < 365; i++) {
                     const futureDate = new Date();
