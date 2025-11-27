@@ -7,59 +7,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let unavailableDates = [];
     let selectedDate = null;
-    let isOverrideEnabled = false; // Variable pour suivre l'état du message personnalisé
-    let orderCutoffDays = 2;
-    let orderCutoffHour = 11;
+    let isOverrideEnabled = false;
+    let orderCutoffDays = 2; // Default, will be updated from backend
+    let orderCutoffHour = 11; // Default, will be updated from backend
 
-    // Helper function to convert DD/MM/YYYY to YYYY-MM-DD for API submission
     function convertDateToISO(dateString) {
         if (!dateString) return null;
         const parts = dateString.split('/');
-        if (parts.length === 3) {
-            return `${parts[2]}-${parts[1]}-${parts[0]}`;
-        }
-        return dateString;
+        return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateString;
     }
 
-    // Fetch unavailable dates from Netlify function
     async function fetchUnavailableDates() {
         try {
             const response = await fetch('/disponibilites?service_type=COMMANDE_MENU');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            unavailableDates = data || [];
-            // Ne rendre le calendrier que si le message override n'est pas actif
-            if (!isOverrideEnabled) {
-                renderCalendar();
-            }
+            if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
+            unavailableDates = await response.json() || [];
+            if (!isOverrideEnabled) renderCalendar();
         } catch (error) {
             console.error('Error fetching unavailable dates:', error);
-            if (!isOverrideEnabled) {
-                renderCalendar();
-            }
+            if (!isOverrideEnabled) renderCalendar();
         }
     }
 
-    // Calendar rendering logic
     function renderCalendar(monthOffset = 0) {
-        // Ne pas rendre le calendrier si le message override est actif
-        if (isOverrideEnabled) {
-            return;
-        }
+        if (isOverrideEnabled) return;
 
         calendarContainer.innerHTML = '';
-
-        // DEBUG: Display the cutoff values being used
-        const debugInfo = document.createElement('p');
-        debugInfo.style.color = 'red';
-        debugInfo.style.fontWeight = 'bold';
-        debugInfo.style.textAlign = 'center';
-        debugInfo.style.marginBottom = '1rem';
-        debugInfo.textContent = `DEBUG: Délai de ${orderCutoffDays} jours, Heure limite ${orderCutoffHour}h.`;
-        calendarContainer.appendChild(debugInfo);
-
         const calendarDiv = document.createElement('div');
         calendarDiv.className = 'calendar';
         const today = new Date();
@@ -107,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const date = new Date(year, month, i);
             date.setHours(0, 0, 0, 0);
             const dateStringDDMMYYYY = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-            const dayOfWeek = date.getDay();
+            
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day current-month';
             dayElement.textContent = i;
@@ -118,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isDisabled = true;
             }
 
-if (unavailableDates.includes(dateStringDDMMYYYY)) {
+            if (unavailableDates.includes(dateStringDDMMYYYY)) {
                 isDisabled = true;
             }
 
@@ -127,7 +100,6 @@ if (unavailableDates.includes(dateStringDDMMYYYY)) {
             cutOffDate.setHours(orderCutoffHour, 0, 0, 0);
 
             const now = new Date();
-
             if (now > cutOffDate) {
                 isDisabled = true;
             }
@@ -160,77 +132,58 @@ if (unavailableDates.includes(dateStringDDMMYYYY)) {
         return date.toLocaleDateString('fr-FR', options);
     }
 
-    // Fetch and display menu content or override message
     async function fetchMenuContent() {
         try {
             const response = await fetch('/get-menus');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
 
             // Set cutoff values from fetched data
             orderCutoffDays = data.order_cutoff_days || 2;
             orderCutoffHour = data.order_cutoff_hour || 11;
 
+            // --- DEBUG LOG ---
+            console.log(`DEBUG: Délai de ${orderCutoffDays} jours, Heure limite ${orderCutoffHour}h`);
+
             const menuOverrideMessage = document.getElementById('menu-override-message');
             const formulaCardsContainer = document.getElementById('formula-cards-container');
             const whatsappButtonContainer = document.getElementById('whatsapp-button-container');
-            const weeklyMenuContent = document.getElementById('weekly-menu-content'); // Section contenu des formules
-            const infoSection = document.querySelector('.info-section'); // Section informations
+            const weeklyMenuContent = document.getElementById('weekly-menu-content');
+            const infoSection = document.querySelector('.info-section');
 
             if (data.menu_override_enabled === 'true' && data.menu_override_message) {
-                // Activer le mode override
                 isOverrideEnabled = true;
-
-                // Afficher le message personnalisé
                 if (menuOverrideMessage) {
                     menuOverrideMessage.querySelector('p').textContent = data.menu_override_message;
                     menuOverrideMessage.style.display = 'block';
                 }
-
-                // Cacher TOUS les éléments de la page menu
                 if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
                 if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = 'none';
                 if (infoSection) infoSection.style.display = 'none';
                 if (calendarContainer) calendarContainer.style.display = 'none';
-                
-                // Désactiver le formulaire complètement
                 if (form) {
                     form.style.pointerEvents = 'none';
                     form.style.opacity = '0.5';
                 }
-
-                // Désactiver tous les cards
                 cards.forEach(card => {
                     card.style.pointerEvents = 'none';
                     card.style.opacity = '0.5';
                 });
-
             } else {
-                // Mode normal - tout est actif
                 isOverrideEnabled = false;
-
-                // Cacher le message override
                 if (menuOverrideMessage) {
                     menuOverrideMessage.style.display = 'none';
                 }
-
-                // Afficher tous les éléments
                 if (weeklyMenuContent) weeklyMenuContent.style.display = '';
                 if (formulaCardsContainer) formulaCardsContainer.style.display = '';
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = '';
                 if (infoSection) infoSection.style.display = '';
                 if (calendarContainer) calendarContainer.style.display = '';
-
-                // Réactiver le formulaire
                 if (form) {
                     form.style.pointerEvents = '';
                     form.style.opacity = '';
                 }
-
-                // Réactiver les cards
                 cards.forEach(card => {
                     card.style.pointerEvents = '';
                     card.style.opacity = '';
@@ -255,7 +208,6 @@ if (unavailableDates.includes(dateStringDDMMYYYY)) {
                     contentDuo.innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo}`;
                 }
 
-                // Charger le calendrier maintenant que override est désactivé
                 fetchUnavailableDates();
             }
         } catch (error) {
@@ -263,13 +215,12 @@ if (unavailableDates.includes(dateStringDDMMYYYY)) {
         }
     }
 
-    // Appel initial - fetchMenuContent en premier pour déterminer le mode
     fetchMenuContent();
 
     // Gestionnaire de clic pour les cartes (seulement si non override)
     cards.forEach(card => {
         card.addEventListener('click', () => {
-            if (isOverrideEnabled) return; // Bloquer si override actif
+            if (isOverrideEnabled) return;
             cards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             card.querySelector('input[type="radio"]').checked = true;
@@ -280,7 +231,6 @@ if (unavailableDates.includes(dateStringDDMMYYYY)) {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Bloquer la soumission si override est actif
         if (isOverrideEnabled) {
             alert('Les commandes sont temporairement suspendues. Veuillez consulter le message affiché.');
             return;
