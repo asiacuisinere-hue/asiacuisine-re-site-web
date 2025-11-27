@@ -142,9 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
             orderCutoffDays = data.order_cutoff_days || 2;
             orderCutoffHour = data.order_cutoff_hour || 11;
 
-            // --- DEBUG LOG ---
-            console.log(`DEBUG: Délai de ${orderCutoffDays} jours, Heure limite ${orderCutoffHour}h`);
-
             const menuOverrideMessage = document.getElementById('menu-override-message');
             const formulaCardsContainer = document.getElementById('formula-cards-container');
             const whatsappButtonContainer = document.getElementById('whatsapp-button-container');
