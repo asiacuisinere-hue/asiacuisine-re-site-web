@@ -24,22 +24,9 @@ export async function onRequest(context) {
         return addCorsHeaders(new Response(null, { status: 204 }), origin);
     }
     
-    if (context.request.method !== 'GET') {
-        return addCorsHeaders(
-            new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), { 
-                status: 405, 
-                headers: { 'Allow': 'GET', 'Content-Type': 'application/json' } 
-            }), 
-            origin
-        );
-    }
-
     try {
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_KEY);
-        console.log('--- [DEBUG] get-menus function called ---');
-        console.log('--- [DEBUG] Origin:', origin);
 
-        // 1. Récupérer les settings de menu de la table 'settings'
         const settingKeys = [
             'menu_decouverte', 'menu_standard', 'menu_confort', 'menu_duo',
             'menu_override_message', 'menu_override_enabled'
@@ -49,10 +36,7 @@ export async function onRequest(context) {
             .select('key, value')
             .in('key', settingKeys);
 
-        if (settingsError) {
-            console.error('Error fetching menu settings:', settingsError);
-            throw settingsError;
-        }
+        if (settingsError) throw settingsError;
 
         const menuSettings = {};
         if (menuSettingsData) {
@@ -61,7 +45,6 @@ export async function onRequest(context) {
             });
         }
 
-        // 2. Récupérer les paramètres de délai de commande de la table 'company_settings'
         const { data: companyData, error: companyError } = await supabase
             .from('company_settings')
             .select('order_cutoff_days, order_cutoff_hour')
@@ -70,31 +53,21 @@ export async function onRequest(context) {
 
         if (companyError) {
             console.error('Error fetching company settings for cutoff dates:', companyError);
-            // Ne pas bloquer l'exécution si ces paramètres manquent, utiliser des valeurs par défaut
         }
 
-        // Valeurs par défaut
         const defaultSettings = {
-            menu_decouverte: '',
-            menu_standard: '',
-            menu_confort: '',
-            menu_duo: '',
-            menu_override_message: '',
-            menu_override_enabled: 'false',
-            order_cutoff_days: 2, // Valeur par défaut
-            order_cutoff_hour: 11  // Valeur par défaut
+            order_cutoff_days: 2,
+            order_cutoff_hour: 11
         };
 
-        const finalMenuSettings = { 
+        const finalSettings = { 
             ...defaultSettings, 
             ...menuSettings,
-            ...companyData // Surcharge les valeurs par défaut si elles existent dans company_settings
+            ...companyData
         };
 
-        console.log('--- [DEBUG] get-menus: Returning settings ---', finalMenuSettings);
-        
         return addCorsHeaders(
-            new Response(JSON.stringify(finalMenuSettings), {
+            new Response(JSON.stringify(finalSettings), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },
             }), 
@@ -102,14 +75,8 @@ export async function onRequest(context) {
         );
 
     } catch (error) {
-        console.error('--- [ERREUR] Erreur capturée dans get-menus ---');
-        console.error('Message:', error.message);
-        console.error('Stack:', error.stack);
         return addCorsHeaders(
-            new Response(JSON.stringify({ 
-                error: 'Internal Server Error', 
-                details: error.message 
-            }), {
+            new Response(JSON.stringify({ error: 'Internal Server Error' }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
             }), 
