@@ -21,12 +21,11 @@ export async function onRequest(context) {
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
-        // 1. Fetch the quote, its items, AND the original demande_id
+        // 1. Fetch the quote with all related data
         const { data: quote, error: quoteError } = await supabase
             .from('quotes')
             .select(`
                 *,
-                demande_id,
                 quote_items (*)
             `)
             .eq('id', quoteId)
@@ -35,19 +34,25 @@ export async function onRequest(context) {
         if (quoteError) throw new Error(`Failed to fetch quote: ${quoteError.message}`);
         if (!quote) throw new Error('Quote not found');
 
-        // Check if an invoice already exists
-        const { data: existingInvoice } = await supabase.from('invoices').select('id').eq('quote_id', quoteId).maybeSingle();
-        if (existingInvoice) throw new Error(`An invoice already exists for quote ${quoteId}`);
+        // 2. Check if an invoice already exists
+        const { data: existingInvoice } = await supabase
+            .from('invoices')
+            .select('id')
+            .eq('quote_id', quoteId)
+            .maybeSingle();
+            
+        if (existingInvoice) {
+            throw new Error(`An invoice already exists for quote ${quoteId}`);
+        }
 
-        // 3. Create the new invoice
+        // 3. Build invoice payload (base fields)
         const invoicePayload = {
             quote_id: quote.id,
-            demande_id: quote.demande_id, // <-- CHAMP CORRIGÉ
             client_id: quote.client_id,
             entreprise_id: quote.entreprise_id,
             total_amount: quote.total_amount,
-            deposit_amount: quote.deposit_amount, // Transférer l'acompte du devis
-            status: quote.deposit_amount > 0 ? 'deposit_paid' : 'pending',
+            deposit_amount: quote.deposit_amount || 0,
+            status: (quote.deposit_amount && quote.deposit_amount > 0) ? 'deposit_paid' : 'pending',
             items: quote.quote_items.map(item => ({
                 name: item.name,
                 description: item.description,
@@ -56,22 +61,81 @@ export async function onRequest(context) {
             })),
         };
 
+        // 4. Handle demande_id (two workflows support)
+        if (quote.demande_id) {
+            // Workflow 1: Quote created from a demande
+            // Verify the demande still exists
+            const { data: demande, error: demandeError } = await supabase
+                .from('demandes')
+                .select('id, status')
+                .eq('id', quote.demande_id)
+                .maybeSingle();
+            
+            if (demandeError) {
+                console.error('Error checking demande:', demandeError);
+            }
+            
+            if (demande) {
+                // Demande exists, link it to invoice
+                invoicePayload.demande_id = quote.demande_id;
+                console.log(`Invoice will be linked to demande ${quote.demande_id}`);
+            } else {
+                // Demande was deleted, proceed without it
+                console.warn(`Demande ${quote.demande_id} not found. Creating invoice without demande link.`);
+            }
+        } else {
+            // Workflow 2: Direct quote creation (no demande)
+            console.log('Quote has no demande_id. Creating standalone invoice.');
+        }
+
+        // 5. Create the invoice
         const { data: newInvoice, error: invoiceError } = await supabase
             .from('invoices')
             .insert(invoicePayload)
-            .select('id')
+            .select('id, demande_id')
             .single();
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        return addCorsHeaders(new Response(JSON.stringify({ success: true, invoiceId: newInvoice.id }), {
+        // 6. Auto-complete linked demande if applicable
+        if (newInvoice.demande_id) {
+            try {
+                const { data: linkedDemande } = await supabase
+                    .from('demandes')
+                    .select('type')
+                    .eq('id', newInvoice.demande_id)
+                    .single();
+
+                if (linkedDemande?.type === 'RESERVATION_SERVICE') {
+                    await supabase
+                        .from('demandes')
+                        .update({ status: 'completed' })
+                        .eq('id', newInvoice.demande_id);
+                    
+                    console.log(`Demande ${newInvoice.demande_id} auto-completed`);
+                }
+            } catch (error) {
+                console.error('Failed to auto-complete demande:', error.message);
+                // Don't throw - invoice is already created
+            }
+        }
+
+        return addCorsHeaders(new Response(JSON.stringify({ 
+            success: true, 
+            invoiceId: newInvoice.id,
+            linkedToDemande: !!newInvoice.demande_id,
+            workflow: newInvoice.demande_id ? 'with_demande' : 'direct'
+        }), {
             status: 201,
             headers: { 'Content-Type': 'application/json' }
         }));
 
     } catch (error) {
         console.error('[ERROR] in create-invoice-from-quote:', error);
-        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), {
+        return addCorsHeaders(new Response(JSON.stringify({ 
+            error: 'Internal Server Error', 
+            details: error.message 
+        }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         }));
