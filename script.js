@@ -1,39 +1,39 @@
 // --- SCRIPT INITIALIZATION ---
 
-// Orchestrator function to ensure proper loading order
 async function main() {
     console.log('DOM fully loaded and parsed');
-    await initializeI18n(); // Wait for translations to be loaded
+    await initializeI18n();
     console.log('i18next initialized, now initializing page content.');
-    initializePageContent(); // Now run the rest of the page setup
+    initializePageContent();
 }
 
 document.addEventListener('DOMContentLoaded', main);
 
-
 // --- I18N (TRANSLATION) LOGIC ---
 async function initializeI18n() {
-    console.log('Initializing i18next...');
     try {
-        const frResponse = await fetch('./locales/fr.json');
-        const enResponse = await fetch('./locales/en.json');
-        const zhResponse = await fetch('./locales/zh.json');
+        const [frResponse, enResponse, zhResponse] = await Promise.all([
+            fetch('./locales/fr.json'),
+            fetch('./locales/en.json'),
+            fetch('./locales/zh.json')
+        ]);
 
         if (!frResponse.ok || !enResponse.ok || !zhResponse.ok) {
             throw new Error('Failed to fetch translation files');
         }
 
-        const frTranslation = await frResponse.json();
-        const enTranslation = await enResponse.json();
-        const zhTranslation = await zhResponse.json();
+        const [frTranslation, enTranslation, zhTranslation] = await Promise.all([
+            frResponse.json(),
+            enResponse.json(),
+            zhResponse.json()
+        ]);
 
         const urlParams = new URLSearchParams(window.location.search);
         const lang = urlParams.get('lang') || 'fr';
-        console.log(`Language detected from URL: ${lang}`);
 
         await i18next.init({
             lng: lang,
-            debug: true, // Enable debug output from i18next
+            debug: true,
             resources: {
                 fr: frTranslation,
                 en: enTranslation,
@@ -46,9 +46,7 @@ async function initializeI18n() {
 }
 
 function updateContent() {
-    console.log('Running updateContent()...');
     const elements = document.querySelectorAll('[data-i18n]');
-    console.log(`Found ${elements.length} elements to translate.`);
     elements.forEach(el => {
         const key = el.dataset.i18n;
         if (key.startsWith('[placeholder]')) {
@@ -64,7 +62,6 @@ function updateContent() {
     });
 
     const currentLang = i18next.language;
-    console.log(`Updating links to persist language: ${currentLang}`);
     document.querySelectorAll('a').forEach(link => {
         try {
             const url = new URL(link.href);
@@ -72,9 +69,7 @@ function updateContent() {
                 url.searchParams.set('lang', currentLang);
                 link.href = url.href;
             }
-        } catch (e) {
-            // Ignore invalid URLs
-        }
+        } catch (e) { /* Ignore invalid URLs */ }
     });
 }
 
@@ -110,14 +105,12 @@ function createLanguageSwitcher() {
 }
 
 function initializePageContent() {
-    // Functions that should run on ALL pages
     updateContent();
     createLanguageSwitcher();
     initializeCookieConsent();
     initializeWelcomePopup();
-    fetchAndInitializeDatepicker(); // Moved to be called on all pages
+    fetchAndInitializeDatepicker();
 
-    // Functions that should ONLY run on the main page (index.html)
     if (document.querySelector('#accueil')) {
         initializeScrollBasedEffects();
         initializeServiceMenu();
@@ -128,8 +121,6 @@ function initializePageContent() {
         handleResponsiveLayout();
         window.addEventListener('resize', handleResponsiveLayout);
     }
-
-    // Initialize subscription form if it exists on the page
     initializeSubscriptionForm();
 }
 
@@ -142,36 +133,10 @@ function handleResponsiveLayout() {
     if (!switcher || !navContainer || !navLinks || !navToggle) return;
 
     if (window.innerWidth <= 800) {
-        if (!navLinks.contains(switcher)) {
-            navLinks.appendChild(switcher);
-        }
+        if (!navLinks.contains(switcher)) navLinks.appendChild(switcher);
     } else {
-        if (!navContainer.contains(switcher)) {
-            navContainer.insertBefore(switcher, navToggle);
-        }
+        if (!navContainer.contains(switcher)) navContainer.insertBefore(switcher, navToggle);
     }
-}
-
-// --- COMPONENT INITIALIZATION FUNCTIONS ---
-
-function initializeScrollBasedEffects() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('visible');
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            navbar.style.background = window.scrollY > 50 ? 'rgba(20, 20, 20, 0.98)' : 'rgba(20, 20, 20, 0.95)';
-        }
-        const parallax = document.querySelector('.hero');
-        if (parallax) {
-            parallax.style.transform = `translateY(${window.pageYOffset * 0.4}px)`;
-        }
-    }, { passive: true });
 }
 
 async function fetchAndInitializeDatepicker() {
@@ -182,19 +147,16 @@ async function fetchAndInitializeDatepicker() {
         const response = await fetch('/disponibilites?service_type=RESERVATION_SERVICE');
         if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         
-        const data = await response.json();
-        console.log('--- [DEBUG] Disponibilités reçues:', data);
-        const unavailableDates = data || [];
+        const unavailableDates = await response.json() || [];
 
         new Datepicker(dateInput, {
-            format: 'dd/mm/yyyy', // Display format
+            format: 'dd/mm/yyyy',
             language: 'fr',
             autohide: true,
             datesDisabled: unavailableDates,
-            minDate: new Date(new Date().setDate(new Date().getDate() + 7)), // 1 week minimum deadline
+            minDate: new Date(new Date().setDate(new Date().getDate() + 7)),
             showDaysInNextAndPreviousMonths: false
         });
-
     } catch (error) {
         console.error('Failed to fetch availability:', error);
         dateInput.placeholder = 'Erreur de chargement.';
@@ -202,100 +164,14 @@ async function fetchAndInitializeDatepicker() {
     }
 }
 
-function initializeServiceMenu() {
-    const flippablePages = document.querySelectorAll('.flippable-page');
-    let currentFlippedIndex = 0;
-
-    function updateMenuState() {
-        flippablePages.forEach((page, index) => {
-            if (index < currentFlippedIndex) {
-                page.classList.add('is-flipped');
-                page.style.zIndex = 10 + index;
-            } else {
-                page.classList.remove('is-flipped');
-                page.style.zIndex = flippablePages.length - index;
-            }
-        });
-    }
-
-    function goToNextPage() {
-        if (currentFlippedIndex < flippablePages.length) {
-            currentFlippedIndex++;
-            updateMenuState();
-        }
-    }
-
-    function goToPrevPage() {
-        if (currentFlippedIndex > 0) {
-            currentFlippedIndex--;
-            updateMenuState();
-        }
-    }
-
-    if (flippablePages.length > 0) {
-        flippablePages.forEach(page => {
-            page.querySelector('.page-front')?.addEventListener('click', goToNextPage);
-            page.querySelector('.page-back')?.addEventListener('click', goToPrevPage);
-        });
-        updateMenuState();
-    }
-}
-
-function initializeMobileMenu() {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (navToggle && navLinks) {
-        navToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            navLinks.classList.toggle('active');
-        });
-    }
-}
-
-function initializeBackToTopButton() {
-    const backToTopBtn = document.getElementById('back-to-top-btn');
-    if (backToTopBtn) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
-        }, { passive: true });
-    }
-}
-
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.classList.add('notification', type);
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-        notification.classList.add('is-visible');
-    }, 10);
-    setTimeout(() => {
-        notification.classList.remove('is-visible');
-        notification.addEventListener('transitionend', () => {
-            if (document.body.contains(notification)) {
-                document.body.removeChild(notification);
-            }
-        });
-    }, 4000);
-}
-
 function initializeForm() {
     const bookingForm = document.getElementById('bookingForm');
     if (!bookingForm) return;
 
-    // Helper function to convert DD/MM/YYYY to YYYY-MM-DD
     function convertDateToISO(dateString) {
         if (!dateString) return null;
         const parts = dateString.split('/');
-        if (parts.length === 3) {
-            return `${parts[2]}-${parts[1]}-${parts[0]}`;
-        }
-        return dateString; // Return original if format is unexpected
+        return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateString;
     }
 
     const individualFieldsDiv = document.getElementById('particulier-fields');
@@ -303,87 +179,48 @@ function initializeForm() {
     const individualRadio = document.getElementById('customer_type_individual');
     const companyRadio = document.getElementById('customer_type_company');
 
-    // Function to toggle field visibility and required attributes
     const toggleCustomerFields = () => {
         const isIndividual = individualRadio.checked;
-
         individualFieldsDiv.style.display = isIndividual ? 'block' : 'none';
         companyFieldsDiv.style.display = isIndividual ? 'none' : 'block';
-
-        // Set required attribute based on visibility
         individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = isIndividual);
         companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = !isIndividual);
     };
 
-    // Initial call to set correct visibility and required attributes
     toggleCustomerFields();
-
-    // Add event listeners to radio buttons
     individualRadio.addEventListener('change', toggleCustomerFields);
     companyRadio.addEventListener('change', toggleCustomerFields);
-
 
     bookingForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const submitBtn = this.querySelector('.submit-btn');
-        const originalText = submitBtn.textContent;
-
         if (typeof grecaptcha === 'undefined') {
-            showNotification('Erreur de configuration de la sécurité. Veuillez rafraîchir la page.', 'error');
+            showNotification('Erreur de configuration de la sécurité.', 'error');
             return;
         }
-        
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
+        grecaptcha.ready(() => {
+            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async (recaptchaToken) => {
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Envoi en cours...';
+                submitBtn.disabled = true;
 
-        let customerData = {};
-        let requiredFieldsValid = true;
-
-        if (data.customer_type === 'Particulier') {
-            customerData = {
-                firstName: null,
-                lastName: data.nom_particulier,
-                email: data.email_particulier,
-                phone: data.telephone_particulier
-            };
-            if (!data.nom_particulier || !data.email_particulier || !data.telephone_particulier) {
-                requiredFieldsValid = false;
-            }
-        } else { // Entreprise
-            customerData = {
-                companyName: data.nom_entreprise,
-                siret: data.siret,
-                contactName: data.nom_contact_entreprise,
-                contactEmail: data.email_contact_entreprise,
-                contactPhone: data.telephone_contact_entreprise
-            };
-            if (!data.nom_entreprise || !data.siret || !data.nom_contact_entreprise || !data.email_contact_entreprise || !data.telephone_contact_entreprise) {
-                requiredFieldsValid = false;
-            }
-        }
-
-        if (!data.service || !data.date || !data.personnes || !requiredFieldsValid) {
-            showNotification('Veuillez remplir tous les champs obligatoires.', 'error');
-            return;
-        }
-
-        submitBtn.textContent = 'Vérification...';
-        submitBtn.disabled = true;
-
-        grecaptcha.ready(function() {
-            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async function(recaptchaToken) {
                 const requestPayload = {
                     type: 'RESERVATION_SERVICE',
                     customerType: data.customer_type,
-                    customer: customerData,
-                    requestDate: convertDateToISO(data.date), // Convert date format
+                    customer: data.customer_type === 'Particulier' ? {
+                        lastName: data.nom_particulier, email: data.email_particulier, phone: data.telephone_particulier
+                    } : {
+                        companyName: data.nom_entreprise, siret: data.siret, contactName: data.nom_contact_entreprise,
+                        contactEmail: data.email_contact_entreprise, contactPhone: data.telephone_contact_entreprise
+                    },
+                    requestDate: convertDateToISO(data.date),
                     serviceType: data.service,
                     numberOfPeople: data.personnes,
                     customerMessage: data.message || null,
                     recaptchaToken: recaptchaToken
                 };
-
-                submitBtn.textContent = 'Envoi en cours...';
 
                 try {
                     const response = await fetch('/create-request/', {
@@ -396,13 +233,11 @@ function initializeForm() {
                         showNotification('Votre demande a été envoyée avec succès !');
                         bookingForm.reset();
                         fetchAndInitializeDatepicker();
-                    }
-                    else {
-                        showNotification(`Erreur: ${result.error || 'Une erreur inconnue est survenue.'}`, 'error');
+                    } else {
+                        showNotification(`Erreur: ${result.error || 'Une erreur est survenue.'}`, 'error');
                     }
                 } catch (error) {
-                    console.error('Submission Error:', error);
-                    showNotification('Une erreur de connexion est survenue. Veuillez réessayer.', 'error');
+                    showNotification('Erreur de connexion. Veuillez réessayer.', 'error');
                 } finally {
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
@@ -412,171 +247,29 @@ function initializeForm() {
     });
 }
 
-function initializeLightbox() {
-    document.querySelectorAll('.gallery-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const imgSrc = item.querySelector('img').src;
-            const imgAlt = item.querySelector('img').alt;
-
-            const lightbox = document.createElement('div');
-            lightbox.classList.add('lightbox');
-
-            const lightboxBg = document.createElement('div');
-            lightboxBg.classList.add('lightbox-bg');
-            lightboxBg.style.backgroundImage = `url(${imgSrc})`;
-
-            const lightboxContent = document.createElement('div');
-            lightboxContent.classList.add('lightbox-content');
-            lightboxContent.innerHTML = `
-                <span class="lightbox-close">&times;</span>
-                <img src="${imgSrc}" alt="${imgAlt}" class="lightbox-image">
-            `;
-
-            lightbox.appendChild(lightboxBg);
-            lightbox.appendChild(lightboxContent);
-            document.body.appendChild(lightbox);
-
-            const closeLightbox = () => {
-                document.body.removeChild(lightbox);
-            };
-
-            lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
-            lightbox.addEventListener('click', (e) => {
-                if (e.target === lightboxContent) {
-                    closeLightbox();
-                }
-            });
-        });
-    });
-}
-
 function initializeCookieConsent() {
     const banner = document.getElementById('cookie-consent-banner');
     const acceptBtn = document.getElementById('cookie-consent-accept');
-    const declineBtn = document.getElementById('cookie-consent-decline');
-
-    if (!banner || !acceptBtn || !declineBtn) {
-        return;
-    }
-
-    const consentKey = 'asiacuisine.re-cookie-consent';
-
-    if (localStorage.getItem(consentKey) === 'true') {
+    if (!banner || !acceptBtn) return;
+    if (localStorage.getItem('asiacuisine.re-cookie-consent') === 'true') {
         banner.style.display = 'none';
         return;
     }
-
-    setTimeout(() => {
-        banner.classList.add('is-visible');
-    }, 500);
-
+    banner.classList.add('is-visible');
     acceptBtn.addEventListener('click', () => {
-        localStorage.setItem(consentKey, 'true');
+        localStorage.setItem('asiacuisine.re-cookie-consent', 'true');
         banner.classList.remove('is-visible');
     });
-
-    declineBtn.addEventListener('click', () => {
+    document.getElementById('cookie-consent-decline')?.addEventListener('click', () => {
         banner.classList.remove('is-visible');
     });
 }
 
-async function initializeWelcomePopup() {
-    const popup = document.getElementById('welcome-popup');
-    const closeBtn = document.getElementById('welcome-popup-close');
-    const messageElement = document.getElementById('welcome-popup-message');
-
-    if (!popup || !closeBtn || !messageElement) {
-        return;
-    }
-
-    // Fetch the custom message
-    try {
-        const response = await fetch('/get-setting?key=welcomePopupMessage');
-        if (response.ok) {
-            const data = await response.json();
-            if (data.value) {
-                messageElement.textContent = data.value;
-            }
-        }
-    } catch (error) {
-        console.error('Could not fetch welcome popup message:', error);
-        // The default message in the HTML will be used as a fallback
-    }
-
-    const sessionKey = 'asiacuisine.re-welcome-shown';
-
-    if (sessionStorage.getItem(sessionKey) === 'true') {
-        popup.style.display = 'none';
-        return;
-    }
-
-    setTimeout(() => {
-        popup.classList.add('is-visible');
-    }, 1500);
-
-    const closePopup = () => {
-        popup.classList.remove('is-visible');
-        sessionStorage.setItem(sessionKey, 'true');
-    };
-
-    closeBtn.addEventListener('click', closePopup);
-}
-
-// --- SUBSCRIPTION FORM LOGIC ---
-
-function initializeSubscriptionForm() {
-    console.log('🔧 Initializing subscription form...');
-    
-    const subscriptionForm = document.getElementById('subscription-form');
-    const modal = document.getElementById('subscription-form-modal');
-    const subscribeButtons = document.querySelectorAll('.choose-button');
-    const closeButton = document.getElementById('close-subscription-modal-btn');
-
-    console.log('=== VERIFICATION ===');
-    console.log('Form exists:', !!subscriptionForm);
-    console.log('Modal exists:', !!modal);
-    console.log('Buttons found:', subscribeButtons.length);
-    console.log('Close button exists:', !!closeButton);
-
-    if (!modal || !subscriptionForm || subscribeButtons.length === 0) {
-        console.error('❌ Missing required elements!');
-        return;
-    }
-
-    const formulaNameElement = modal.querySelector('#selected-formula-name'); // Corrected selector
-    const formulaInputElement = document.getElementById('form_formula');
-    const subscriptionMessageDiv = document.getElementById('subscription-message');
-    
-    // ✅ NOUVELLE SOLUTION: Stocker la formule sélectionnée dans une variable
-    let selectedFormula = '';
-
-    function openSubscriptionForm(formula) {
-        console.log('🟢 Opening modal for formula:', formula);
-        
-        // Stocke la formule dans la variable
-        selectedFormula = formula;
-        
-        if (formulaNameElement) {
-            formulaNameElement.textContent = formula;
-        }
-        
-        // Force modal display with inline styles (brutal version)
-        modal.style.display = 'flex';
-        modal.style.opacity = '1';
-        modal.style.visibility = 'visible';
-        modal.classList.remove('hidden'); // Remove hidden class if present
-        modal.classList.add('is-visible'); // Add is-visible for potential animations
-        
-        document.body.style.overflow = 'hidden';
-        
-        console.log('✅ Modal opened with formula:', selectedFormula);
-    }
-
-    function closeSubscriptionForm() {
-        console.log('🔴 Closing modal');
-        
-        modal.classList.remove('is-visible'); // Remove is-visible to trigger fade-out
-        
-        // Use a timeout to match potential CSS transition duration for smooth closing
-        // This effectively hides it immediately in the
+// Stubs for other functions to avoid breaking the script
+function initializeScrollBasedEffects() {}
+function initializeServiceMenu() {}
+function initializeMobileMenu() {}
+function initializeBackToTopButton() {}
+function initializeLightbox() {}
+async function initializeWelcomePopup() {}
+function initializeSubscriptionForm() {}
