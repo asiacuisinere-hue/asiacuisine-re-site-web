@@ -50,6 +50,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         calendarContainer.innerHTML = '';
+
+        // DEBUG: Display the cutoff values being used
+        const debugInfo = document.createElement('p');
+        debugInfo.style.color = 'red';
+        debugInfo.style.fontWeight = 'bold';
+        debugInfo.style.textAlign = 'center';
+        debugInfo.style.marginBottom = '1rem';
+        debugInfo.textContent = `DEBUG: Délai de ${orderCutoffDays} jours, Heure limite ${orderCutoffHour}h.`;
+        calendarContainer.appendChild(debugInfo);
+
         const calendarDiv = document.createElement('div');
         calendarDiv.className = 'calendar';
         const today = new Date();
