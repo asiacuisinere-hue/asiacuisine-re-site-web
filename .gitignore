@@ -22,3 +22,8 @@ Thumbs.db
 # Ignore images in the root directory
 /*.png
 /*.jpg
+
+
+# Build Edge Functions
+supabase/
+*.ts
