@@ -25,5 +25,5 @@ Thumbs.db
 
 
 # Build Edge Functions
-supabase/
+#supabase/
 *.ts

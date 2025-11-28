@@ -38,10 +38,10 @@ Restaurer le flux complet de traitement d'une "COMMANDE_MENU" tel que décrit pa
 ### Étape 3 : Flux de Livraison
 - **Description:** Gérer les actions liées à la préparation et la livraison le jour J.
 - **Actions:**
-    1.  Ajouter une colonne (ou champ éditable) pour la date de livraison dans la modale `DemandeDetail` (si elle n'est pas déjà présente et persévérante).
-    2.  Ajouter un bouton "Mettre en préparation" (visible le jour de la livraison ou avant).
-    3.  Ce bouton changera le statut de la demande à `'Préparation en cours'`.
-    4.  Implémenter la logique pour le scan/confirmation du QR code.
+    1.  Ajouter une colonne (ou champ éditable) pour la date de livraison dans la modale `DemandeDetail` (si elle n'est pas déjà présente et persévérante). - **COMPLETED**
+    2.  Ajouter un bouton "Mettre en préparation" (visible le jour de la livraison ou avant). - **COMPLETED**
+    3.  Ce bouton changera le statut de la demande à `'Préparation en cours'`. - **COMPLETED**
+    4.  Implémenter la logique pour le scan/confirmation du QR code. - **COMPLETED (Redirection & Validation page)**
     5.  Mettre à jour le statut à `'Confirmée'` / `'Completed'` (après scan QR code) et la déplacer vers l'historique.
 - **Statut:** PENDING
 
@@ -50,7 +50,7 @@ Restaurer le flux complet de traitement d'une "COMMANDE_MENU" tel que décrit pa
 - **Actions:**
     1.  Vérifier l'affichage de la date de livraison, du nombre de personnes, des détails de livraison (si pertinents pour `COMMANDE_MENU`) dans la modale.
     2.  Ajuster le `renderReadOnlyDetails` si nécessaire.
-- **Statut:** PENDING
+- **Statut:** COMPLETED
 
 ---
 

@@ -82,7 +82,7 @@ serve(async (req) => {
         }
 
         // 3. Build invoice payload (base fields)
-        const invoicePayload: any = {
+        const invoicePayload = {
             quote_id: quote.id,
             client_id: quote.client_id,
             entreprise_id: quote.entreprise_id,

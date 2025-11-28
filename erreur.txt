@@ -1,12 +1,63 @@
-supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
-supabaseClient.js:7 Has API Key: true
-DemandesEnCours.js:43 --- [DEBUG] Demandes en cours reçues: (5) [{…}, {…}, {…}, {…}, {…}]
-demandes-en-cours:1 Access to fetch at 'https://zgniojabjywrnwovlmaf.supabase.co/functions/v1/send-qrcode' from origin 'https://gestion.asiacuisine.re' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
-DemandeDetail.js:102  POST https://zgniojabjywrnwovlmaf.supabase.co/functions/v1/send-qrcode net::ERR_FAILED
-onClick @ DemandeDetail.js:102
-Qu @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
+2025-11-28T05:29:48.165135Z	Cloning repository...
+2025-11-28T05:29:50.513751Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
+2025-11-28T05:29:50.514251Z	 * branch            1a0d6994e3594f48cb7a88005ce8b1ec812fa5be -> FETCH_HEAD
+2025-11-28T05:29:50.514393Z	
+2025-11-28T05:29:51.253696Z	HEAD is now at 1a0d699 Fix(create-invoice): Correct typo from demande_id to demand_id
+2025-11-28T05:29:51.254397Z	
+2025-11-28T05:29:51.330233Z	
+2025-11-28T05:29:51.330968Z	Using v2 root directory strategy
+2025-11-28T05:29:51.354924Z	Success: Finished cloning repository files
+2025-11-28T05:29:53.247265Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-28T05:29:53.248149Z	
+2025-11-28T05:29:54.350245Z	No wrangler.toml file found. Continuing.
+2025-11-28T05:29:54.41933Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2025-11-28T05:29:54.431856Z	Installing project dependencies: npm clean-install --progress=false
+2025-11-28T05:29:59.356486Z	
+2025-11-28T05:29:59.356717Z	added 192 packages, and audited 193 packages in 5s
+2025-11-28T05:29:59.357218Z	
+2025-11-28T05:29:59.357329Z	37 packages are looking for funding
+2025-11-28T05:29:59.357421Z	  run `npm fund` for details
+2025-11-28T05:29:59.359587Z	
+2025-11-28T05:29:59.359789Z	1 high severity vulnerability
+2025-11-28T05:29:59.359945Z	
+2025-11-28T05:29:59.360056Z	To address all issues, run:
+2025-11-28T05:29:59.360161Z	  npm audit fix
+2025-11-28T05:29:59.360263Z	
+2025-11-28T05:29:59.360379Z	Run `npm audit` for details.
+2025-11-28T05:29:59.448011Z	Executing user command: npm run build
+2025-11-28T05:29:59.80334Z	
+2025-11-28T05:29:59.803542Z	> site_internet@1.0.0 build
+2025-11-28T05:29:59.803835Z	> node ./scripts/inject-env.cjs
+2025-11-28T05:29:59.804066Z	
+2025-11-28T05:29:59.840545Z	--- Running custom build script using Node.js fs ---
+2025-11-28T05:29:59.840833Z	RECAPTCHA_SITE_KEY is available. Starting file replacements...
+2025-11-28T05:29:59.841039Z	Processing file: /opt/buildhome/repo/index.html
+2025-11-28T05:29:59.841342Z	Processing file: /opt/buildhome/repo/menu.html
+2025-11-28T05:29:59.841651Z	Processing file: /opt/buildhome/repo/script.js
+2025-11-28T05:29:59.842627Z	Warning: Placeholder not found in /opt/buildhome/repo/index.html. Skipping.
+2025-11-28T05:29:59.842838Z	Successfully injected site key into /opt/buildhome/repo/script.js
+2025-11-28T05:29:59.842961Z	Build script finished successfully.
+2025-11-28T05:29:59.843098Z	Warning: Placeholder not found in /opt/buildhome/repo/menu.html. Skipping.
+2025-11-28T05:29:59.862689Z	Finished
+2025-11-28T05:30:00.736061Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-28T05:30:00.736648Z	
+2025-11-28T05:30:01.83797Z	No wrangler.toml file found. Continuing.
+2025-11-28T05:30:01.838627Z	Found Functions directory at /functions. Uploading.
+2025-11-28T05:30:01.843847Z	 ⛅️ wrangler 3.101.0
+2025-11-28T05:30:01.844077Z	-------------------
+2025-11-28T05:30:02.673792Z	✘ [ERROR] Expected ";" but found ":"
+2025-11-28T05:30:02.674529Z	
+2025-11-28T05:30:02.674698Z	    ../../../buildhome/repo/functions/create-invoice-from-quote.js:85:28:
+2025-11-28T05:30:02.67487Z	      85 │         const invoicePayload: any = {
+2025-11-28T05:30:02.674959Z	         │                             ^
+2025-11-28T05:30:02.675056Z	         ╵                             ;
+2025-11-28T05:30:02.675137Z	
+2025-11-28T05:30:02.690219Z	
+2025-11-28T05:30:02.77493Z	[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mBuild failed with 1 error:[0m
+2025-11-28T05:30:02.775261Z	
+2025-11-28T05:30:02.775444Z	  ../../../buildhome/repo/functions/create-invoice-from-quote.js:85:28: ERROR: Expected ";" but found ":"
+2025-11-28T05:30:02.77564Z	
+2025-11-28T05:30:02.775768Z	
+2025-11-28T05:30:02.846343Z	🪵  Logs were written to "/root/.config/.wrangler/logs/wrangler-2025-11-28_05-30-02_439.log"
+2025-11-28T05:30:02.856555Z	Failed building Pages Functions.
+2025-11-28T05:30:09.269153Z	Failed: generating Pages Functions failed. Check the logs above for more information. If this continues for an unknown reason, contact support: https://cfl.re/3WgEyrH
