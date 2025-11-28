@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { format } from "https://deno.land/std@0.224.0/datetime/mod.ts"; // Import format for date utility
 
 const addCorsHeaders = (response) => {
     response.headers.set('Access-Control-Allow-Origin', 'https://gestion.asiacuisine.re');
@@ -66,8 +65,8 @@ export async function onRequest(context) {
 
         // --- Generate Invoice Document Number (FR_...) ---
         const now = new Date();
-        const year = format(now, "yyyy");
-        const month = format(now, "MM");
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
         const week = getWeekNumber(now);
         const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
         

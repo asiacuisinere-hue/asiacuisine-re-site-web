@@ -1,48 +1,57 @@
-supabaseClient.js:6 Supabase URL: https://zgniojabjywrnwovlmaf.supabase.co
-supabaseClient.js:7 Has API Key: true
-App.js:117 --- [DEBUG] Fetching all counts ---
-App.js:122 DEBUG: New Demands Count: 1
-App.js:134 DEBUG: Sent Quotes Count: 0
-App.js:140 DEBUG: To Prepare Demands Count: 0
-App.js:146 DEBUG: Pending Invoices Count: 0
-App.js:151 DEBUG: Deposit Paid Invoices Count: 0
-DemandesEnCours.js:35 --- [DEBUG] Demandes en cours reçues: [{…}]
-DemandesEnCours.js:35 --- [DEBUG] Demandes en cours reçues: [{…}]
-Devis.js:189 Creating quote WITH demande: 3c59f4bb-fa95-4784-a148-f163d9b61fb4
-Devis.js:247 --- [DEBUG] handleUpdateQuoteStatus: Démarrage pour devis 6b0d1a5d-d5d1-4f15-a214-eaf6effa867d avec statut accepted
-Devis.js:257 --- [DEBUG] handleUpdateQuoteStatus: Session authentifiée.
-Devis.js:260 --- [DEBUG] handleUpdateQuoteStatus: Mise à jour du statut dans Supabase...
-Devis.js:267 --- [DEBUG] handleUpdateQuoteStatus: Statut mis à jour avec succès.
-Devis.js:270 --- [DEBUG] handleUpdateQuoteStatus: Le statut est "accepted", tentative de création de la facture...
-Devis.js:271  POST https://zgniojabjywrnwovlmaf.supabase.co/functions/v1/create-invoice-from-quote 500 (Internal Server Error)
-onUpdateStatus @ Devis.js:271
-await in onUpdateStatus
-onClick @ QuoteDetailModal.js:105
-Qu @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
-Devis.js:282 --- [DEBUG] handleUpdateQuoteStatus: Réponse reçue du serveur pour create-invoice-from-quote, statut: 500
-Devis.js:286 --- [ERREUR] handleUpdateQuoteStatus: Réponse non-OK de create-invoice-from-quote {error: 'Internal Server Error', details: 'Failed to create invoice: insert or update on tabl… foreign key constraint "invoices_demand_id_fkey"'}
-onUpdateStatus @ Devis.js:286
-await in onUpdateStatus
-onClick @ QuoteDetailModal.js:105
-Qu @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
-Devis.js:306 --- [ERREUR] handleUpdateQuoteStatus: Erreur capturée dans le catch de création de facture: Error: Failed to create invoice: insert or update on table "invoices" violates foreign key constraint "invoices_demand_id_fkey"
-    at onUpdateStatus (Devis.js:287:27)
-onUpdateStatus @ Devis.js:306
-await in onUpdateStatus
-onClick @ QuoteDetailModal.js:105
-Qu @ react-dom-client.production.js:12317
-(anonymous) @ react-dom-client.production.js:12867
-Ft @ react-dom-client.production.js:1498
-td @ react-dom-client.production.js:12455
-Sh @ react-dom-client.production.js:15306
-bh @ react-dom-client.production.js:15274
+2025-11-28T13:22:36.100477Z	Cloning repository...
+2025-11-28T13:22:38.489812Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
+2025-11-28T13:22:38.490393Z	 * branch            f0b2a62934668fc543563ee7ea500bc9c5945534 -> FETCH_HEAD
+2025-11-28T13:22:38.490584Z	
+2025-11-28T13:22:39.202025Z	HEAD is now at f0b2a62 Fix: restauration de la nomination de factures
+2025-11-28T13:22:39.202507Z	
+2025-11-28T13:22:39.279893Z	
+2025-11-28T13:22:39.280379Z	Using v2 root directory strategy
+2025-11-28T13:22:39.303876Z	Success: Finished cloning repository files
+2025-11-28T13:22:41.033353Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-28T13:22:41.033976Z	
+2025-11-28T13:22:42.139835Z	No wrangler.toml file found. Continuing.
+2025-11-28T13:22:42.206196Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2025-11-28T13:22:42.216932Z	Installing project dependencies: npm clean-install --progress=false
+2025-11-28T13:22:47.681096Z	
+2025-11-28T13:22:47.68139Z	added 192 packages, and audited 193 packages in 5s
+2025-11-28T13:22:47.681533Z	
+2025-11-28T13:22:47.681678Z	37 packages are looking for funding
+2025-11-28T13:22:47.68179Z	  run `npm fund` for details
+2025-11-28T13:22:47.68393Z	
+2025-11-28T13:22:47.684117Z	1 high severity vulnerability
+2025-11-28T13:22:47.684387Z	
+2025-11-28T13:22:47.684548Z	To address all issues, run:
+2025-11-28T13:22:47.684668Z	  npm audit fix
+2025-11-28T13:22:47.684786Z	
+2025-11-28T13:22:47.684907Z	Run `npm audit` for details.
+2025-11-28T13:22:47.777755Z	Executing user command: npm run build
+2025-11-28T13:22:48.134675Z	
+2025-11-28T13:22:48.134922Z	> site_internet@1.0.0 build
+2025-11-28T13:22:48.135057Z	> node ./scripts/inject-env.cjs
+2025-11-28T13:22:48.13516Z	
+2025-11-28T13:22:48.176948Z	--- Running custom build script using Node.js fs ---
+2025-11-28T13:22:48.177182Z	RECAPTCHA_SITE_KEY is available. Starting file replacements...
+2025-11-28T13:22:48.177376Z	Processing file: /opt/buildhome/repo/index.html
+2025-11-28T13:22:48.17774Z	Processing file: /opt/buildhome/repo/menu.html
+2025-11-28T13:22:48.177947Z	Processing file: /opt/buildhome/repo/script.js
+2025-11-28T13:22:48.178327Z	Successfully injected site key into /opt/buildhome/repo/script.js
+2025-11-28T13:22:48.178463Z	Build script finished successfully.
+2025-11-28T13:22:48.179029Z	Warning: Placeholder not found in /opt/buildhome/repo/index.html. Skipping.
+2025-11-28T13:22:48.179491Z	Warning: Placeholder not found in /opt/buildhome/repo/menu.html. Skipping.
+2025-11-28T13:22:48.199594Z	Finished
+2025-11-28T13:22:49.095387Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-28T13:22:49.096035Z	
+2025-11-28T13:22:50.198956Z	No wrangler.toml file found. Continuing.
+2025-11-28T13:22:50.199803Z	Found Functions directory at /functions. Uploading.
+2025-11-28T13:22:50.205661Z	⛅️ wrangler 3.101.0
+2025-11-28T13:22:50.205864Z	-------------------
+2025-11-28T13:22:51.363255Z	✨ Compiled Worker successfully
+2025-11-28T13:22:52.450948Z	Validating asset output directory
+2025-11-28T13:22:56.294063Z	Deploying your site to Cloudflare's global network...
+2025-11-28T13:23:01.420819Z	Uploading... (198/198)
+2025-11-28T13:23:01.421778Z	✨ Success! Uploaded 0 files (198 already uploaded) (0.30 sec)
+2025-11-28T13:23:01.421908Z	
+2025-11-28T13:23:01.821687Z	✨ Upload complete!
+2025-11-28T13:23:06.876091Z	Success: Assets published!
+2025-11-28T13:23:08.575789Z	Error: Failed to publish your Function. Got error: Uncaught Error: No such module "https:/deno.land/std@0.224.0/datetime/mod.ts".
+  imported from "functionsWorker-0.6728491508503422.js"
