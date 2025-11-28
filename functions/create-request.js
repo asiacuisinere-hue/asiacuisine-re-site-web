@@ -160,7 +160,7 @@ export async function onRequest(context) {
 
         let details = {};
         if (formData.type === 'COMMANDE_MENU') {
-            details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity };
+            details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, ville: formData.deliveryCity };
         } else if (formData.type === 'RESERVATION_SERVICE') {
             details = { 
                 customerType: formData.customerType,
@@ -200,7 +200,7 @@ export async function onRequest(context) {
                         customerMessage: 'Message du client',
                         formulaName: 'Formule',
                         formulaOption: 'Option de la formule',
-                        deliveryCity: 'Ville de livraison'
+                        ville: 'Ville de livraison'
                     };
                     detailsHtml += `<li><strong>${keyMap[key] || key}:</strong> ${value}</li>`;
                 }
