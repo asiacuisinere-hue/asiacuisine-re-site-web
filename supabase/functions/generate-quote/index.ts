@@ -55,7 +55,9 @@ serve(async (req) => {
     }
     const companySettings = companySettingsArray[0];
 
-    const { customer, items, total, type, demandeId } = await req.json();
+    const payload = await req.json();
+    console.log("--- [generate-quote] Received payload:", JSON.stringify(payload, null, 2));
+    const { customer, items, total, type, demandeId } = payload;
 
     // --- 1. Générer le numéro de document ---
     const now = new Date();

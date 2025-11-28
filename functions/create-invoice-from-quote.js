@@ -45,11 +45,12 @@ export async function onRequest(context) {
             throw new Error(`An invoice already exists for quote ${quoteId}`);
         }
 
-        // 3. Build invoice payload (base fields)
+        // 3. Build invoice payload
         const invoicePayload = {
             quote_id: quote.id,
             client_id: quote.client_id,
             entreprise_id: quote.entreprise_id,
+            demand_id: quote.demand_id || null, // Ensure demand_id is always present
             total_amount: quote.total_amount,
             deposit_amount: quote.deposit_amount || 0,
             status: (quote.deposit_amount && quote.deposit_amount > 0) ? 'deposit_paid' : 'pending',
@@ -61,34 +62,7 @@ export async function onRequest(context) {
             })),
         };
 
-        // 4. Handle demand_id (two workflows support)
-        if (quote.demand_id) {
-            // Workflow 1: Quote created from a demande
-            // Verify the demande still exists
-            const { data: demande, error: demandeError } = await supabase
-                .from('demandes')
-                .select('id, status')
-                .eq('id', quote.demand_id)
-                .maybeSingle();
-            
-            if (demandeError) {
-                console.error('Error checking demande:', demandeError);
-            }
-            
-            if (demande) {
-                // Demande exists, link it to invoice
-                invoicePayload.demand_id = quote.demand_id;
-                console.log(`Invoice will be linked to demande ${quote.demand_id}`);
-            } else {
-                // Demande was deleted, proceed without it
-                console.warn(`Demande ${quote.demand_id} not found. Creating invoice without demande link.`);
-            }
-        } else {
-            // Workflow 2: Direct quote creation (no demande)
-            console.log('Quote has no demand_id. Creating standalone invoice.');
-        }
-
-        // 5. Create the invoice
+        // 4. Create the invoice
         const { data: newInvoice, error: invoiceError } = await supabase
             .from('invoices')
             .insert(invoicePayload)
@@ -97,7 +71,7 @@ export async function onRequest(context) {
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        // 6. Auto-complete linked demande if applicable
+        // 5. Auto-complete linked demande if applicable
         if (newInvoice.demand_id) {
             try {
                 const { data: linkedDemande } = await supabase
