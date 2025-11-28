@@ -27,7 +27,7 @@ export async function onRequestPost(context) {
         }
 
         const body = await context.request.json();
-        const { customer, items, total, type, demandeId } = body; // <-- Accepter demandeId
+        const { customer, items, total, type, demandId } = body; // <-- Accepter demandId
 
         if (!customer || !customer.id || !items || items.length === 0 || total === undefined || !type) {
             return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400, headers: corsHeaders() });
@@ -39,7 +39,7 @@ export async function onRequestPost(context) {
         const { data: quoteData, error: quoteError } = await supabase
             .from('quotes')
             .insert({
-                demande_id: demandeId, // <-- Sauvegarder demandeId
+                demand_id: demandId, // <-- Sauvegarder demandId
                 client_id: customer.id, // En supposant que customer.id est le client_id
                 total_amount: total,
                 status: 'draft',
