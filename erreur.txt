@@ -1,63 +1,71 @@
-2025-11-28T05:29:48.165135Z	Cloning repository...
-2025-11-28T05:29:50.513751Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
-2025-11-28T05:29:50.514251Z	 * branch            1a0d6994e3594f48cb7a88005ce8b1ec812fa5be -> FETCH_HEAD
-2025-11-28T05:29:50.514393Z	
-2025-11-28T05:29:51.253696Z	HEAD is now at 1a0d699 Fix(create-invoice): Correct typo from demande_id to demand_id
-2025-11-28T05:29:51.254397Z	
-2025-11-28T05:29:51.330233Z	
-2025-11-28T05:29:51.330968Z	Using v2 root directory strategy
-2025-11-28T05:29:51.354924Z	Success: Finished cloning repository files
-2025-11-28T05:29:53.247265Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-28T05:29:53.248149Z	
-2025-11-28T05:29:54.350245Z	No wrangler.toml file found. Continuing.
-2025-11-28T05:29:54.41933Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
-2025-11-28T05:29:54.431856Z	Installing project dependencies: npm clean-install --progress=false
-2025-11-28T05:29:59.356486Z	
-2025-11-28T05:29:59.356717Z	added 192 packages, and audited 193 packages in 5s
-2025-11-28T05:29:59.357218Z	
-2025-11-28T05:29:59.357329Z	37 packages are looking for funding
-2025-11-28T05:29:59.357421Z	  run `npm fund` for details
-2025-11-28T05:29:59.359587Z	
-2025-11-28T05:29:59.359789Z	1 high severity vulnerability
-2025-11-28T05:29:59.359945Z	
-2025-11-28T05:29:59.360056Z	To address all issues, run:
-2025-11-28T05:29:59.360161Z	  npm audit fix
-2025-11-28T05:29:59.360263Z	
-2025-11-28T05:29:59.360379Z	Run `npm audit` for details.
-2025-11-28T05:29:59.448011Z	Executing user command: npm run build
-2025-11-28T05:29:59.80334Z	
-2025-11-28T05:29:59.803542Z	> site_internet@1.0.0 build
-2025-11-28T05:29:59.803835Z	> node ./scripts/inject-env.cjs
-2025-11-28T05:29:59.804066Z	
-2025-11-28T05:29:59.840545Z	--- Running custom build script using Node.js fs ---
-2025-11-28T05:29:59.840833Z	RECAPTCHA_SITE_KEY is available. Starting file replacements...
-2025-11-28T05:29:59.841039Z	Processing file: /opt/buildhome/repo/index.html
-2025-11-28T05:29:59.841342Z	Processing file: /opt/buildhome/repo/menu.html
-2025-11-28T05:29:59.841651Z	Processing file: /opt/buildhome/repo/script.js
-2025-11-28T05:29:59.842627Z	Warning: Placeholder not found in /opt/buildhome/repo/index.html. Skipping.
-2025-11-28T05:29:59.842838Z	Successfully injected site key into /opt/buildhome/repo/script.js
-2025-11-28T05:29:59.842961Z	Build script finished successfully.
-2025-11-28T05:29:59.843098Z	Warning: Placeholder not found in /opt/buildhome/repo/menu.html. Skipping.
-2025-11-28T05:29:59.862689Z	Finished
-2025-11-28T05:30:00.736061Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-28T05:30:00.736648Z	
-2025-11-28T05:30:01.83797Z	No wrangler.toml file found. Continuing.
-2025-11-28T05:30:01.838627Z	Found Functions directory at /functions. Uploading.
-2025-11-28T05:30:01.843847Z	 ⛅️ wrangler 3.101.0
-2025-11-28T05:30:01.844077Z	-------------------
-2025-11-28T05:30:02.673792Z	✘ [ERROR] Expected ";" but found ":"
-2025-11-28T05:30:02.674529Z	
-2025-11-28T05:30:02.674698Z	    ../../../buildhome/repo/functions/create-invoice-from-quote.js:85:28:
-2025-11-28T05:30:02.67487Z	      85 │         const invoicePayload: any = {
-2025-11-28T05:30:02.674959Z	         │                             ^
-2025-11-28T05:30:02.675056Z	         ╵                             ;
-2025-11-28T05:30:02.675137Z	
-2025-11-28T05:30:02.690219Z	
-2025-11-28T05:30:02.77493Z	[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mBuild failed with 1 error:[0m
-2025-11-28T05:30:02.775261Z	
-2025-11-28T05:30:02.775444Z	  ../../../buildhome/repo/functions/create-invoice-from-quote.js:85:28: ERROR: Expected ";" but found ":"
-2025-11-28T05:30:02.77564Z	
-2025-11-28T05:30:02.775768Z	
-2025-11-28T05:30:02.846343Z	🪵  Logs were written to "/root/.config/.wrangler/logs/wrangler-2025-11-28_05-30-02_439.log"
-2025-11-28T05:30:02.856555Z	Failed building Pages Functions.
-2025-11-28T05:30:09.269153Z	Failed: generating Pages Functions failed. Check the logs above for more information. If this continues for an unknown reason, contact support: https://cfl.re/3WgEyrH
+2025-11-28T07:16:08.032623627Z	Cloning repository...
+2025-11-28T07:16:08.689438703Z	From https://github.com/asiacuisinere-hue/dashboard
+2025-11-28T07:16:08.689729768Z	 * branch            ce6d8a8f460e1877a5a196386c39b54d6be0ec7b -> FETCH_HEAD
+2025-11-28T07:16:08.690001258Z	
+2025-11-28T07:16:08.723187927Z	HEAD is now at ce6d8a8 Fix(Devis): Correct import path for QuoteDetailModal
+2025-11-28T07:16:08.723554439Z	
+2025-11-28T07:16:08.803114666Z	
+2025-11-28T07:16:08.803664843Z	Using v2 root directory strategy
+2025-11-28T07:16:08.82854181Z	Success: Finished cloning repository files
+2025-11-28T07:16:10.617399488Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-11-28T07:16:10.617715586Z	
+2025-11-28T07:16:11.728230589Z	No wrangler.toml file found. Continuing.
+2025-11-28T07:16:11.794935355Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2025-11-28T07:16:11.795505077Z	Installing project dependencies: npm clean-install --progress=false
+2025-11-28T07:16:15.398259038Z	npm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
+2025-11-28T07:16:15.827163692Z	npm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+2025-11-28T07:16:15.830066556Z	npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+2025-11-28T07:16:16.023472711Z	npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-11-28T07:16:16.040960689Z	npm warn deprecated workbox-google-analytics@6.6.0: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
+2025-11-28T07:16:16.043951022Z	npm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
+2025-11-28T07:16:16.159063215Z	npm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
+2025-11-28T07:16:16.236691386Z	npm warn deprecated q@1.5.1: You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+2025-11-28T07:16:16.237103377Z	npm warn deprecated
+2025-11-28T07:16:16.237234311Z	npm warn deprecated (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+2025-11-28T07:16:17.255494438Z	npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-11-28T07:16:17.448512356Z	npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-11-28T07:16:17.83674997Z	npm warn deprecated domexception@2.0.1: Use your platform's native DOMException instead
+2025-11-28T07:16:18.054738687Z	npm warn deprecated svgo@1.3.2: This SVGO version is no longer supported. Upgrade to v2.x.x.
+2025-11-28T07:16:18.472829806Z	npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
+2025-11-28T07:16:18.991897378Z	npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+2025-11-28T07:16:19.035485585Z	npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+2025-11-28T07:16:19.453146597Z	npm warn deprecated @babel/plugin-proposal-numeric-separator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-numeric-separator instead.
+2025-11-28T07:16:19.453718522Z	npm warn deprecated @babel/plugin-proposal-private-methods@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-methods instead.
+2025-11-28T07:16:19.513219967Z	npm warn deprecated @babel/plugin-proposal-optional-chaining@7.21.0: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
+2025-11-28T07:16:19.550169818Z	npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+2025-11-28T07:16:19.621847143Z	npm warn deprecated @babel/plugin-proposal-nullish-coalescing-operator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-nullish-coalescing-operator instead.
+2025-11-28T07:16:22.155337127Z	npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+2025-11-28T07:16:24.149542795Z	
+2025-11-28T07:16:24.149866266Z	added 1368 packages, and audited 1369 packages in 12s
+2025-11-28T07:16:24.150024836Z	
+2025-11-28T07:16:24.150360589Z	276 packages are looking for funding
+2025-11-28T07:16:24.15037615Z	  run `npm fund` for details
+2025-11-28T07:16:24.158359076Z	
+2025-11-28T07:16:24.158554764Z	12 vulnerabilities (4 moderate, 8 high)
+2025-11-28T07:16:24.158688965Z	
+2025-11-28T07:16:24.158874683Z	To address issues that do not require attention, run:
+2025-11-28T07:16:24.159143177Z	  npm audit fix
+2025-11-28T07:16:24.159159153Z	
+2025-11-28T07:16:24.159256495Z	To address all issues (including breaking changes), run:
+2025-11-28T07:16:24.159364498Z	  npm audit fix --force
+2025-11-28T07:16:24.159485477Z	
+2025-11-28T07:16:24.160022172Z	Run `npm audit` for details.
+2025-11-28T07:16:24.190202547Z	Executing user command: npm run build
+2025-11-28T07:16:24.574855598Z	
+2025-11-28T07:16:24.574898654Z	> dashboard@0.1.0 build
+2025-11-28T07:16:24.57514275Z	> react-scripts build
+2025-11-28T07:16:24.575263011Z	
+2025-11-28T07:16:25.73534877Z	Creating an optimized production build...
+2025-11-28T07:16:28.412909128Z	
+2025-11-28T07:16:28.413306709Z	Module not found: Error: Can't resolve './QuoteDetailModal' in '/opt/buildhome/repo/src/pages'
+2025-11-28T07:16:28.413328225Z	
+2025-11-28T07:16:28.413487453Z	
+2025-11-28T07:16:28.445370143Z	Failed: Error while executing user command. Exited with error code: 1
+2025-11-28T07:16:28.455176613Z	Failed: build command exited with code: 1
+2025-11-28T07:16:28.412909128Z	
+2025-11-28T07:16:28.413306709Z	Module not found: Error: Can't resolve './QuoteDetailModal' in '/opt/buildhome/repo/src/pages'
+2025-11-28T07:16:28.413328225Z	
+2025-11-28T07:16:28.413487453Z	
+2025-11-28T07:16:28.445370143Z	Failed: Error while executing user command. Exited with error code: 1
+2025-11-28T07:16:28.455176613Z	Failed: build command exited with code: 1
+2025-11-28T07:16:29.694045Z	Failed: error occurred while running build command

@@ -55,7 +55,7 @@ serve(async (req) => {
     }
     const companySettings = companySettingsArray[0];
 
-    const { customer, items, total, type } = await req.json();
+    const { customer, items, total, type, demandeId } = await req.json();
 
     // --- 1. Générer le numéro de document ---
     const now = new Date();
@@ -84,6 +84,7 @@ serve(async (req) => {
     const quoteData = {
       client_id: customer.type === "client" ? customer.id : null,
       entreprise_id: customer.type === "entreprise" ? customer.id : null,
+      demand_id: demandeId || null,
       total_amount: total,
       status: "sent",
       type: type || "service_reservation",
