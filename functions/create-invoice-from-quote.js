@@ -113,29 +113,6 @@ export async function onRequest(context) {
 
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        // 5. Auto-complete linked demande if applicable
-        if (newInvoice.demand_id) {
-            try {
-                const { data: linkedDemande } = await supabase
-                    .from('demandes')
-                    .select('type')
-                    .eq('id', newInvoice.demand_id)
-                    .single();
-
-                if (linkedDemande?.type === 'RESERVATION_SERVICE') {
-                    await supabase
-                        .from('demandes')
-                        .update({ status: 'completed' })
-                        .eq('id', newInvoice.demand_id);
-                    
-                    console.log(`Demande ${newInvoice.demand_id} auto-completed`);
-                }
-            } catch (error) {
-                console.error('Failed to auto-complete demande:', error.message);
-                // Don't throw - invoice is already created
-            }
-        }
-
         return addCorsHeaders(new Response(JSON.stringify({ 
             success: true, 
             invoiceId: newInvoice.id,
