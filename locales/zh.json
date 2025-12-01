@@ -44,7 +44,15 @@
       "special_offer_quantity": "数量",
       "special_offer_add": "添加",
       "cart_title": "您的特别订单",
-      "cart_total": "总计"
+      "cart_total": "总计",
+      "your_info_title": "2. 您的信息",
+      "label_nom": "姓氏",
+      "label_prenom": "名字",
+      "label_phone": "电话号码",
+      "label_email": "电子邮件",
+      "label_delivery_city": "送货城市",
+      "option_select_city": "选择城市",
+      "label_delivery_date": "送货/取货日期"
     },
     "hero": {
       "title": "Asiacuisine.re",

@@ -34,7 +34,15 @@
       "special_offer_quantity": "Quantité",
       "special_offer_add": "Ajouter",
       "cart_title": "Votre Commande Spéciale",
-      "cart_total": "Total:"
+      "cart_total": "Total:",
+      "your_info_title": "2. Vos informations",
+      "label_nom": "Nom",
+      "label_prenom": "Prénom",
+      "label_phone": "Numéro de téléphone",
+      "label_email": "Email",
+      "label_delivery_city": "Ville de livraison",
+      "option_select_city": "Sélectionnez une ville",
+      "label_delivery_date": "Jour de livraison/retrait"
     },
     "hero": {
       "title": "Asiacuisine.re",
