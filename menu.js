@@ -348,10 +348,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Remplir le contenu des menus
-                document.getElementById('content-decouverte').innerHTML = `<strong>Formule Découverte :</strong> ${data.menu_decouverte || ''}`;
-                document.getElementById('content-standard').innerHTML = `<strong>Formule Standard :</strong> ${data.menu_standard || ''}`;
-                document.getElementById('content-confort').innerHTML = `<strong>Formule Confort :</strong> ${data.menu_confort || ''}`;
-                document.getElementById('content-duo').innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo || ''}`;
+                const contentDecouverte = document.getElementById('content-decouverte');
+                if (contentDecouverte) {
+                    if (data.menu_decouverte && data.menu_decouverte.trim()) {
+                        contentDecouverte.innerHTML = `<strong>Formule Découverte :</strong> ${data.menu_decouverte}`;
+                        contentDecouverte.style.display = '';
+                    } else {
+                        contentDecouverte.style.display = 'none';
+                    }
+                }
+                const contentStandard = document.getElementById('content-standard');
+                if (contentStandard) {
+                    if (data.menu_standard && data.menu_standard.trim()) {
+                        contentStandard.innerHTML = `<strong>Formule Standard :</strong> ${data.menu_standard}`;
+                        contentStandard.style.display = '';
+                    } else {
+                        contentStandard.style.display = 'none';
+                    }
+                }
+                const contentConfort = document.getElementById('content-confort');
+                if (contentConfort) {
+                    if (data.menu_confort && data.menu_confort.trim()) {
+                        contentConfort.innerHTML = `<strong>Formule Confort :</strong> ${data.menu_confort}`;
+                        contentConfort.style.display = '';
+                    } else {
+                        contentConfort.style.display = 'none';
+                    }
+                }
+                const contentDuo = document.getElementById('content-duo');
+                if (contentDuo) {
+                    if (data.menu_duo && data.menu_duo.trim()) {
+                        contentDuo.innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo}`;
+                        contentDuo.style.display = '';
+                    } else {
+                        contentDuo.style.display = 'none';
+                    }
+                }
 
                 // Mettre à jour les prix
                 if (data.menu_decouverte_price) {
