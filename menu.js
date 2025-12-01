@@ -17,17 +17,13 @@ async function fetchAndDisplayAnnouncement() {
         const announcementContent = document.getElementById('announcement-content');
 
         if (data.announcement_enabled === 'true' && data.announcement_message) {
-            // Convertir Markdown en HTML
             const htmlContent = marked.parse(data.announcement_message);
-            
-            // Appliquer le style
             const style = announcementStyles[data.announcement_style] || announcementStyles.info;
             announcementContent.innerHTML = htmlContent;
             announcementContent.style.padding = '1.5rem';
             announcementContent.style.background = style.background;
             announcementContent.style.borderLeft = `4px solid ${style.border}`;
             announcementContent.style.borderRadius = '4px';
-            
             announcementContainer.style.display = 'block';
         } else {
             announcementContainer.style.display = 'none';
@@ -47,13 +43,123 @@ document.addEventListener('DOMContentLoaded', () => {
     let unavailableDates = [];
     let selectedDate = null;
     let isOverrideEnabled = false;
-    let orderCutoffDays = 2; // Default, will be updated from backend
-    let orderCutoffHour = 11; // Default, will be updated from backend
+    let orderCutoffDays = 2;
+    let orderCutoffHour = 11;
+    let isSpecialOfferActive = false;
+    let specialOfferDetails = null;
+    let cart = [];
 
     function convertDateToISO(dateString) {
         if (!dateString) return null;
         const parts = dateString.split('/');
         return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateString;
+    }
+    
+    function renderSpecialOffer(offer) {
+        const container = document.getElementById('special-offer-container');
+        if (!container) return;
+
+        const dishOptions = offer.dishes.map((dish, index) => 
+            `<option value="${index}">${dish.name}</option>`
+        ).join('');
+
+        container.innerHTML = `
+            <h2>${offer.title || 'Offre Spéciale'}</h2>
+            <p class="subtitle">${offer.description || ''}</p>
+            
+            <div id="special-offer-creator" style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <div class="form-grid" style="align-items: flex-end;">
+                    <div class="form-group">
+                        <label for="special-offer-dish">Plat</label>
+                        <select id="special-offer-dish" class="form-control">${dishOptions}</select>
+                    </div>
+                    <div class="form-group">
+                        <label for="special-offer-portion">Portion</label>
+                        <select id="special-offer-portion" class="form-control">
+                            <option value="250">250g</option>
+                            <option value="500">500g</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="special-offer-quantity">Quantité</label>
+                        <input type="number" id="special-offer-quantity" class="form-control" value="1" min="1" style="width: 80px;">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" id="add-to-cart-btn" class="cta-button" style="padding: 10px 15px; font-size: 14px;">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="special-offer-summary">
+                {/* Cart items will be rendered here */}
+            </div>
+        `;
+
+        document.getElementById('add-to-cart-btn').addEventListener('click', handleAddToCart);
+    }
+
+    function handleAddToCart() {
+        const dishIndex = document.getElementById('special-offer-dish').value;
+        const portion = document.getElementById('special-offer-portion').value;
+        const quantity = parseInt(document.getElementById('special-offer-quantity').value, 10);
+        
+        if (!dishIndex || !portion || !quantity || quantity < 1) {
+            alert('Veuillez sélectionner un plat, une portion et une quantité valide.');
+            return;
+        }
+
+        const dish = specialOfferDetails.dishes[dishIndex];
+        const price = portion === '250' ? dish.price250 : dish.price500;
+        
+        cart.push({
+            name: dish.name,
+            portion: `${portion}g`,
+            quantity: quantity,
+            price: parseFloat(price)
+        });
+
+        renderCart();
+    }
+
+    function renderCart() {
+        const summaryContainer = document.getElementById('special-offer-summary');
+        if (!summaryContainer) return;
+
+        if (cart.length === 0) {
+            summaryContainer.innerHTML = '';
+            return;
+        }
+
+        let total = 0;
+        const itemsHTML = cart.map((item, index) => {
+            const itemTotal = item.quantity * item.price;
+            total += itemTotal;
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
+                    <span>${item.quantity} x ${item.name} (${item.portion})</span>
+                    <span style="display: flex; align-items: center;">
+                        <span style="margin-right: 20px;">${itemTotal.toFixed(2)} €</span>
+                        <button type="button" class="remove-from-cart-btn" data-index="${index}" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">&times;</button>
+                    </span>
+                </div>
+            `;
+        }).join('');
+
+        summaryContainer.innerHTML = `
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Votre Commande Spéciale</h3>
+            ${itemsHTML}
+            <div style="text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 1rem;">
+                Total: ${total.toFixed(2)} €
+            </div>
+        `;
+
+        document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index, 10);
+                cart.splice(index, 1);
+                renderCart();
+            });
+        });
     }
 
     async function fetchUnavailableDates() {
@@ -177,7 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
 
-            // Set cutoff values from fetched data
             orderCutoffDays = data.order_cutoff_days || 2;
             orderCutoffHour = data.order_cutoff_hour || 11;
 
@@ -186,15 +291,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const whatsappButtonContainer = document.getElementById('whatsapp-button-container');
             const weeklyMenuContent = document.getElementById('weekly-menu-content');
             const infoSection = document.querySelector('.info-section');
+            const specialOfferContainer = document.getElementById('special-offer-container');
 
-            if (data.menu_override_enabled === 'true' && data.menu_override_message) {
+            const disableRegularContent = (disable) => {
+                const display = disable ? 'none' : '';
+                if (weeklyMenuContent) weeklyMenuContent.style.display = display;
+                if (formulaCardsContainer) formulaCardsContainer.style.display = display;
+            };
+            
+            isSpecialOfferActive = data.special_offer_enabled === 'true' && data.special_offer_details;
+
+            if (isSpecialOfferActive) {
+                try {
+                    specialOfferDetails = JSON.parse(data.special_offer_details);
+                } catch (e) {
+                    console.error("Failed to parse special offer details:", e);
+                    isSpecialOfferActive = false; // Fallback to normal
+                }
+            }
+
+            if (isSpecialOfferActive) {
+                disableRegularContent(true);
+                if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
+                if (specialOfferContainer) {
+                    specialOfferContainer.style.display = 'block';
+                    renderSpecialOffer(specialOfferDetails);
+                }
+                fetchUnavailableDates();
+            } else if (data.menu_override_enabled === 'true' && data.menu_override_message) {
                 isOverrideEnabled = true;
                 if (menuOverrideMessage) {
                     menuOverrideMessage.querySelector('p').textContent = data.menu_override_message;
                     menuOverrideMessage.style.display = 'block';
                 }
-                if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
-                if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
+                disableRegularContent(true);
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = 'none';
                 if (infoSection) infoSection.style.display = 'none';
                 if (calendarContainer) calendarContainer.style.display = 'none';
@@ -202,17 +332,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     form.style.pointerEvents = 'none';
                     form.style.opacity = '0.5';
                 }
-                cards.forEach(card => {
-                    card.style.pointerEvents = 'none';
-                    card.style.opacity = '0.5';
-                });
             } else {
                 isOverrideEnabled = false;
-                if (menuOverrideMessage) {
-                    menuOverrideMessage.style.display = 'none';
-                }
-                if (weeklyMenuContent) weeklyMenuContent.style.display = '';
-                if (formulaCardsContainer) formulaCardsContainer.style.display = '';
+                if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
+                if (specialOfferContainer) specialOfferContainer.style.display = 'none';
+                
+                disableRegularContent(false);
+
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = '';
                 if (infoSection) infoSection.style.display = '';
                 if (calendarContainer) calendarContainer.style.display = '';
@@ -220,29 +346,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     form.style.pointerEvents = '';
                     form.style.opacity = '';
                 }
-                cards.forEach(card => {
-                    card.style.pointerEvents = '';
-                    card.style.opacity = '';
-                });
 
                 // Remplir le contenu des menus
-                const contentDecouverte = document.getElementById('content-decouverte');
-                const contentStandard = document.getElementById('content-standard');
-                const contentConfort = document.getElementById('content-confort');
-                const contentDuo = document.getElementById('content-duo');
-
-                if (contentDecouverte && data.menu_decouverte) {
-                    contentDecouverte.innerHTML = `<strong>Formule Découverte :</strong> ${data.menu_decouverte}`;
-                }
-                if (contentStandard && data.menu_standard) {
-                    contentStandard.innerHTML = `<strong>Formule Standard :</strong> ${data.menu_standard}`;
-                }
-                if (contentConfort && data.menu_confort) {
-                    contentConfort.innerHTML = `<strong>Formule Confort :</strong> ${data.menu_confort}`;
-                }
-                if (contentDuo && data.menu_duo) {
-                    contentDuo.innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo}`;
-                }
+                document.getElementById('content-decouverte').innerHTML = `<strong>Formule Découverte :</strong> ${data.menu_decouverte || ''}`;
+                document.getElementById('content-standard').innerHTML = `<strong>Formule Standard :</strong> ${data.menu_standard || ''}`;
+                document.getElementById('content-confort').innerHTML = `<strong>Formule Confort :</strong> ${data.menu_confort || ''}`;
+                document.getElementById('content-duo').innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo || ''}`;
 
                 // Mettre à jour les prix
                 if (data.menu_decouverte_price) {
@@ -272,17 +381,15 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAndDisplayAnnouncement();
     fetchMenuContent();
 
-    // Gestionnaire de clic pour les cartes (seulement si non override)
     cards.forEach(card => {
         card.addEventListener('click', () => {
-            if (isOverrideEnabled) return;
+            if (isOverrideEnabled || isSpecialOfferActive) return;
             cards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             card.querySelector('input[type="radio"]').checked = true;
         });
     });
 
-    // Gestionnaire de soumission du formulaire
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -298,82 +405,113 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Erreur de configuration de la sécurité. Veuillez rafraîchir la page.');
             return;
         }
+        
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data.jour || !data.email) {
+            alert('Veuillez remplir vos informations et la date de livraison/retrait.');
+            return;
+        }
+
+        let message;
+        let orderPayload;
+
+        if (isSpecialOfferActive) {
+            if (cart.length === 0) {
+                alert('Votre panier est vide. Veuillez ajouter des plats pour commander.');
+                return;
+            }
+            let total = 0;
+            const orderDetails = cart.map(item => {
+                const itemTotal = item.quantity * item.price;
+                total += itemTotal;
+                return `- ${item.quantity} x ${item.name} (${item.portion}) : ${itemTotal.toFixed(2)} €`;
+            }).join('\n');
+            
+            message = `Bonjour, je souhaite passer une commande pour l'offre spéciale "${specialOfferDetails.title}" :\n\n${orderDetails}\n\nTotal : ${total.toFixed(2)} €\n\n- Nom : ${data.nom} ${data.prenom || ''}\n- Téléphone : ${data.telephone}\n- Livraison/Retrait : ${data.livraison}, le ${data.jour}\n\nMerci !\n`;
+            
+            orderPayload = {
+                type: 'COMMANDE_SPECIALE',
+                details: JSON.stringify(cart),
+                total: total.toFixed(2),
+                customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
+                deliveryCity: data.livraison,
+                requestDate: convertDateToISO(data.jour),
+                recaptchaToken: null
+            };
+
+        } else {
+            if (!data.formule) {
+                alert('Veuillez choisir une formule.');
+                return;
+            }
+            
+            let formulaOption = null;
+            if (data.formule.includes("Formule Standard")) {
+                const selectedOptionStandard = document.querySelector('input[name="optionStandard"]:checked');
+                if (!selectedOptionStandard) {
+                    alert('Veuillez choisir une option (A ou B) pour la Formule Standard.');
+                    return;
+                }
+                formulaOption = selectedOptionStandard.value;
+            } else if (data.formule.includes("Formule Confort")) {
+                const selectedOptionConfort = document.querySelector('input[name="optionConfort"]:checked');
+                if (!selectedOptionConfort) {
+                    alert('Veuillez choisir une option (A ou B) pour la Formule Confort.');
+                    return;
+                }
+                formulaOption = selectedOptionConfort.value;
+            } else if (data.formule.includes("Option Duo")) {
+                const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
+                if (!selectedOptionDuo) {
+                    alert("Veuillez choisir une option (A ou B) pour l'Option Duo.");
+                    return;
+                }
+                formulaOption = selectedOptionDuo.value;
+            }
+            
+            const formuleDetails = data.formule + (formulaOption ? ` (${formulaOption})` : '');
+            message = `Bonjour, je souhaite passer une commande :\n\n- Formule : ${formuleDetails}\n- Nom : ${data.nom} ${data.prenom || ''}\n- Téléphone : ${data.telephone}\n- Livraison/Retrait : ${data.livraison}, le ${data.jour}\n\nMerci !\n`;
+
+            orderPayload = {
+                type: 'COMMANDE_MENU',
+                customerType: 'Particulier',
+                formulaName: data.formule,
+                formulaOption: formulaOption,
+                customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
+                deliveryCity: data.livraison,
+                requestDate: convertDateToISO(data.jour),
+                recaptchaToken: null
+            };
+        }
 
         submitBtn.textContent = 'Vérification...';
         submitBtn.disabled = true;
 
         grecaptcha.ready(function() {
             grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async function(recaptchaToken) {
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-
-                if (!data.formule || !data.jour || !data.email) {
-                    alert('Veuillez remplir tous les champs obligatoires.');
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    return;
-                }
-
-                let formulaOption = null;
-                if (data.formule.includes("Formule Standard")) {
-                    const selectedOptionStandard = document.querySelector('input[name="optionStandard"]:checked');
-                    if (!selectedOptionStandard) {
-                        alert('Veuillez choisir une option (A ou B) pour la Formule Standard.');
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                        return;
-                    }
-                    formulaOption = selectedOptionStandard.value;
-                } else if (data.formule.includes("Formule Confort")) {
-                    const selectedOptionConfort = document.querySelector('input[name="optionConfort"]:checked');
-                    if (!selectedOptionConfort) {
-                        alert('Veuillez choisir une option (A ou B) pour la Formule Confort.');
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                        return;
-                    }
-                    formulaOption = selectedOptionConfort.value;
-                } else if (data.formule.includes("Option Duo")) {
-                    const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
-                    if (!selectedOptionDuo) {
-                        alert("Veuillez choisir une option (A ou B) pour l'Option Duo.");
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                        return;
-                    }
-                    formulaOption = selectedOptionDuo.value;
-                }
-
-                const orderData = {
-                    type: 'COMMANDE_MENU',
-                    customerType: 'Particulier',
-                    formulaName: data.formule,
-                    formulaOption: formulaOption,
-                    customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
-                    deliveryCity: data.livraison,
-                    requestDate: convertDateToISO(data.jour),
-                    recaptchaToken: recaptchaToken
-                };
-
+                orderPayload.recaptchaToken = recaptchaToken;
+                
                 submitBtn.textContent = 'Envoi en cours...';
 
                 try {
                     const response = await fetch('/create-request/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(orderData)
+                        body: JSON.stringify(orderPayload)
                     });
                     if (!response.ok) {
                         const errorResult = await response.json();
                         throw new Error(errorResult.error || 'Une erreur serveur est survenue.');
                     }
 
-                    const formuleDetails = data.formule + (formulaOption ? ` (${formulaOption})` : '');
-                    const message = `\nBonjour, je souhaite passer une commande :\n\n- Formule : ${formuleDetails}\n- Nom : ${data.nom} ${data.prenom || ''}\n- Téléphone : ${data.telephone}\n- Livraison/Retrait : ${data.livraison}, le ${data.jour}\n\nMerci !\n`;
                     const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message.trim())}`;
                     window.open(whatsappUrl, '_blank');
                     form.reset();
                     cards.forEach(c => c.classList.remove('selected'));
+                    cart = [];
+                    renderCart();
                 } catch (error) {
                     console.error('Erreur lors de la soumission:', error);
                     alert(`Une erreur est survenue : ${error.message}`);
