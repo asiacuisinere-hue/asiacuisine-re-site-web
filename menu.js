@@ -1,3 +1,42 @@
+// Styles pour les annonces
+const announcementStyles = {
+    info: { background: '#e3f2fd', border: '#2196f3' },
+    attention: { background: '#fff9e6', border: '#ff9800' },
+    fete: { background: '#ffebee', border: '#e91e63' },
+    promotion: { background: '#fffaf0', border: '#d4af37' },
+    annonce: { background: '#f3e5f5', border: '#9c27b0' }
+};
+
+async function fetchAndDisplayAnnouncement() {
+    try {
+        const response = await fetch('/get-announcement');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+
+        const announcementContainer = document.getElementById('announcement-container');
+        const announcementContent = document.getElementById('announcement-content');
+
+        if (data.announcement_enabled === 'true' && data.announcement_message) {
+            // Convertir Markdown en HTML
+            const htmlContent = marked.parse(data.announcement_message);
+            
+            // Appliquer le style
+            const style = announcementStyles[data.announcement_style] || announcementStyles.info;
+            announcementContent.innerHTML = htmlContent;
+            announcementContent.style.padding = '1.5rem';
+            announcementContent.style.background = style.background;
+            announcementContent.style.borderLeft = `4px solid ${style.border}`;
+            announcementContent.style.borderRadius = '4px';
+            
+            announcementContainer.style.display = 'block';
+        } else {
+            announcementContainer.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error fetching announcement:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('whatsapp-order-form');
     const cards = document.querySelectorAll('.formula-card');
@@ -212,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    fetchAndDisplayAnnouncement();
     fetchMenuContent();
 
     // Gestionnaire de clic pour les cartes (seulement si non override)

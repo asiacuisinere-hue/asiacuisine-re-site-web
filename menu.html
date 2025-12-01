@@ -17,6 +17,8 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <!-- Google reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render=6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq" async defer></script>
+    <!-- Juste avant la fermeture de </head> -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
@@ -33,10 +35,14 @@
     <main>
         <div class="menu-container">
             <h1 data-i18n="menu.title">Menus de la semaine</h1>
-            <p class="subtitle" data-i18n="menu.subtitle">Choisissez votre formule et remplissez vos informations pour commander.</p>
-
-            <div id="weekly-menu-content" style="margin-bottom: 2.5rem; padding: 1.5rem; background: #f9f9f9; border-left: 4px solid #d4af37; border-radius: 4px;">
-                <h2 style="text-align: left; margin-top: 0; margin-bottom: 1rem;">Contenu des formules cette semaine :</h2>
+                    <p class="subtitle" data-i18n="menu.subtitle">Choisissez votre formule et remplissez vos informations pour commander.</p>
+            
+                    <!-- NOUVELLE ZONE D'ANNONCE -->
+                    <div id="announcement-container" style="display: none; margin-bottom: 2.5rem;">
+                        <div id="announcement-content"></div>
+                    </div>
+            
+                    <div id="weekly-menu-content" style="margin-bottom: 2.5rem; padding: 1.5rem; background: #f9f9f9; border-left: 4px solid #d4af37; border-radius: 4px;">                <h2 style="text-align: left; margin-top: 0; margin-bottom: 1rem;">Contenu des formules cette semaine :</h2>
                 <p id="content-decouverte" style="margin-bottom: 0.5rem;"></p>
                 <p id="content-standard" style="margin-bottom: 0.5rem;"></p>
                 <p id="content-confort" style="margin-bottom: 0.5rem;"></p>

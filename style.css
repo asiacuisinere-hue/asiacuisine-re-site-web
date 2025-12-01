@@ -877,3 +877,33 @@ body {
 .subscription-modal.is-visible .subscription-modal-content {
     transform: scale(1);
 }
+
+#announcement-content h1, 
+#announcement-content h2, 
+#announcement-content h3 {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+#announcement-content p {
+    margin: 0.5em 0;
+}
+
+#announcement-content ul, 
+#announcement-content ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+#announcement-content a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+#announcement-content strong {
+    font-weight: bold;
+}
+
+#announcement-content em {
+    font-style: italic;
+}
