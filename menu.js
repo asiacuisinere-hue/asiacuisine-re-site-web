@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (isSpecialOfferActive) {
-                disableRegularContent(true);
+                disableRegularContent(data.special_offer_disables_formulas === 'true');
                 if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
                 if (specialOfferContainer) {
                     specialOfferContainer.style.display = 'block';
