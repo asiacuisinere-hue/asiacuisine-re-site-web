@@ -244,6 +244,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     contentDuo.innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo}`;
                 }
 
+                // Mettre à jour les prix
+                if (data.menu_decouverte_price) {
+                    document.getElementById('price-decouverte').textContent = `${data.menu_decouverte_price} €`;
+                    document.getElementById('formule-decouverte').value = `Formule Découverte (${data.menu_decouverte_price}€)`;
+                }
+                if (data.menu_standard_price) {
+                    document.getElementById('price-standard').textContent = `${data.menu_standard_price} €`;
+                    document.getElementById('formule-standard').value = `Formule Standard (${data.menu_standard_price}€)`;
+                }
+                if (data.menu_confort_price) {
+                    document.getElementById('price-confort').textContent = `${data.menu_confort_price} €`;
+                    document.getElementById('formule-confort').value = `Formule Confort (${data.menu_confort_price}€)`;
+                }
+                if (data.menu_duo_price) {
+                    document.getElementById('price-duo').textContent = `${data.menu_duo_price} €`;
+                    document.getElementById('formule-duo').value = `Option Duo (${data.menu_duo_price}€)`;
+                }
+
                 fetchUnavailableDates();
             }
         } catch (error) {

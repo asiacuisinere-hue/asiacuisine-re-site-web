@@ -29,7 +29,8 @@ export async function onRequest(context) {
 
         const settingKeys = [
             'menu_decouverte', 'menu_standard', 'menu_confort', 'menu_duo',
-            'menu_override_message', 'menu_override_enabled'
+            'menu_override_message', 'menu_override_enabled',
+            'menu_decouverte_price', 'menu_standard_price', 'menu_confort_price', 'menu_duo_price'
         ];
         const { data: menuSettingsData, error: settingsError } = await supabase
             .from('settings')
