@@ -1,11 +1,10 @@
 # Logs
 *.log
 
-# Node dependencies
-node_modules/
-
 # Build artifacts and local development files
 dashboard/
+
+
 
 # OS-specific
 .DS_Store
@@ -25,4 +24,4 @@ Thumbs.db
 
 
 # Build Edge Functions
-#supabase/
+supabase/
