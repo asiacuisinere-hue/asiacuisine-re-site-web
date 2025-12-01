@@ -22,7 +22,19 @@
       "comfort_desc": "5 dishes from the weekly menu<br>🏡 Home delivery (limited areas)",
       "duo_title": "👥 Duo Option",
       "duo_desc": "<strong>2 identical Standard Formulas</strong> (10 dishes total)<br>Joint delivery to the same meeting point",
-      "to_order_cta": "Order via WhatsApp"
+      "to_order_cta": "Order via WhatsApp",
+      "weekly_content_title": "This week's formula contents:",
+      "formula_discovery_label": "Discovery Formula:",
+      "formula_standard_label": "Standard Formula:",
+      "formula_comfort_label": "Comfort Formula:",
+      "formula_duo_label": "Duo Option:",
+      "special_offer_title": "Special Offer",
+      "special_offer_dish": "Dish",
+      "special_offer_portion": "Portion",
+      "special_offer_quantity": "Quantity",
+      "special_offer_add": "Add",
+      "cart_title": "Your Special Order",
+      "cart_total": "Total:"
     },
     "hero": {
       "title": "Asiacuisine.re",

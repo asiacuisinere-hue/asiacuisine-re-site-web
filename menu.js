@@ -64,34 +64,33 @@ document.addEventListener('DOMContentLoaded', () => {
         ).join('');
 
         container.innerHTML = `
-            <h2>${offer.title || 'Offre Spéciale'}</h2>
+            <h2>${offer.title || i18next.t('menu.special_offer_title')}</h2>
             <p class="subtitle">${offer.description || ''}</p>
             
             <div id="special-offer-creator" style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
                 <div class="form-grid" style="align-items: flex-end;">
                     <div class="form-group">
-                        <label for="special-offer-dish">Plat</label>
+                        <label for="special-offer-dish">${i18next.t('menu.special_offer_dish')}</label>
                         <select id="special-offer-dish" class="form-control">${dishOptions}</select>
                     </div>
                     <div class="form-group">
-                        <label for="special-offer-portion">Portion</label>
+                        <label for="special-offer-portion">${i18next.t('menu.special_offer_portion')}</label>
                         <select id="special-offer-portion" class="form-control">
                             <option value="250">250g</option>
                             <option value="500">500g</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="special-offer-quantity">Quantité</label>
+                        <label for="special-offer-quantity">${i18next.t('menu.special_offer_quantity')}</label>
                         <input type="number" id="special-offer-quantity" class="form-control" value="1" min="1" style="width: 80px;">
                     </div>
                     <div class="form-group">
-                        <button type="button" id="add-to-cart-btn" class="cta-button" style="padding: 10px 15px; font-size: 14px;">Ajouter</button>
+                        <button type="button" id="add-to-cart-btn" class="cta-button" style="padding: 10px 15px; font-size: 14px;">${i18next.t('menu.special_offer_add')}</button>
                     </div>
                 </div>
             </div>
 
             <div id="special-offer-summary">
-                {/* Cart items will be rendered here */}
             </div>
         `;
 
@@ -146,10 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
 
         summaryContainer.innerHTML = `
-            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Votre Commande Spéciale</h3>
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">${i18next.t('menu.cart_title')}</h3>
             ${itemsHTML}
             <div style="text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 1rem;">
-                Total: ${total.toFixed(2)} €
+                ${i18next.t('menu.cart_total')} ${total.toFixed(2)} €
             </div>
         `;
 
@@ -360,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentDecouverte = document.getElementById('content-decouverte');
                 if (contentDecouverte) {
                     if (data.menu_decouverte && data.menu_decouverte.trim()) {
-                        contentDecouverte.innerHTML = `<strong>Formule Découverte :</strong> ${data.menu_decouverte}`;
+                        contentDecouverte.innerHTML = `<strong>${i18next.t('menu.formula_discovery_label')}</strong> ${data.menu_decouverte}`;
                         contentDecouverte.style.display = '';
                     } else {
                         contentDecouverte.style.display = 'none';
@@ -369,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentStandard = document.getElementById('content-standard');
                 if (contentStandard) {
                     if (data.menu_standard && data.menu_standard.trim()) {
-                        contentStandard.innerHTML = `<strong>Formule Standard :</strong> ${data.menu_standard}`;
+                        contentStandard.innerHTML = `<strong>${i18next.t('menu.formula_standard_label')}</strong> ${data.menu_standard}`;
                         contentStandard.style.display = '';
                     } else {
                         contentStandard.style.display = 'none';
@@ -378,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentConfort = document.getElementById('content-confort');
                 if (contentConfort) {
                     if (data.menu_confort && data.menu_confort.trim()) {
-                        contentConfort.innerHTML = `<strong>Formule Confort :</strong> ${data.menu_confort}`;
+                        contentConfort.innerHTML = `<strong>${i18next.t('menu.formula_comfort_label')}</strong> ${data.menu_confort}`;
                         contentConfort.style.display = '';
                     } else {
                         contentConfort.style.display = 'none';
@@ -387,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentDuo = document.getElementById('content-duo');
                 if (contentDuo) {
                     if (data.menu_duo && data.menu_duo.trim()) {
-                        contentDuo.innerHTML = `<strong>Option Duo :</strong> ${data.menu_duo}`;
+                        contentDuo.innerHTML = `<strong>${i18next.t('menu.formula_duo_label')}</strong> ${data.menu_duo}`;
                         contentDuo.style.display = '';
                     } else {
                         contentDuo.style.display = 'none';

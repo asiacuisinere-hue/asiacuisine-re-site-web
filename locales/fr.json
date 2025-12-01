@@ -22,7 +22,19 @@
       "comfort_desc": "5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)",
       "duo_title": "👥 Option Duo",
       "duo_desc": "<strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV",
-      "to_order_cta": "Commander via WhatsApp"
+      "to_order_cta": "Commander via WhatsApp",
+      "weekly_content_title": "Contenu des formules cette semaine :",
+      "formula_discovery_label": "Formule Découverte :",
+      "formula_standard_label": "Formule Standard :",
+      "formula_comfort_label": "Formule Confort :",
+      "formula_duo_label": "Option Duo :",
+      "special_offer_title": "Offre Spéciale",
+      "special_offer_dish": "Plat",
+      "special_offer_portion": "Portion",
+      "special_offer_quantity": "Quantité",
+      "special_offer_add": "Ajouter",
+      "cart_title": "Votre Commande Spéciale",
+      "cart_total": "Total:"
     },
     "hero": {
       "title": "Asiacuisine.re",

@@ -32,7 +32,19 @@
       "info_payment": "<strong>💳 支付时间：</strong> 请于周四上午11点前完成（确认及付款链接将在下单后发送）。",
       "to_order_title": "📲 如何订餐：",
       "to_order_desc": "只需发送“每周菜单”私信，即可获取可选菜品并预订您的套餐。",
-      "to_order_cta": "私信订餐"
+      "to_order_cta": "私信订餐",
+      "weekly_content_title": "本周菜单内容：",
+      "formula_discovery_label": "体验套餐:",
+      "formula_standard_label": "标准套餐:",
+      "formula_comfort_label": "舒适套餐:",
+      "formula_duo_label": "双人套餐:",
+      "special_offer_title": "特别优惠",
+      "special_offer_dish": "菜品",
+      "special_offer_portion": "份",
+      "special_offer_quantity": "数量",
+      "special_offer_add": "添加",
+      "cart_title": "您的特别订单",
+      "cart_total": "总计"
     },
     "hero": {
       "title": "Asiacuisine.re",
