@@ -160,13 +160,19 @@ export async function onRequest(context) {
 
         let details = {};
         if (formData.type === 'COMMANDE_MENU') {
-            details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, ville: formData.deliveryCity };
+            details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity };
         } else if (formData.type === 'RESERVATION_SERVICE') {
             details = { 
                 customerType: formData.customerType,
                 serviceType: formData.serviceType, 
                 numberOfPeople: formData.numberOfPeople, 
                 customerMessage: formData.customerMessage 
+            };
+        } else if (formData.type === 'COMMANDE_SPECIALE') {
+            details = {
+                items: JSON.parse(formData.details),
+                total: formData.total,
+                deliveryCity: formData.deliveryCity
             };
         }
 
@@ -200,7 +206,7 @@ export async function onRequest(context) {
                         customerMessage: 'Message du client',
                         formulaName: 'Formule',
                         formulaOption: 'Option de la formule',
-                        ville: 'Ville de livraison'
+                        deliveryCity: 'Ville de livraison'
                     };
                     detailsHtml += `<li><strong>${keyMap[key] || key}:</strong> ${value}</li>`;
                 }
