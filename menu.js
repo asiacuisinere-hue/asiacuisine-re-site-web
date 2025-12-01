@@ -486,7 +486,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
                 deliveryCity: data.livraison,
                 requestDate: convertDateToISO(data.jour),
-                recaptchaToken: null
+                recaptchaToken: null,
+                customerType: 'Particulier'
             };
 
         // Sinon, on traite une commande de formule classique
