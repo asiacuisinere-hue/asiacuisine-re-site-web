@@ -293,32 +293,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const infoSection = document.querySelector('.info-section');
             const specialOfferContainer = document.getElementById('special-offer-container');
 
+            // Reset all displays
+            if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
+            if (specialOfferContainer) specialOfferContainer.style.display = 'none';
+            if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
+            if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
+            
             const disableRegularContent = (disable) => {
                 const display = disable ? 'none' : '';
                 if (weeklyMenuContent) weeklyMenuContent.style.display = display;
                 if (formulaCardsContainer) formulaCardsContainer.style.display = display;
             };
-            
-            isSpecialOfferActive = data.special_offer_enabled === 'true' && data.special_offer_details;
 
-            if (isSpecialOfferActive) {
-                try {
-                    specialOfferDetails = JSON.parse(data.special_offer_details);
-                } catch (e) {
-                    console.error("Failed to parse special offer details:", e);
-                    isSpecialOfferActive = false; // Fallback to normal
-                }
-            }
-
-            if (isSpecialOfferActive) {
-                disableRegularContent(data.special_offer_disables_formulas === 'true');
-                if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
-                if (specialOfferContainer) {
-                    specialOfferContainer.style.display = 'block';
-                    renderSpecialOffer(specialOfferDetails);
-                }
-                fetchUnavailableDates();
-            } else if (data.menu_override_enabled === 'true' && data.menu_override_message) {
+            // Highest priority: Menu Override
+            if (data.menu_override_enabled === 'true' && data.menu_override_message) {
                 isOverrideEnabled = true;
                 if (menuOverrideMessage) {
                     menuOverrideMessage.querySelector('p').textContent = data.menu_override_message;
@@ -332,13 +320,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     form.style.pointerEvents = 'none';
                     form.style.opacity = '0.5';
                 }
-            } else {
-                isOverrideEnabled = false;
-                if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
-                if (specialOfferContainer) specialOfferContainer.style.display = 'none';
-                
-                disableRegularContent(false);
+                return; // Stop further processing
+            }
 
+            // Not overridden, so set up the page for ordering
+            isOverrideEnabled = false;
+
+            // Check for special offer
+            isSpecialOfferActive = data.special_offer_enabled === 'true' && data.special_offer_details;
+            if (isSpecialOfferActive) {
+                try {
+                    specialOfferDetails = JSON.parse(data.special_offer_details);
+                    if (specialOfferContainer) {
+                        specialOfferContainer.style.display = 'block';
+                        renderSpecialOffer(specialOfferDetails);
+                    }
+                } catch (e) {
+                    console.error("Failed to parse special offer details:", e);
+                    isSpecialOfferActive = false; 
+                }
+            }
+
+            // Regular content visibility
+            const shouldDisableRegularContent = isSpecialOfferActive && data.special_offer_disables_formulas === 'true';
+            disableRegularContent(shouldDisableRegularContent);
+
+            if (!shouldDisableRegularContent) {
+                if (weeklyMenuContent) weeklyMenuContent.style.display = '';
+                if (formulaCardsContainer) formulaCardsContainer.style.display = '';
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = '';
                 if (infoSection) infoSection.style.display = '';
                 if (calendarContainer) calendarContainer.style.display = '';
@@ -402,9 +411,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('price-duo').textContent = `${data.menu_duo_price} €`;
                     document.getElementById('formule-duo').value = `Option Duo (${data.menu_duo_price}€)`;
                 }
-
-                fetchUnavailableDates();
             }
+            
+            fetchUnavailableDates();
+
         } catch (error) {
             console.error('Error fetching menu content:', error);
         }
@@ -415,7 +425,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cards.forEach(card => {
         card.addEventListener('click', () => {
-            if (isOverrideEnabled || isSpecialOfferActive) return;
+            if (isOverrideEnabled) return;
+            // Clear special offer cart when selecting a regular formula
+            if (cart.length > 0) {
+                if (confirm("Votre panier d'offre spéciale sera vidé si vous sélectionnez une formule. Continuer ?")) {
+                    cart = [];
+                    renderCart();
+                } else {
+                    return;
+                }
+            }
             cards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             card.querySelector('input[type="radio"]').checked = true;
@@ -449,11 +468,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let message;
         let orderPayload;
 
-        if (isSpecialOfferActive) {
-            if (cart.length === 0) {
-                alert('Votre panier est vide. Veuillez ajouter des plats pour commander.');
-                return;
-            }
+        // Si le panier de l'offre spéciale n'est pas vide, on traite cette commande
+        if (cart.length > 0) {
             let total = 0;
             const orderDetails = cart.map(item => {
                 const itemTotal = item.quantity * item.price;
@@ -473,9 +489,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 recaptchaToken: null
             };
 
+        // Sinon, on traite une commande de formule classique
         } else {
             if (!data.formule) {
-                alert('Veuillez choisir une formule.');
+                alert('Veuillez choisir une formule ou composer une commande avec l\'offre spéciale.');
                 return;
             }
             
