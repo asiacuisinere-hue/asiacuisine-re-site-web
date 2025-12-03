@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.menu_override_enabled === 'true' && data.menu_override_message) {
                 isOverrideEnabled = true;
                 if (menuOverrideMessage) {
-                    menuOverrideMessage.querySelector('p').textContent = data.menu_override_message;
+                    menuOverrideMessage.querySelector('p').innerHTML = marked.parse(data.menu_override_message);
                     menuOverrideMessage.style.display = 'block';
                 }
                 disableRegularContent(true);
