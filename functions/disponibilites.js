@@ -25,32 +25,31 @@ export async function onRequest(context) {
         
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_KEY);
         const unavailableDates = new Set();
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // La seule source d'indisponibilité est maintenant la table 'indisponibilites'
-        const { data: indisponibilites, error: indisponibilitesError } = await supabase
-            .from('indisponibilites')
-            .select('*')
-            .eq('service_type', serviceType);
-
-        if (indisponibilitesError) throw indisponibilitesError;
-
-        indisponibilites.forEach(item => {
-            if (item.date && new Date(item.date) >= today) {
-                unavailableDates.add(item.date); // Format YYYY-MM-DD
-            } 
-            else if (item.day_of_week !== null) {
-                for (let i = 0; i < 365; i++) {
-                    const futureDate = new Date();
-                    futureDate.setDate(today.getDate() + i);
-                    if (futureDate.getDay() === item.day_of_week) {
-                        unavailableDates.add(futureDate.toISOString().split('T')[0]);
+                const today = new Date();
+                const todayString = today.toISOString().split('T')[0]; // Get 'YYYY-MM-DD' string for today
+        
+                // La seule source d'indisponibilité est maintenant la table 'indisponibilites'
+                const { data: indisponibilites, error: indisponibilitesError } = await supabase
+                    .from('indisponibilites')
+                    .select('*')
+                    .eq('service_type', serviceType);
+        
+                if (indisponibilitesError) throw indisponibilitesError;
+        
+                indisponibilites.forEach(item => {
+                    if (item.date && item.date >= todayString) {
+                        unavailableDates.add(item.date); // Format YYYY-MM-DD
                     }
-                }
-            }
-        });
-
+                    else if (item.day_of_week !== null) {
+                        for (let i = 0; i < 365; i++) {
+                            const futureDate = new Date();
+                            futureDate.setDate(today.getDate() + i);
+                            if (futureDate.getDay() === item.day_of_week) {
+                                unavailableDates.add(futureDate.toISOString().split('T')[0]);
+                            }
+                        }
+                    }
+                });
         // Convertir YYYY-MM-DD en DD/MM/YYYY pour la librairie du calendrier
         const formattedDates = Array.from(unavailableDates).map(d => {
             const [year, month, day] = d.split('-');
