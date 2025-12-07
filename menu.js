@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="form-group">
                         <label for="special-offer-portion">${i18next.t('menu.special_offer_portion')}</label>
                         <select id="special-offer-portion" class="form-control">
-                            <option value="250">250g</option>
                             <option value="500">500g</option>
+                            <option value="1000">1000g</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const dish = specialOfferDetails.dishes[dishIndex];
-        const price = portion === '250' ? dish.price250 : dish.price500;
+        const price = portion === '500' ? dish.price500 : dish.price1000;
         
         cart.push({
             name: dish.name,
