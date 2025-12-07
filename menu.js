@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentDecouverte = document.getElementById('content-decouverte');
                 if (contentDecouverte) {
                     if (data.menu_decouverte && data.menu_decouverte.trim()) {
-                        contentDecouverte.innerHTML = `<strong>${i18next.t('menu.formula_discovery_label')}</strong> ${data.menu_decouverte}`;
+                        contentDecouverte.innerHTML = `<strong>${i18next.t('menu.formula_discovery_label')}</strong> ${marked.parse(data.menu_decouverte)}`;
                         contentDecouverte.style.display = '';
                     } else {
                         contentDecouverte.style.display = 'none';
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentStandard = document.getElementById('content-standard');
                 if (contentStandard) {
                     if (data.menu_standard && data.menu_standard.trim()) {
-                        contentStandard.innerHTML = `<strong>${i18next.t('menu.formula_standard_label')}</strong> ${data.menu_standard}`;
+                        contentStandard.innerHTML = `<strong>${i18next.t('menu.formula_standard_label')}</strong> ${marked.parse(data.menu_standard)}`;
                         contentStandard.style.display = '';
                     } else {
                         contentStandard.style.display = 'none';
@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentConfort = document.getElementById('content-confort');
                 if (contentConfort) {
                     if (data.menu_confort && data.menu_confort.trim()) {
-                        contentConfort.innerHTML = `<strong>${i18next.t('menu.formula_comfort_label')}</strong> ${data.menu_confort}`;
+                        contentConfort.innerHTML = `<strong>${i18next.t('menu.formula_comfort_label')}</strong> ${marked.parse(data.menu_confort)}`;
                         contentConfort.style.display = '';
                     } else {
                         contentConfort.style.display = 'none';
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentDuo = document.getElementById('content-duo');
                 if (contentDuo) {
                     if (data.menu_duo && data.menu_duo.trim()) {
-                        contentDuo.innerHTML = `<strong>${i18next.t('menu.formula_duo_label')}</strong> ${data.menu_duo}`;
+                        contentDuo.innerHTML = `<strong>${i18next.t('menu.formula_duo_label')}</strong> ${marked.parse(data.menu_duo)}`;
                         contentDuo.style.display = '';
                     } else {
                         contentDuo.style.display = 'none';
