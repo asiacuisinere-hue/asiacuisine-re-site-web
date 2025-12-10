@@ -45,7 +45,8 @@ export async function onRequest(context) {
                         first_name: data.prenom,
                         last_name: data.nom,
                         phone: data.phone,
-                        client_id: newId
+                        client_id: newId,
+                        type: 'Particulier'
                     })
                     .select()
                     .single();
