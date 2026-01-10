@@ -55,6 +55,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateString;
     }
     
+    function openWhatsAppLink(phone, message) {
+        const encodedMessage = encodeURIComponent(message.trim());
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        if (isIOS || isSafari) {
+            const appLink = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
+            const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+
+            window.location.href = appLink;
+
+            setTimeout(() => {
+                window.location.href = webLink;
+            }, 1000);
+        } else {
+            window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+        }
+    }
+    
     function renderSpecialOffer(offer) {
         const container = document.getElementById('special-offer-container');
         if (!container) return;
@@ -555,8 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error(errorResult.error || 'Une erreur serveur est survenue.');
                     }
 
-                    const whatsappUrl = `https://wa.me/33767644714?text=${encodeURIComponent(message.trim())}`;
-                    window.open(whatsappUrl, '_blank');
+                    openWhatsAppLink('33767644714', message);
                     form.reset();
                     cards.forEach(c => c.classList.remove('selected'));
                     cart = [];

@@ -85,6 +85,7 @@ function initializePageContent() {
         window.addEventListener('resize', handleResponsiveLayout);
     }
     initializeSubscriptionForm();
+    initializeWhatsAppLinks();
 }
 
 function handleResponsiveLayout() {
@@ -371,5 +372,33 @@ function initializeSubscriptionForm() {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
+    });
+}
+
+function initializeWhatsAppLinks() {
+    document.querySelectorAll('.js-whatsapp-link').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const phone = this.dataset.phone;
+            const message = "Bonjour, je souhaite commander..."; // Default message
+            const encodedMessage = encodeURIComponent(message);
+
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            if (isIOS || isSafari) {
+                const appLink = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
+                const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+
+                window.location.href = appLink;
+
+                setTimeout(() => {
+                    window.location.href = webLink;
+                }, 1000);
+            } else {
+                window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+            }
+        });
     });
 }
