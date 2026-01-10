@@ -225,6 +225,7 @@ function initializeForm() {
                     requestDate: convertDateToISO(data.date),
                     serviceType: data.service,
                     numberOfPeople: data.personnes,
+                    ville: data.ville,
                     customerMessage: data.message || null,
                     recaptchaToken
                 };

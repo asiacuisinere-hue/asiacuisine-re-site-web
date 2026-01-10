@@ -166,6 +166,7 @@ export async function onRequest(context) {
                 customerType: formData.customerType,
                 serviceType: formData.serviceType, 
                 numberOfPeople: formData.numberOfPeople, 
+                ville: formData.ville,
                 customerMessage: formData.customerMessage 
             };
         } else if (formData.type === 'COMMANDE_SPECIALE') {
@@ -233,6 +234,8 @@ export async function onRequest(context) {
 
             try {
                 const resend = new Resend(resendApiKey);
+                
+                // Email to Admin
                 await resend.emails.send({
                     from: 'reservation@asiacuisine.re',
                     to: 'contact@asiacuisine.re',
@@ -249,6 +252,33 @@ export async function onRequest(context) {
                         ${detailsHtml}
                     `
                 });
+
+                // Email to Client
+                const clientEmail = customerDetailsForEmail.type === 'Particulier' ? customerDetailsForEmail.email : customerDetailsForEmail.contactEmail;
+                const clientName = customerDetailsForEmail.type === 'Particulier' ? (customerDetailsForEmail.name || 'client(e)') : (customerDetailsForEmail.contactName || 'client(e)');
+
+                await resend.emails.send({
+                    from: 'no-reply@asiacuisine.re',
+                    to: clientEmail,
+                    subject: 'Confirmation de votre demande chez Asiacuisine.re',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                            <h2>Merci pour votre demande !</h2>
+                            <p>Bonjour ${clientName},</p>
+                            <p>Nous avons bien reçu votre demande et nous vous en remercions. Nous l'examinerons attentivement et reviendrons vers vous dans les plus brefs délais pour vous confirmer la disponibilité et les détails.</p>
+                            <p>Pour rappel, voici les informations que vous nous avez transmises :</p>
+                            <ul>
+                                <li><strong>Type de demande :</strong> ${formData.type}</li>
+                                <li><strong>Date souhaitée :</strong> ${new Date(formData.requestDate).toLocaleDateString('fr-FR')}</li>
+                            </ul>
+                            <p>Si vous avez des questions, n'hésitez pas à nous contacter directement en répondant à cet e-mail.</p>
+                            <br>
+                            <p>Cordialement,</p>
+                            <p><strong>L'équipe d'Asiacuisine.re</strong></p>
+                        </div>
+                    `
+                });
+
             } catch (emailError) {
                 console.error('Failed to send email notification:', emailError);
             }
