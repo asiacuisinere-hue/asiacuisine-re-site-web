@@ -230,6 +230,7 @@ function initializeForm() {
                     budget: data.budget || null,
                     allergies: data.allergies || null,
                     customerMessage: data.message || null,
+                    lang: i18next.language,
                     recaptchaToken
                 };
 

@@ -328,6 +328,20 @@
         "section13_title": "13. 适用法律",
         "section13_p1": "本 CGV 受法国法律管辖。",
         "section13_p2": "任何争议均由留尼汪有管辖权的法院处理。"
+    },
+    "email": {
+      "confirmation": {
+        "subject": "您的 Asiacuisine.re 请求已确认",
+        "title": "感谢您的请求！",
+        "greeting": "您好 ${clientName},",
+        "body": "我们已收到您的请求（跟踪号：<strong>${requestId}</strong>），非常感谢。我们将仔细审核您的请求，并尽快（通常在24小时内）与您联系。",
+        "summary_title": "为了方便您核对，以下是您提交的信息：",
+        "request_type": "请求类型：",
+        "request_date": "期望日期：",
+        "questions": "如果您有任何问题，请随时通过回复此电子邮件与我们联系。",
+        "closing": "此致,",
+        "signature": "Asiacuisine.re 团队"
+      }
     }
   }
 }

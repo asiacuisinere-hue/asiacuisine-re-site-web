@@ -305,6 +305,20 @@
         "section13_title": "13. Loi applicable",
         "section13_p1": "Les présentes CGV sont soumises au droit français.",
         "section13_p2": "Tout litige relève des tribunaux de La Réunion."
+    },
+    "email": {
+      "confirmation": {
+        "subject": "Confirmation de votre demande chez Asiacuisine.re",
+        "title": "Merci pour votre demande !",
+        "greeting": "Bonjour ${clientName},",
+        "body": "Nous avons bien reçu votre demande (numéro de suivi : <strong>${requestId}</strong>) et nous vous en remercions. Nous l'examinerons attentivement et reviendrons vers vous dans les plus brefs délais (généralement sous 24h).",
+        "summary_title": "Pour rappel, voici les informations que vous nous avez transmises :",
+        "request_type": "Type de demande :",
+        "request_date": "Date souhaitée :",
+        "questions": "Si vous avez des questions, n'hésitez pas à nous contacter directement en répondant à cet e-mail.",
+        "closing": "Cordialement,",
+        "signature": "L'équipe d'Asiacuisine.re"
+      }
     }
   }
 }

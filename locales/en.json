@@ -318,6 +318,20 @@
         "section13_title": "13. Applicable Law",
         "section13_p1": "These TCS are subject to French law.",
         "section13_p2": "Any dispute falls under the jurisdiction of the courts of La Réunion."
+    },
+    "email": {
+      "confirmation": {
+        "subject": "Confirmation of your request at Asiacuisine.re",
+        "title": "Thank you for your request!",
+        "greeting": "Hello ${clientName},",
+        "body": "We have received your request (tracking number: <strong>${requestId}</strong>) and we thank you for it. We will review it carefully and get back to you as soon as possible (usually within 24 hours).",
+        "summary_title": "As a reminder, here is the information you provided:",
+        "request_type": "Request type:",
+        "request_date": "Desired date:",
+        "questions": "If you have any questions, feel free to contact us by replying to this email.",
+        "closing": "Best regards,",
+        "signature": "The Asiacuisine.re Team"
+      }
     }
   }
 }

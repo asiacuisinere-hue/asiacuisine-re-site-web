@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
+import fr from '../locales/fr.json' assert { type: 'json' };
+import en from '../locales/en.json' assert { type: 'json' };
+import zh from '../locales/zh.json' assert { type: 'json' };
 
 // Helper function to generate a random 6-character alphanumeric string
 function generateClientId() {
@@ -50,6 +53,19 @@ export async function onRequest(context) {
             console.error('--- [ERROR] reCAPTCHA verification failed or score too low:', recaptchaResult);
             return new Response(JSON.stringify({ error: 'reCAPTCHA verification failed. Are you a robot?' }), { status: 403 });
         }
+
+        // --- I18n Setup ---
+        const lang = formData.lang && ['fr', 'en', 'zh'].includes(formData.lang) ? formData.lang : 'fr';
+        const translations = { fr, en, zh };
+        const t = (key) => {
+            const keys = key.split('.');
+            let result = translations[lang].translation;
+            for (const k of keys) {
+                result = result?.[k];
+                if (!result) return key; // Return key if not found
+            }
+            return result;
+        };
 
         // Continue with the rest of the logic using formData instead of data
         if (!formData.type || !formData.customer || !formData.requestDate) {
@@ -188,8 +204,7 @@ export async function onRequest(context) {
             request_date: formData.requestDate,
             details_json: details
         };
-        console.log('--- [DEBUG] Payload for "demandes" insertion:', JSON.stringify(demandePayload, null, 2));
-
+        
         const { data: newDemande, error: demandeError } = await supabase
             .from('demandes')
             .insert(demandePayload)
@@ -262,28 +277,30 @@ export async function onRequest(context) {
                     `
                 });
 
-                // Email to Client
+                // --- Email to Client ---
                 const clientEmail = customerDetailsForEmail.type === 'Particulier' ? customerDetailsForEmail.email : customerDetailsForEmail.contactEmail;
                 const clientName = customerDetailsForEmail.type === 'Particulier' ? (customerDetailsForEmail.name || 'client(e)') : (customerDetailsForEmail.contactName || 'client(e)');
+                const requestId = newDemande.id.substring(0, 8);
+                const requestDate = new Date(formData.requestDate).toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, { year: 'numeric', month: 'long', day: 'numeric' });
 
                 await resend.emails.send({
                     from: 'no-reply@asiacuisine.re',
                     to: clientEmail,
-                    subject: 'Confirmation de votre demande chez Asiacuisine.re',
+                    subject: t('email.confirmation.subject'),
                     html: `
                         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                            <h2>Merci pour votre demande !</h2>
-                            <p>Bonjour ${clientName},</p>
-                            <p>Nous avons bien reçu votre demande (numéro de suivi : <strong>${newDemande.id.substring(0, 8)}</strong>) et nous vous en remercions. Nous l'examinerons attentivement et reviendrons vers vous dans les plus brefs délais (généralement sous 24h).</p>
-                            <p>Pour rappel, voici les informations que vous nous avez transmises :</p>
+                            <h2>${t('email.confirmation.title')}</h2>
+                            <p>${t('email.confirmation.greeting').replace('${clientName}', clientName)}</p>
+                            <p>${t('email.confirmation.body').replace('${requestId}', `<strong>${requestId}</strong>`)}</p>
+                            <p>${t('email.confirmation.summary_title')}</p>
                             <ul>
-                                <li><strong>Type de demande :</strong> ${formData.type}</li>
-                                <li><strong>Date souhaitée :</strong> ${new Date(formData.requestDate).toLocaleDateString('fr-FR')}</li>
+                                <li><strong>${t('email.confirmation.request_type')}</strong> ${formData.type}</li>
+                                <li><strong>${t('email.confirmation.request_date')}</strong> ${requestDate}</li>
                             </ul>
-                            <p>Si vous avez des questions, n'hésitez pas à nous contacter directement en répondant à cet e-mail.</p>
+                            <p>${t('email.confirmation.questions')}</p>
                             <br>
-                            <p>Cordialement,</p>
-                            <p><strong>L'équipe d'Asiacuisine.re</strong></p>
+                            <p>${t('email.confirmation.closing')}</p>
+                            <p><strong>${t('email.confirmation.signature')}</strong></p>
                         </div>
                     `
                 });
