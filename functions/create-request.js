@@ -190,9 +190,11 @@ export async function onRequest(context) {
         };
         console.log('--- [DEBUG] Payload for "demandes" insertion:', JSON.stringify(demandePayload, null, 2));
 
-        const { error: demandeError } = await supabase
+        const { data: newDemande, error: demandeError } = await supabase
             .from('demandes')
-            .insert(demandePayload);
+            .insert(demandePayload)
+            .select()
+            .single();
 
         if (demandeError) throw demandeError;
         console.log('--- [DEBUG] "demandes" insertion successful');
@@ -206,7 +208,11 @@ export async function onRequest(context) {
                     const keyMap = {
                         customerType: 'Type de client',
                         serviceType: 'Type de service',
+                        heure: 'Heure souhaitée',
                         numberOfPeople: 'Nombre de personnes',
+                        ville: 'Ville',
+                        budget: 'Budget par personne',
+                        allergies: 'Allergies/Régimes',
                         customerMessage: 'Message du client',
                         formulaName: 'Formule',
                         formulaOption: 'Option de la formule',
@@ -268,7 +274,7 @@ export async function onRequest(context) {
                         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
                             <h2>Merci pour votre demande !</h2>
                             <p>Bonjour ${clientName},</p>
-                            <p>Nous avons bien reçu votre demande et nous vous en remercions. Nous l'examinerons attentivement et reviendrons vers vous dans les plus brefs délais pour vous confirmer la disponibilité et les détails.</p>
+                            <p>Nous avons bien reçu votre demande (numéro de suivi : <strong>${newDemande.id.substring(0, 8)}</strong>) et nous vous en remercions. Nous l'examinerons attentivement et reviendrons vers vous dans les plus brefs délais (généralement sous 24h).</p>
                             <p>Pour rappel, voici les informations que vous nous avez transmises :</p>
                             <ul>
                                 <li><strong>Type de demande :</strong> ${formData.type}</li>

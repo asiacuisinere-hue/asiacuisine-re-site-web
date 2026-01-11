@@ -3,16 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi de votre commande - Asiacuisine.re</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Suivi de votre demande – Asiacuisine.re</title>
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
-    <div class="container">
-        <h1>Suivi de votre commande</h1>
-        <div id="status-container">
-            <p>Chargement du statut de votre commande...</p>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo"><img src="favicon.png" alt="Asiacuisine.re Logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">← Retour à l'accueil</a></li>
+            </ul>
         </div>
-    </div>
-    <script src="suivi.js"></script>
+    </nav>
+
+    <main class="container" style="padding-top: 100px; text-align: center; max-width: 700px; margin: auto;">
+        <h1>Suivi de votre demande</h1>
+        <p>Entrez votre numéro de suivi à 8 caractères (reçu par e-mail) pour consulter le statut de votre demande.</p>
+
+        <form id="suivi-form" style="margin-top: 2rem;">
+            <div class="form-group">
+                <label for="request-id" style="display: block; margin-bottom: 0.5rem;">Numéro de suivi</label>
+                <input type="text" id="request-id" name="requestId" required maxlength="8" style="padding: 10px; width: 80%; max-width: 300px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
+            <button type="submit" class="cta-button">Suivre</button>
+        </form>
+
+        <div id="suivi-result" style="margin-top: 3rem; text-align: left; padding: 2rem; background: #f9f9f9; border-radius: 8px; display: none;">
+            <!-- Les résultats seront affichés ici -->
+        </div>
+    </main>
+
+    <script src="suivi.js" defer></script>
 </body>
 </html>
