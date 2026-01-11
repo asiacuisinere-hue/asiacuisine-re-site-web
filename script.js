@@ -223,9 +223,12 @@ function initializeForm() {
                         ? { lastName: data.nom_particulier, email: data.email_particulier, phone: data.telephone_particulier }
                         : { companyName: data.nom_entreprise, siret: data.siret, contactName: data.nom_contact_entreprise, contactEmail: data.email_contact_entreprise, contactPhone: data.telephone_contact_entreprise },
                     requestDate: convertDateToISO(data.date),
+                    heure: data.heure,
                     serviceType: data.service,
                     numberOfPeople: data.personnes,
                     ville: data.ville,
+                    budget: data.budget || null,
+                    allergies: data.allergies || null,
                     customerMessage: data.message || null,
                     recaptchaToken
                 };

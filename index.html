@@ -366,6 +366,14 @@
                     <input type="text" id="date" name="date" required autocomplete="off" data-i18n="[placeholder]booking.date_placeholder" placeholder="Cliquez pour choisir une date">
                 </div>
                 <div class="form-group">
+                    <label for="heure" data-i18n="booking.time_label">Heure souhaitée :</label>
+                    <select id="heure" name="heure" required>
+                        <option value="">Sélectionnez un moment</option>
+                        <option value="Midi">Midi (déjeuner)</option>
+                        <option value="Soir">Soir (dîner)</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="personnes" data-i18n="booking.people_label">Nombre de personnes :</label>
                     <select id="personnes" name="personnes" required>
                         <option value="" data-i18n="booking.people_option_default">Sélectionnez</option>
@@ -406,8 +414,21 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="message" data-i18n="booking.message_label">Message (préférences, allergies, demandes spéciales) :</label>
-                    <textarea id="message" name="message" rows="4" data-i18n="[placeholder]booking.message_placeholder" placeholder="Décrivez vos préférences culinaires, allergies alimentaires ou demandes spéciales..."></textarea>
+                    <label for="budget" data-i18n="booking.budget_label">Budget par personne (optionnel) :</label>
+                    <select id="budget" name="budget">
+                        <option value="">Non spécifié</option>
+                        <option value="<50">Moins de 50€</option>
+                        <option value="50-80">50€ - 80€</option>
+                        <option value=">80">Plus de 80€</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="allergies" data-i18n="booking.allergies_label">Allergies ou régimes spéciaux :</label>
+                    <textarea id="allergies" name="allergies" rows="3" data-i18n="[placeholder]booking.allergies_placeholder" placeholder="Veuillez lister ici toutes les allergies (ex: arachides, lactose) ou régimes spéciaux (ex: végétarien, sans gluten)..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="message" data-i18n="booking.message_label">Message (préférences ou demandes spéciales) :</label>
+                    <textarea id="message" name="message" rows="3" data-i18n="[placeholder]booking.message_placeholder" placeholder="Avez-vous des préférences pour le menu, ou une demande particulière pour l'organisation ?"></textarea>
                 </div>
                 <button type="submit" class="submit-btn" data-i18n="booking.submit_button">Envoyer la demande de réservation</button>
             </form>

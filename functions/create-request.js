@@ -165,8 +165,11 @@ export async function onRequest(context) {
             details = { 
                 customerType: formData.customerType,
                 serviceType: formData.serviceType, 
+                heure: formData.heure,
                 numberOfPeople: formData.numberOfPeople, 
                 ville: formData.ville,
+                budget: formData.budget,
+                allergies: formData.allergies,
                 customerMessage: formData.customerMessage 
             };
         } else if (formData.type === 'COMMANDE_SPECIALE') {
