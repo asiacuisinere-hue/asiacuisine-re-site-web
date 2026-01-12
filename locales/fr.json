@@ -318,6 +318,26 @@
         "questions": "Si vous avez des questions, n'hésitez pas à nous contacter directement en répondant à cet e-mail.",
         "closing": "Cordialement,",
         "signature": "L'équipe d'Asiacuisine.re"
+      },
+      "reminder": {
+        "subject": "Rappel de votre réservation chez Asiacuisine.re",
+        "title": "Rappel amical de votre événement",
+        "greeting": "Bonjour ${clientName},",
+        "body": "Ceci est un simple rappel que votre prestation de chef à domicile est prévue pour le ${requestDate}. Nous sommes impatients de vous offrir une expérience culinaire mémorable.",
+        "summary_title": "Résumé de votre réservation :",
+        "request_type": "Type de service :",
+        "questions": "Si vous avez la moindre question ou si des changements de dernière minute sont nécessaires, n'hésitez pas à nous contacter.",
+        "closing": "À très bientôt,",
+        "signature": "L'équipe d'Asiacuisine.re"
+      },
+      "followup": {
+        "subject": "Merci d'avoir choisi Asiacuisine.re !",
+        "title": "Nous espérons que vous avez apprécié !",
+        "greeting": "Bonjour ${clientName},",
+        "body": "Nous tenions à vous remercier d'avoir fait appel à nos services pour votre événement du ${requestDate}. Nous espérons que l'expérience culinaire a été à la hauteur de vos attentes.",
+        "feedback_prompt": "Votre avis est précieux pour nous aider à nous améliorer. Si vous avez un moment, nous serions ravis que vous partagiez votre expérience sur nos réseaux sociaux ou en répondant à cet e-mail.",
+        "closing": "Au plaisir de vous régaler à nouveau,",
+        "signature": "L'équipe d'Asiacuisine.re"
       }
     }
   }

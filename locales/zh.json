@@ -341,6 +341,26 @@
         "questions": "如果您有任何问题，请随时通过回复此电子邮件与我们联系。",
         "closing": "此致,",
         "signature": "Asiacuisine.re 团队"
+      },
+      "reminder": {
+        "subject": "您的 Asiacuisine.re 预订提醒",
+        "title": "温馨提醒：您的活动即将开始",
+        "greeting": "您好 ${clientName},",
+        "body": "这封邮件是温馨提醒，您的私人厨师服务已安排在 ${requestDate}。我们期待为您带来难忘的美食体验。",
+        "summary_title": "您的预订摘要：",
+        "request_type": "服务类型：",
+        "questions": "如果您有任何疑问或需要临时变更，请随时与我们联系。",
+        "closing": "期待与您相见,",
+        "signature": "Asiacuisine.re 团队"
+      },
+      "followup": {
+        "subject": "感谢您选择 Asiacuisine.re！",
+        "title": "希望您用餐愉快！",
+        "greeting": "您好 ${clientName},",
+        "body": "我们想感谢您在 ${requestDate} 的活动中选择了我们的服务。希望这次美食体验达到了您的期望。",
+        "feedback_prompt": "您的反馈对我们至关重要。如果您有时间，我们非常希望您能在我们的社交媒体上分享您的体验，或通过回复此邮件告诉我们您的想法。",
+        "closing": "期待再次为您服务,",
+        "signature": "Asiacuisine.re 团队"
       }
     }
   }

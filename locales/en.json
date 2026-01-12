@@ -331,6 +331,26 @@
         "questions": "If you have any questions, feel free to contact us by replying to this email.",
         "closing": "Best regards,",
         "signature": "The Asiacuisine.re Team"
+      },
+      "reminder": {
+        "subject": "Reminder for your Asiacuisine.re Booking",
+        "title": "Friendly Reminder for Your Event",
+        "greeting": "Hello ${clientName},",
+        "body": "This is a friendly reminder that your private chef service is scheduled for ${requestDate}. We look forward to providing you with a memorable culinary experience.",
+        "summary_title": "Summary of your booking:",
+        "request_type": "Service type:",
+        "questions": "If you have any questions or require last-minute changes, please do not hesitate to contact us.",
+        "closing": "See you soon,",
+        "signature": "The Asiacuisine.re Team"
+      },
+      "followup": {
+        "subject": "Thank you for choosing Asiacuisine.re!",
+        "title": "We hope you enjoyed it!",
+        "greeting": "Hello ${clientName},",
+        "body": "We wanted to thank you for using our services for your event on ${requestDate}. We hope the culinary experience met your expectations.",
+        "feedback_prompt": "Your feedback is valuable to help us improve. If you have a moment, we would be delighted if you could share your experience on our social media or by replying to this email.",
+        "closing": "Looking forward to delighting you again,",
+        "signature": "The Asiacuisine.re Team"
       }
     }
   }
