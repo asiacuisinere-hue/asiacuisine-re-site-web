@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 // This function will be deployed as a Vercel serverless function.
 export default async (req, res) => {
