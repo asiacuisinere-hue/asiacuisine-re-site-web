@@ -282,6 +282,7 @@ export async function onRequest(context) {
                 const clientName = customerDetailsForEmail.type === 'Particulier' ? (customerDetailsForEmail.name || 'client(e)') : (customerDetailsForEmail.contactName || 'client(e)');
                 const requestId = newDemande.id.substring(0, 8);
                 const requestDate = new Date(formData.requestDate).toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, { year: 'numeric', month: 'long', day: 'numeric' });
+                const trackingPageUrl = `https://www.asiacuisine.re/suivi.html?id=${requestId}`;
 
                 await resend.emails.send({
                     from: 'no-reply@asiacuisine.re',
@@ -291,7 +292,7 @@ export async function onRequest(context) {
                         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
                             <h2>${t('email.confirmation.title')}</h2>
                             <p>${t('email.confirmation.greeting').replace('${clientName}', clientName)}</p>
-                            <p>${t('email.confirmation.body').replace('${requestId}', `<strong>${requestId}</strong>`)}</p>
+                            <p>${t('email.confirmation.body').replace('${requestId}', `<strong>${requestId}</strong>`).replace('${trackingPageUrl}', trackingPageUrl)}</p>
                             <p>${t('email.confirmation.summary_title')}</p>
                             <ul>
                                 <li><strong>${t('email.confirmation.request_type')}</strong> ${formData.type}</li>

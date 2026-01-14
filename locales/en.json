@@ -324,7 +324,7 @@
         "subject": "Confirmation of your request at Asiacuisine.re",
         "title": "Thank you for your request!",
         "greeting": "Hello ${clientName},",
-        "body": "We have received your request (tracking number: <strong>${requestId}</strong>) and we thank you for it. We will review it carefully and get back to you as soon as possible (usually within 24 hours).",
+        "body": "We have received your request (tracking number: <strong>${requestId}</strong>) and we thank you for it. We will review it carefully and get back to you as soon as possible (usually within 24 hours). You can track the status of your request at any time on our tracking page: <a href=\"${trackingPageUrl}\">${trackingPageUrl}</a>",
         "summary_title": "As a reminder, here is the information you provided:",
         "request_type": "Request type:",
         "request_date": "Desired date:",
