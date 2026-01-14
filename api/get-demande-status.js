@@ -30,12 +30,10 @@ export default async (req, res) => {
         // Initialize Supabase client
         const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-        // Query for a demand where the UUID starts with the provided 8-character ID
+        // Call the custom SQL function to find the demand by its short ID
         const { data, error } = await supabase
-            .from('demandes')
-            .select('id, created_at, type, status')
-            .ilike('id', `${id}%`) // Use ilike for case-insensitive matching on the text representation of the UUID
-            .single(); // We expect only one result
+            .rpc('get_demande_by_short_id', { short_id: id })
+            .single();
 
         if (error) {
             if (error.code === 'PGRST116') { // "Not a single row was found" in PostgREST
