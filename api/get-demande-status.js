@@ -32,7 +32,10 @@ export default async (req, res) => {
 
         // Call the custom SQL function to find the demand by its short ID
         const { data, error } = await supabase
-            .rpc('get_demande_by_short_id', { short_id: id })
+            .from('demandes_with_text_id')
+            .select('id, created_at, type, status')
+            .ilike('id_text', `${id}%`)
+            .limit(1)
             .single();
 
         if (error) {
