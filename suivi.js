@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // The serverless function will be at /api/get-demande-status
-            const response = await fetch(`/api/get-demande-status?id=${requestId}`);
+            const response = await fetch(`/api/lookup-request?id=${requestId}`);
             const data = await response.json();
 
             if (!response.ok) {
