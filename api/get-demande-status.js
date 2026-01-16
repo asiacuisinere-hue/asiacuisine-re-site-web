@@ -17,19 +17,23 @@ export default async (req, res) => {
     }
 
     try {
-        const { id } = req.query;
+        // Utilisez 'shortId' au lieu de 'id' pour éviter le conflit avec la colonne UUID
+        const { id: shortId } = req.query;
 
-        if (!id || typeof id !== 'string' || id.length !== 8) {
+        if (!shortId || typeof shortId !== 'string' || shortId.length !== 8) {
             return res.status(400).json({ error: 'A valid 8-character request ID is required.' });
         }
 
-        const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+        const supabase = createClient(
+            process.env.SUPABASE_URL, 
+            process.env.SUPABASE_SERVICE_ROLE_KEY
+        );
 
-        // Ne sélectionnez PAS la colonne 'id' (UUID) - seulement id_text
+        // Query la vue avec seulement les colonnes nécessaires
         const { data, error } = await supabase
-            .from('demandes_with_text_id')
-            .select('id_text, created_at, type, status')
-            .ilike('id_text', `${id}%`)
+            .from('demandes_lookup')
+            .select('short_id, created_at, type, status')
+            .like('short_id', `${shortId.toLowerCase()}%`)
             .limit(1)
             .single();
 
@@ -43,14 +47,13 @@ export default async (req, res) => {
             throw error;
         }
         
-        // Si la donnée est null (cas où .single() ne trouve rien et ne retourne pas d'erreur PGRST116)
         if (!data) {
             return res.status(404).json({ error: 'Request not found.' });
         }
 
-        // Renommez id_text en id dans la réponse pour la compatibilité frontend
+        // Renommez short_id en id dans la réponse pour la compatibilité frontend
         const response = {
-            id: data.id_text,
+            id: data.short_id,
             created_at: data.created_at,
             type: data.type,
             status: data.status
@@ -59,7 +62,10 @@ export default async (req, res) => {
         return res.status(200).json(response);
 
     } catch (error) {
-        console.error('Error fetching demand status:', error.message);
-        return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        console.error('Error fetching demand status:', error);
+        return res.status(500).json({ 
+            error: 'Internal Server Error', 
+            details: error.message 
+        });
     }
 };
