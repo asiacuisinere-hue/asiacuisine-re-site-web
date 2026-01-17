@@ -44,13 +44,12 @@ export async function onRequest(context) {
             context.env.SUPABASE_SERVICE_ROLE_KEY
         );
 
-        console.log('🔍 Querying demandes_with_text_id...');
+        console.log('🔍 Querying demandes_lookup table...');
 
-        // Query the view using the text-based ID
         const { data, error } = await supabase
-            .from('demandes_with_text_id')
-            .select('id_text, created_at, type, status')
-            .like('id_text', `${id.toLowerCase()}%`)
+            .from('demandes_lookup')
+            .select('short_id, created_at, type, status')
+            .like('short_id', `${id.toLowerCase()}%`)
             .limit(1)
             .single();
 
@@ -77,7 +76,7 @@ export async function onRequest(context) {
         }
 
         const responsePayload = {
-            id: data.id_text,
+            id: data.short_id,
             created_at: data.created_at,
             type: data.type,
             status: data.status
