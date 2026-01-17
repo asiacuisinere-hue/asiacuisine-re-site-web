@@ -28,7 +28,7 @@ export async function onRequestPost(context) {
         }
 
         const body = await context.request.json();
-        const { customer, items, total, type, demandId } = body;
+        const { customer, items, total, type, demandId, menuDetails } = body; // Add menuDetails here
 
         if (!customer || !customer.id || !items || items.length === 0 || total === undefined || !type || !demandId) {
             return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400, headers: corsHeaders() });
@@ -45,6 +45,7 @@ export async function onRequestPost(context) {
                 total_amount: total,
                 status: 'draft',
                 type: type,
+                menu_details: menuDetails, // Store menuDetails
             })
             .select()
             .single();
@@ -64,7 +65,7 @@ export async function onRequestPost(context) {
         if (itemsError) throw itemsError;
 
         // --- 3. Generate PDF ---
-        const pdfBytes = await generateQuotePDF(quoteData, customer, items, total);
+        const pdfBytes = await generateQuotePDF(quoteData, customer, items, total, menuDetails); // Pass menuDetails
         
         // --- 4. Convert PDF to Base64 ---
         let binaryString = '';
@@ -124,7 +125,7 @@ export async function onRequestPost(context) {
 }
 
 // --- PDF Generation Helper ---
-async function generateQuotePDF(quote, customer, items, total) {
+async function generateQuotePDF(quote, customer, items, total, menuDetails) { // Add menuDetails here
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
     const { width, height } = page.getSize();
@@ -147,11 +148,23 @@ async function generateQuotePDF(quote, customer, items, total) {
         y -= 15;
         page.drawText(customer.phone, { x: 50, y, font, size: 12 });
     }
-    y -= 50;
+    y -= 50; // Space before menu details
+
+    if (menuDetails) {
+        page.drawText('Menu Convenu:', { x: 50, y, font: boldFont, size: 12 });
+        y -= 15;
+        const menuLines = menuDetails.split('\n');
+        for (const line of menuLines) {
+            page.drawText(line, { x: 50, y, font, size: 10 });
+            y -= 12; // Adjust line height
+        }
+        y -= 20; // Extra space after menu details
+    }
+    
     page.drawText('Description', { x: 50, y, font: boldFont, size: 12 });
     page.drawText('Qté', { x: 350, y, font: boldFont, size: 12 });
     page.drawText('P.U.', { x: 400, y, font: boldFont, size: 12 });
-    page.drawText('Total', { x: 480, y, font: boldFont, size: 12 });
+    page.drawText('Total', { x: 480, y, y: height - 50, font: boldFont, size: 12 });
     y -= 10;
     page.drawLine({ start: { x: 50, y }, end: { x: width - 50, y }, thickness: 1, color: rgb(0, 0, 0) });
     y -= 20;
