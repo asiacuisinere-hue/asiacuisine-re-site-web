@@ -1,0 +1,5 @@
+# Fichier de configuration pour Wrangler, l'outil de ligne de commande de Cloudflare
+
+# Nom de votre projet Pages. Assurez-vous qu'il correspond au nom dans votre tableau de bord Cloudflare.
+name = "asiacuisine-re-site-web" 
+compatibility_date = "2023-10-30"
