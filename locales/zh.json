@@ -334,7 +334,8 @@
         "subject": "您的 Asiacuisine.re 请求已确认",
         "title": "感谢您的请求！",
         "greeting": "您好 ${clientName},",
-        "body": "我们已收到您的请求（跟踪号：<strong>${requestId}</strong>），非常感谢。我们将仔细审核您的请求，并尽快（通常在24小时内）与您联系。您可以随时在我们的跟踪页面上查看您的请求状态：<a href=\"${trackingPageUrl}\">${trackingPageUrl}</a>",
+        "body": "我们已收到您的请求（跟踪号：<strong>${requestId}</strong>），非常感谢。我们将仔细审核您的请求，并尽快（通常在24小时内）与您联系。您可以随时在我们的跟踪页面上查看您的请求状态：${trackingPageUrl}。",
+        "tracking_link_text": "点击这里",
         "summary_title": "为了方便您核对，以下是您提交的信息：",
         "request_type": "请求类型：",
         "request_date": "期望日期：",
@@ -361,6 +362,9 @@
         "feedback_prompt": "您的反馈对我们至关重要。如果您有时间，我们非常希望您能在我们的社交媒体上分享您的体验，或通过回复此邮件告诉我们您的想法。",
         "closing": "期待再次为您服务,",
         "signature": "Asiacuisine.re 团队"
+      },
+      "footer": {
+        "tagline": "留尼汪岛的私人厨师、烹饪课程和外卖美食"
       }
     }
   }

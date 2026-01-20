@@ -311,7 +311,8 @@
         "subject": "Confirmation de votre demande chez Asiacuisine.re",
         "title": "Merci pour votre demande !",
         "greeting": "Bonjour ${clientName},",
-        "body": "Nous avons bien reçu votre demande (numéro de suivi : <strong>${requestId}</strong>) et nous vous en remercions. Nous l'examinerons attentivement et reviendrons vers vous dans les plus brefs délais (généralement sous 24h). Vous pouvez suivre l'état de votre demande à tout moment sur notre page de suivi : <a href=\"${trackingPageUrl}\">${trackingPageUrl}</a>",
+        "body": "Nous avons bien reçu votre demande (numéro de suivi : <strong>${requestId}</strong>) et nous vous en remercions. Nous l'examinerons attentivement et reviendrons vers vous dans les plus brefs délais (généralement sous 24h). Vous pouvez suivre l'état de votre demande à tout moment sur notre page de suivi : ${trackingPageUrl}.",
+        "tracking_link_text": "cliquez ici",
         "summary_title": "Pour rappel, voici les informations que vous nous avez transmises :",
         "request_type": "Type de demande :",
         "request_date": "Date souhaitée :",
@@ -338,6 +339,9 @@
         "feedback_prompt": "Votre avis est précieux pour nous aider à nous améliorer. Si vous avez un moment, nous serions ravis que vous partagiez votre expérience sur nos réseaux sociaux ou en répondant à cet e-mail.",
         "closing": "Au plaisir de vous régaler à nouveau,",
         "signature": "L'équipe d'Asiacuisine.re"
+      },
+      "footer": {
+        "tagline": "Chef privé, cours de cuisine et plats à emporter à La Réunion"
       }
     }
   }

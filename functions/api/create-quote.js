@@ -80,7 +80,7 @@ export async function onRequestPost(context) {
         const recipientName = customer.last_name || 'Client';
 
         await resend.emails.send({
-            from: 'contact@asiacuisine.re',
+            from: 'Asiacuisine.re <contact@asiacuisine.re>',
             to: recipientEmail,
             subject: 'Votre devis Asiacuisine.re',
             html: `
@@ -164,7 +164,7 @@ async function generateQuotePDF(quote, customer, items, total, menuDetails) { //
     page.drawText('Description', { x: 50, y, font: boldFont, size: 12 });
     page.drawText('Qté', { x: 350, y, font: boldFont, size: 12 });
     page.drawText('P.U.', { x: 400, y, font: boldFont, size: 12 });
-    page.drawText('Total', { x: 480, y, y: height - 50, font: boldFont, size: 12 });
+    page.drawText('Total', { x: 480, y, font: boldFont, size: 12 });
     y -= 10;
     page.drawLine({ start: { x: 50, y }, end: { x: width - 50, y }, thickness: 1, color: rgb(0, 0, 0) });
     y -= 20;

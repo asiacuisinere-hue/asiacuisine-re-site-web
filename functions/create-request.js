@@ -14,6 +14,24 @@ function generateClientId() {
     return result;
 }
 
+const getEmailFooter = (t, lang) => {
+    const baseUrl = 'https://www.asiacuisine.re'; 
+    const tagline = t('email.footer.tagline');
+
+    return `
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee; text-align: center; color: #888888; font-size: 12px;">
+            <img src="${baseUrl}/favicon.png" alt="Asiacuisine.re Logo" width="50" height="50" style="margin-bottom: 10px;">
+            <p style="margin: 0;"><strong>Asiacuisine.re</strong></p>
+            <p style="margin: 0;">${tagline}</p>
+            <p style="margin: 10px 0 0 0;">
+                <a href="${baseUrl}?lang=${lang}" style="color: #888888; text-decoration: none;">Site Web</a> | 
+                <a href="https://www.instagram.com/asiacuisine.re/" style="color: #888888; text-decoration: none;">Instagram</a> | 
+                <a href="https://www.facebook.com/profile.php?id=100090025515349" style="color: #888888; text-decoration: none;">Facebook</a>
+            </p>
+        </div>
+    `;
+};
+
 export async function onRequest(context) {
     if (context.request.method !== 'POST') {
         return new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), {
@@ -182,7 +200,7 @@ export async function onRequest(context) {
                 customerType: formData.customerType,
                 serviceType: formData.serviceType, 
                 heure: formData.heure,
-                numberOfPeople: formData.numberOfPeople, 
+                numberOfPeople: formData.numberOfPeople,
                 ville: formData.ville,
                 budget: formData.budget,
                 allergies: formData.allergies,
@@ -283,25 +301,30 @@ export async function onRequest(context) {
                 const requestId = newDemande.id.substring(0, 8);
                 const requestDate = new Date(formData.requestDate).toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, { year: 'numeric', month: 'long', day: 'numeric' });
                 const trackingPageUrl = `https://www.asiacuisine.re/suivi.html?id=${requestId}`;
+                
+                const emailBody = `
+                    <h2>${t('email.confirmation.title')}</h2>
+                    <p>${t('email.confirmation.greeting').replace('${clientName}', clientName)}</p>
+                    <p>${t('email.confirmation.body').replace('${requestId}', `<strong>${requestId}</strong>`).replace('${trackingPageUrl}', `<a href="${trackingPageUrl}">${t('email.confirmation.tracking_link_text')}</a>`)}</p>
+                    <p>${t('email.confirmation.summary_title')}</p>
+                    <ul>
+                        <li><strong>${t('email.confirmation.request_type')}</strong> ${formData.type}</li>
+                        <li><strong>${t('email.confirmation.request_date')}</strong> ${requestDate}</li>
+                    </ul>
+                    <p>${t('email.confirmation.questions')}</p>
+                    <br>
+                    <p>${t('email.confirmation.closing')}</p>
+                    <p><strong>${t('email.confirmation.signature')}</strong></p>
+                `;
 
                 await resend.emails.send({
-                    from: 'no-reply@asiacuisine.re',
+                    from: 'Asiacuisine.re <no-reply@asiacuisine.re>',
                     to: clientEmail,
                     subject: t('email.confirmation.subject'),
                     html: `
                         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                            <h2>${t('email.confirmation.title')}</h2>
-                            <p>${t('email.confirmation.greeting').replace('${clientName}', clientName)}</p>
-                            <p>${t('email.confirmation.body').replace('${requestId}', `<strong>${requestId}</strong>`).replace('${trackingPageUrl}', trackingPageUrl)}</p>
-                            <p>${t('email.confirmation.summary_title')}</p>
-                            <ul>
-                                <li><strong>${t('email.confirmation.request_type')}</strong> ${formData.type}</li>
-                                <li><strong>${t('email.confirmation.request_date')}</strong> ${requestDate}</li>
-                            </ul>
-                            <p>${t('email.confirmation.questions')}</p>
-                            <br>
-                            <p>${t('email.confirmation.closing')}</p>
-                            <p><strong>${t('email.confirmation.signature')}</strong></p>
+                            ${emailBody}
+                            ${getEmailFooter(t, lang)}
                         </div>
                     `
                 });

@@ -146,7 +146,7 @@ export async function onRequest(context) {
         const resend = new Resend(context.env.RESEND_API_KEY);
         
         await resend.emails.send({
-            from: 'contact@asiacuisine.re',
+            from: 'Asiacuisine.re <contact@asiacuisine.re>',
             to: recipientEmail,
             subject: 'Votre facture Asiacuisine.re',
             html: `

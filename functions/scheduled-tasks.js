@@ -20,6 +20,25 @@ const formatDateToISOString = (date) => {
     return date.toISOString().split('T')[0];
 };
 
+const getEmailFooter = (t, lang) => {
+    // The base URL should ideally come from an environment variable for flexibility
+    const baseUrl = 'https://www.asiacuisine.re'; 
+    const tagline = t('email.footer.tagline');
+
+    return `
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee; text-align: center; color: #888888; font-size: 12px;">
+            <img src="${baseUrl}/favicon.png" alt="Asiacuisine.re Logo" width="50" height="50" style="margin-bottom: 10px;">
+            <p style="margin: 0;"><strong>Asiacuisine.re</strong></p>
+            <p style="margin: 0;">${tagline}</p>
+            <p style="margin: 10px 0 0 0;">
+                <a href="${baseUrl}?lang=${lang}" style="color: #888888; text-decoration: none;">Site Web</a> | 
+                <a href="https://www.instagram.com/asiacuisine.re/" style="color: #888888; text-decoration: none;">Instagram</a> | 
+                <a href="https://www.facebook.com/profile.php?id=100090025515349" style="color: #888888; text-decoration: none;">Facebook</a>
+            </p>
+        </div>
+    `;
+};
+
 export async function onRequest(context) {
     // This function is expected to be triggered by a Cloudflare Cron Trigger.
     // We assume the cron trigger sends a POST request.
@@ -67,23 +86,28 @@ export async function onRequest(context) {
 
             if (!clientEmail) continue;
 
+            const emailBody = `
+                <h2>${t(clientLang, 'email.reminder.title')}</h2>
+                <p>${t(clientLang, 'email.reminder.greeting').replace('${clientName}', clientName)}</p>
+                <p>${t(clientLang, 'email.reminder.body').replace('${requestDate}', `<strong>${formattedRequestDate}</strong>`)}</p>
+                <p><strong>${t(clientLang, 'email.reminder.summary_title')}</strong></p>
+                <ul>
+                    <li><strong>${t(clientLang, 'email.reminder.request_type')}</strong> ${demand.details_json?.serviceType || demand.type}</li>
+                </ul>
+                <p>${t(clientLang, 'email.reminder.questions')}</p>
+                <br>
+                <p>${t(clientLang, 'email.reminder.closing')}</p>
+                <p><strong>${t(clientLang, 'email.reminder.signature')}</strong></p>
+            `;
+
             await resend.emails.send({
-                from: 'no-reply@asiacuisine.re',
+                from: 'Asiacuisine.re <no-reply@asiacuisine.re>',
                 to: clientEmail,
                 subject: t(clientLang, 'email.reminder.subject'),
                 html: `
                     <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                        <h2>${t(clientLang, 'email.reminder.title')}</h2>
-                        <p>${t(clientLang, 'email.reminder.greeting').replace('${clientName}', clientName)}</p>
-                        <p>${t(clientLang, 'email.reminder.body').replace('${requestDate}', `<strong>${formattedRequestDate}</strong>`)}</p>
-                        <p><strong>${t(clientLang, 'email.reminder.summary_title')}</strong></p>
-                        <ul>
-                            <li><strong>${t(clientLang, 'email.reminder.request_type')}</strong> ${demand.details_json?.serviceType || demand.type}</li>
-                        </ul>
-                        <p>${t(clientLang, 'email.reminder.questions')}</p>
-                        <br>
-                        <p>${t(clientLang, 'email.reminder.closing')}</p>
-                        <p><strong>${t(clientLang, 'email.reminder.signature')}</strong></p>
+                        ${emailBody}
+                        ${getEmailFooter(t, clientLang)}
                     </div>
                 `
             });
@@ -121,19 +145,24 @@ export async function onRequest(context) {
 
             if (!clientEmail) continue;
 
+            const emailBody = `
+                <h2>${t(clientLang, 'email.followup.title')}</h2>
+                <p>${t(clientLang, 'email.followup.greeting').replace('${clientName}', clientName)}</p>
+                <p>${t(clientLang, 'email.followup.body').replace('${requestDate}', `<strong>${formattedRequestDate}</strong>`)}</p>
+                <p>${t(clientLang, 'email.followup.feedback_prompt')}</p>
+                <br>
+                <p>${t(clientLang, 'email.followup.closing')}</p>
+                <p><strong>${t(clientLang, 'email.followup.signature')}</strong></p>
+            `;
+
             await resend.emails.send({
-                from: 'no-reply@asiacuisine.re',
+                from: 'Asiacuisine.re <no-reply@asiacuisine.re>',
                 to: clientEmail,
                 subject: t(clientLang, 'email.followup.subject'),
                 html: `
                     <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                        <h2>${t(clientLang, 'email.followup.title')}</h2>
-                        <p>${t(clientLang, 'email.followup.greeting').replace('${clientName}', clientName)}</p>
-                        <p>${t(clientLang, 'email.followup.body').replace('${requestDate}', `<strong>${formattedRequestDate}</strong>`)}</p>
-                        <p>${t(clientLang, 'email.followup.feedback_prompt')}</p>
-                        <br>
-                        <p>${t(clientLang, 'email.followup.closing')}</p>
-                        <p><strong>${t(clientLang, 'email.followup.signature')}</strong></p>
+                        ${emailBody}
+                        ${getEmailFooter(t, clientLang)}
                     </div>
                 `
             });

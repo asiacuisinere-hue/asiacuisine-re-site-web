@@ -324,7 +324,8 @@
         "subject": "Confirmation of your request at Asiacuisine.re",
         "title": "Thank you for your request!",
         "greeting": "Hello ${clientName},",
-        "body": "We have received your request (tracking number: <strong>${requestId}</strong>) and we thank you for it. We will review it carefully and get back to you as soon as possible (usually within 24 hours). You can track the status of your request at any time on our tracking page: <a href=\"${trackingPageUrl}\">${trackingPageUrl}</a>",
+        "body": "We have received your request (tracking number: <strong>${requestId}</strong>) and we thank you for it. We will review it carefully and get back to you as soon as possible (usually within 24 hours). You can track the status of your request at any time on our tracking page: ${trackingPageUrl}.",
+        "tracking_link_text": "click here",
         "summary_title": "As a reminder, here is the information you provided:",
         "request_type": "Request type:",
         "request_date": "Desired date:",
@@ -351,6 +352,9 @@
         "feedback_prompt": "Your feedback is valuable to help us improve. If you have a moment, we would be delighted if you could share your experience on our social media or by replying to this email.",
         "closing": "Looking forward to delighting you again,",
         "signature": "The Asiacuisine.re Team"
+      },
+      "footer": {
+        "tagline": "Private chef, cooking classes, and takeaway meals on Réunion Island"
       }
     }
   }
