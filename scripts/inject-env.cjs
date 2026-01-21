@@ -10,33 +10,96 @@ if (!siteKey) {
     process.exit(1);
 }
 
-console.log('RECAPTCHA_SITE_KEY is available. Starting file replacements...');
+console.log('RECAPTCHA_SITE_KEY is available. Starting build...');
 
-const filesToProcess = [
-    path.join(__dirname, '..', 'index.html'),
-    path.join(__dirname, '..', 'menu.html'),
-    path.join(__dirname, '..', 'script.js'),
+// Créer le dossier dist
+const distDir = path.join(__dirname, '..', 'dist');
+if (fs.existsSync(distDir)) {
+    fs.rmSync(distDir, { recursive: true });
+}
+fs.mkdirSync(distDir, { recursive: true });
+
+// Fichiers à traiter (avec injection)
+const filesToInject = [
+    'index.html',
+    'menu.html',
+    'script.js',
 ];
 
-filesToProcess.forEach(filePath => {
+// Traiter les fichiers avec injection
+filesToInject.forEach(fileName => {
+    const sourcePath = path.join(__dirname, '..', fileName);
+    const destPath = path.join(distDir, fileName);
+    
     try {
-        console.log(`Processing file: ${filePath}`);
-        const content = fs.readFileSync(filePath, 'utf8');
+        console.log(`Processing file: ${fileName}`);
         
-        if (!content.includes('%%RECAPTCHA_SITE_KEY%%')) {
-            console.warn(`Warning: Placeholder not found in ${filePath}. Skipping.`);
+        if (!fs.existsSync(sourcePath)) {
+            console.warn(`Warning: ${fileName} not found. Skipping.`);
             return;
         }
-
-        const newContent = content.replace(/%%RECAPTCHA_SITE_KEY%%/g, siteKey);
-        fs.writeFileSync(filePath, newContent, 'utf8');
         
-        console.log(`Successfully injected site key into ${filePath}`);
+        let content = fs.readFileSync(sourcePath, 'utf8');
+        
+        if (content.includes('%%RECAPTCHA_SITE_KEY%%')) {
+            content = content.replace(/%%RECAPTCHA_SITE_KEY%%/g, siteKey);
+            console.log(`✓ Injected site key into ${fileName}`);
+        }
+        
+        fs.writeFileSync(destPath, content, 'utf8');
     } catch (error) {
-        console.error(`Error processing file ${filePath}:`, error);
+        console.error(`Error processing file ${fileName}:`, error);
         process.exit(1);
     }
 });
 
-console.log('Build script finished successfully.');
+// Copier tous les autres fichiers et dossiers nécessaires
+const itemsToCopy = [
+    'style.css',
+    'sitemap.xml',
+    'robots.txt',
+    '_redirects',
+    'favicon.png',
+    'cgv.html',
+    'legal.html',
+    'suivi.html',
+    'menu.html',
+    'abonnements.html',
+    'admin.html',
+    'calculateur.html',
+    'menu-personalise.html',
+    'assets', 
+    'locales', 
+    'functions', 
+    'api', 
+];
+
+itemsToCopy.forEach(item => {
+    const sourcePath = path.join(__dirname, '..', item);
+    const destPath = path.join(distDir, item);
+    
+    if (!fs.existsSync(sourcePath)) {
+        console.warn(`Warning: ${item} not found. Skipping.`);
+        return;
+    }
+    
+    try {
+        const stats = fs.statSync(sourcePath);
+        
+        if (stats.isDirectory()) {
+            // Copier récursivement un dossier
+            fs.cpSync(sourcePath, destPath, { recursive: true });
+            console.log(`✓ Copied directory: ${item}`);
+        } else {
+            // Copier un fichier
+            fs.copyFileSync(sourcePath, destPath);
+            console.log(`✓ Copied file: ${item}`);
+        }
+    } catch (error) {
+        console.error(`Error copying ${item}:`, error);
+        process.exit(1);
+    }
+});
+
+console.log('Build script finished successfully. Output in ./dist');
 process.exit(0);

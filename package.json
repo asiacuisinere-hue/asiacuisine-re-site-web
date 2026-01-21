@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": ":"
+    "build": "node ./scripts/inject-env.cjs"
   },
   "keywords": [],
   "author": "",
