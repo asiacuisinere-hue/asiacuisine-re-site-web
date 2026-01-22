@@ -1,0 +1,12 @@
+name = "asiacuisine-email-cron"
+main = "src/index.js"
+compatibility_date = "2024-01-20"
+
+[triggers]
+crons = ["0 9 * * *"]  # Tous les jours à 9h UTC
+
+[vars]
+SUPABASE_URL = "https://zgniojabjywrnwovlmaf.supabase.co" # REMPLACEZ PAR VOTRE URL SUPABASE
+
+# Les secrets (RESEND_API_KEY et SUPABASE_SERVICE_ROLE_KEY) devront être ajoutés
+# via la commande `wrangler secret put NOM_DU_SECRET` ou via le tableau de bord Cloudflare Worker.
