@@ -16,12 +16,13 @@ async function fetchAndDisplayAnnouncement() {
         const announcementContainer = document.getElementById('announcement-container');
         const announcementContent = document.getElementById('announcement-content');
 
-        if (data.announcement_enabled === 'true' && data.announcement_message) {
+        const isAnnouncementEnabled = data.announcement_enabled === true || data.announcement_enabled === 'true';
+        if (isAnnouncementEnabled && data.announcement_message) {
             const htmlContent = marked.parse(data.announcement_message);
             const style = announcementStyles[data.announcement_style] || announcementStyles.info;
             announcementContent.innerHTML = htmlContent;
             announcementContent.style.padding = '1.5rem';
-            announcementContent.style.background = style.background;
+            announcementContent.style.backgroundColor = style.background; // Use backgroundColor
             announcementContent.style.borderLeft = `4px solid ${style.border}`;
             announcementContent.style.borderRadius = '4px';
             announcementContainer.style.display = 'block';
@@ -324,7 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             // Highest priority: Menu Override
-            if (data.menu_override_enabled === 'true' && data.menu_override_message) {
+            const isMenuOverrideEnabled = data.menu_override_enabled === true || data.menu_override_enabled === 'true';
+            if (isMenuOverrideEnabled && data.menu_override_message) {
                 isOverrideEnabled = true;
                 if (menuOverrideMessage) {
                     menuOverrideMessage.querySelector('p').innerHTML = marked.parse(data.menu_override_message);
@@ -345,7 +347,8 @@ document.addEventListener('DOMContentLoaded', () => {
             isOverrideEnabled = false;
 
             // Check for special offer
-            isSpecialOfferActive = data.special_offer_enabled === 'true' && data.special_offer_details;
+            const isSpecialOfferEnabled = data.special_offer_enabled === true || data.special_offer_enabled === 'true';
+            isSpecialOfferActive = isSpecialOfferEnabled && data.special_offer_details;
             if (isSpecialOfferActive) {
                 try {
                     specialOfferDetails = JSON.parse(data.special_offer_details);
@@ -360,7 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Regular content visibility
-            const shouldDisableRegularContent = isSpecialOfferActive && data.special_offer_disables_formulas === 'true';
+            const isSpecialOfferDisablesFormulas = data.special_offer_disables_formulas === true || data.special_offer_disables_formulas === 'true';
+            const shouldDisableRegularContent = isSpecialOfferActive && isSpecialOfferDisablesFormulas;
             disableRegularContent(shouldDisableRegularContent);
 
             if (!shouldDisableRegularContent) {
