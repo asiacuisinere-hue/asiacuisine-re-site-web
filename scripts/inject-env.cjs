@@ -16,6 +16,7 @@ const itemsToCopy = [
     'menu.html',
     'script.js',
     'menu.js',
+    'choix-menu.html',
     'choix-menu.js',
     'suivi.js',
     'admin.js',
