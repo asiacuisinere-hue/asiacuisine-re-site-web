@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composez votre Menu – Asiacuisine.re</title>
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px 0; }
+        .dish-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.3s ease; position: relative; border: 2px solid transparent; }
+        .dish-card:hover { transform: translateY(-5px); }
+        .dish-card.selected { border-color: #d4af37; background: #fffdf0; }
+        .dish-image { width: 100%; height: 200px; object-fit: cover; }
+        .dish-info { padding: 15px; }
+        .dish-name { margin: 0 0 10px 0; font-size: 1.2rem; color: #333; }
+        .dish-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+        .tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; background: #f0f0f0; color: #666; }
+        .select-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-add { background: #d4af37; color: white; }
+        .btn-remove { background: #6c757d; color: white; }
+        
+        .selection-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #333; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease; }
+        .selection-bar.visible { transform: translateY(0); }
+        
+        .filter-container { margin-bottom: 30px; text-align: center; }
+        .filter-btn { padding: 8px 15px; margin: 5px; border: 1px solid #d4af37; border-radius: 20px; background: white; color: #d4af37; cursor: pointer; transition: all 0.2s; }
+        .filter-btn.active { background: #d4af37; color: white; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; max-width: 600px; width: 90%; color: #333; }
+        .service-option { border: 2px solid #eee; border-radius: 10px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.2s; }
+        .service-option:hover { border-color: #d4af37; }
+        .service-option.active { border-color: #d4af37; background: #fffdf0; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo"><img src="favicon.png" alt="Asiacuisine.re Logo"></a>
+            <span style="color: white; font-weight: bold;">Espace Client</span>
+        </div>
+    </nav>
+
+    <main class="container" style="padding-top: 100px; padding-bottom: 100px;">
+        <div id="auth-section">
+            <h1 style="text-align: center;">Accès à votre Espace Menu</h1>
+            <p style="text-align: center;">Veuillez entrer votre numéro de suivi (8 caractères) pour commencer.</p>
+            <div style="display: flex; justify-content: center; margin-top: 2rem;">
+                <input type="text" id="request-id-input" placeholder="Ex: 041c6d64" maxlength="8" style="padding: 12px; width: 250px; border-radius: 6px; border: 1px solid #ccc;">
+                <button id="auth-btn" class="cta-button" style="margin-left: 10px;">Accéder</button>
+            </div>
+        </div>
+
+        <div id="menu-section" style="display: none;">
+            <header style="text-align: center; margin-bottom: 40px;">
+                <h1>Composez votre Festin</h1>
+                <p>Sélectionnez les plats qui vous inspirent. Nous en discuterons ensemble pour valider le menu final selon le marché.</p>
+            </header>
+
+            <div class="filter-container">
+                <div id="country-filters"></div>
+                <div id="ingredient-filters" style="margin-top: 10px;"></div>
+            </div>
+
+            <div id="dishes-grid" class="menu-grid">
+                <!-- Les plats seront chargés ici -->
+            </div>
+        </div>
+    </main>
+
+    <div id="selection-bar" class="selection-bar">
+        <div>
+            <span id="selection-count">0</span> plat(s) sélectionné(s)
+        </div>
+        <button id="validate-selection-btn" class="cta-button" style="background: #28a745;">Valider mes choix</button>
+    </div>
+
+    <!-- Modal Style de Service -->
+    <div id="service-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0;">Comment souhaitez-vous être servi ?</h2>
+            <p>Le style de service change l'ambiance et la logistique de votre événement.</p>
+            
+            <div class="service-option" data-style="Convivial">
+                <h3>🍲 L'Expérience Authentique (Conseillé)</h3>
+                <p>Plats disposés au centre de la table. Tout le monde goûte à tout. Convivialité maximum et voyage gustatif complet.</p>
+                <small><strong>Inclus dans le tarif de base.</strong></small>
+            </div>
+
+            <div class="service-option" data-style="Assiette">
+                <h3>🍽️ Le Service de Gala</h3>
+                <p>Dressage individuel à l'assiette. Plus formel et raffiné.</p>
+                <small><strong>Option Premium : supplément sur devis (logistique et temps de dressage).</strong></small>
+            </div>
+
+            <button id="final-submit-btn" class="cta-button" style="width: 100%; margin-top: 20px;" disabled>Envoyer ma sélection au Chef</button>
+            <button id="close-modal-btn" style="background:none; border:none; color:#666; width:100%; margin-top:10px; cursor:pointer;">Retour aux plats</button>
+        </div>
+    </div>
+
+    <script src="choix-menu.js" defer></script>
+</body>
+</html>
