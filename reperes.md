@@ -1,1 +1,1 @@
-Repères avant mise en place du menu dans le devis
+⚠️Repères avant mise à jour de la barre latérale
