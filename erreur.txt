@@ -1,57 +1,63 @@
-2025-11-28T13:22:36.100477Z	Cloning repository...
-2025-11-28T13:22:38.489812Z	From https://github.com/asiacuisinere-hue/asiacuisine-re-site-web
-2025-11-28T13:22:38.490393Z	 * branch            f0b2a62934668fc543563ee7ea500bc9c5945534 -> FETCH_HEAD
-2025-11-28T13:22:38.490584Z	
-2025-11-28T13:22:39.202025Z	HEAD is now at f0b2a62 Fix: restauration de la nomination de factures
-2025-11-28T13:22:39.202507Z	
-2025-11-28T13:22:39.279893Z	
-2025-11-28T13:22:39.280379Z	Using v2 root directory strategy
-2025-11-28T13:22:39.303876Z	Success: Finished cloning repository files
-2025-11-28T13:22:41.033353Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-28T13:22:41.033976Z	
-2025-11-28T13:22:42.139835Z	No wrangler.toml file found. Continuing.
-2025-11-28T13:22:42.206196Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
-2025-11-28T13:22:42.216932Z	Installing project dependencies: npm clean-install --progress=false
-2025-11-28T13:22:47.681096Z	
-2025-11-28T13:22:47.68139Z	added 192 packages, and audited 193 packages in 5s
-2025-11-28T13:22:47.681533Z	
-2025-11-28T13:22:47.681678Z	37 packages are looking for funding
-2025-11-28T13:22:47.68179Z	  run `npm fund` for details
-2025-11-28T13:22:47.68393Z	
-2025-11-28T13:22:47.684117Z	1 high severity vulnerability
-2025-11-28T13:22:47.684387Z	
-2025-11-28T13:22:47.684548Z	To address all issues, run:
-2025-11-28T13:22:47.684668Z	  npm audit fix
-2025-11-28T13:22:47.684786Z	
-2025-11-28T13:22:47.684907Z	Run `npm audit` for details.
-2025-11-28T13:22:47.777755Z	Executing user command: npm run build
-2025-11-28T13:22:48.134675Z	
-2025-11-28T13:22:48.134922Z	> site_internet@1.0.0 build
-2025-11-28T13:22:48.135057Z	> node ./scripts/inject-env.cjs
-2025-11-28T13:22:48.13516Z	
-2025-11-28T13:22:48.176948Z	--- Running custom build script using Node.js fs ---
-2025-11-28T13:22:48.177182Z	RECAPTCHA_SITE_KEY is available. Starting file replacements...
-2025-11-28T13:22:48.177376Z	Processing file: /opt/buildhome/repo/index.html
-2025-11-28T13:22:48.17774Z	Processing file: /opt/buildhome/repo/menu.html
-2025-11-28T13:22:48.177947Z	Processing file: /opt/buildhome/repo/script.js
-2025-11-28T13:22:48.178327Z	Successfully injected site key into /opt/buildhome/repo/script.js
-2025-11-28T13:22:48.178463Z	Build script finished successfully.
-2025-11-28T13:22:48.179029Z	Warning: Placeholder not found in /opt/buildhome/repo/index.html. Skipping.
-2025-11-28T13:22:48.179491Z	Warning: Placeholder not found in /opt/buildhome/repo/menu.html. Skipping.
-2025-11-28T13:22:48.199594Z	Finished
-2025-11-28T13:22:49.095387Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-11-28T13:22:49.096035Z	
-2025-11-28T13:22:50.198956Z	No wrangler.toml file found. Continuing.
-2025-11-28T13:22:50.199803Z	Found Functions directory at /functions. Uploading.
-2025-11-28T13:22:50.205661Z	⛅️ wrangler 3.101.0
-2025-11-28T13:22:50.205864Z	-------------------
-2025-11-28T13:22:51.363255Z	✨ Compiled Worker successfully
-2025-11-28T13:22:52.450948Z	Validating asset output directory
-2025-11-28T13:22:56.294063Z	Deploying your site to Cloudflare's global network...
-2025-11-28T13:23:01.420819Z	Uploading... (198/198)
-2025-11-28T13:23:01.421778Z	✨ Success! Uploaded 0 files (198 already uploaded) (0.30 sec)
-2025-11-28T13:23:01.421908Z	
-2025-11-28T13:23:01.821687Z	✨ Upload complete!
-2025-11-28T13:23:06.876091Z	Success: Assets published!
-2025-11-28T13:23:08.575789Z	Error: Failed to publish your Function. Got error: Uncaught Error: No such module "https:/deno.land/std@0.224.0/datetime/mod.ts".
-  imported from "functionsWorker-0.6728491508503422.js"
+2026-01-20T13:46:44.433Z	Initializing build environment...
+2026-01-20T13:46:44.433Z	Initializing build environment...
+2026-01-20T13:46:46.950Z	Success: Finished initializing build environment
+2026-01-20T13:46:47.360Z	Cloning repository...
+2026-01-20T13:46:51.418Z	Restoring from dependencies cache
+2026-01-20T13:46:51.421Z	Restoring from build output cache
+2026-01-20T13:46:51.426Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2026-01-20T13:46:51.531Z	Installing project dependencies: npm clean-install --progress=false
+2026-01-20T13:47:01.615Z	
+2026-01-20T13:47:01.615Z	added 192 packages, and audited 193 packages in 8s
+2026-01-20T13:47:01.616Z	
+2026-01-20T13:47:01.616Z	37 packages are looking for funding
+2026-01-20T13:47:01.616Z	  run `npm fund` for details
+2026-01-20T13:47:01.663Z	
+2026-01-20T13:47:01.663Z	4 vulnerabilities (3 low, 1 high)
+2026-01-20T13:47:01.663Z	
+2026-01-20T13:47:01.663Z	To address issues that do not require attention, run:
+2026-01-20T13:47:01.664Z	  npm audit fix
+2026-01-20T13:47:01.664Z	
+2026-01-20T13:47:01.664Z	To address all issues (including breaking changes), run:
+2026-01-20T13:47:01.664Z	  npm audit fix --force
+2026-01-20T13:47:01.664Z	
+2026-01-20T13:47:01.664Z	Run `npm audit` for details.
+2026-01-20T13:47:01.998Z	Executing user build command: npm run build
+2026-01-20T13:47:02.256Z	
+2026-01-20T13:47:02.256Z	> site_internet@1.0.0 build
+2026-01-20T13:47:02.258Z	> :
+2026-01-20T13:47:02.258Z	
+2026-01-20T13:47:02.269Z	Success: Build command completed
+2026-01-20T13:47:03.144Z	Executing user deploy command: npx wrangler deploy
+2026-01-20T13:47:04.606Z	
+2026-01-20T13:47:04.607Z	 ⛅️ wrangler 4.47.0 (update available 4.59.2)
+2026-01-20T13:47:04.607Z	─────────────────────────────────────────────
+2026-01-20T13:47:04.623Z	
+2026-01-20T13:47:04.677Z	✘ [ERROR] Missing entry-point to Worker script or to assets directory
+2026-01-20T13:47:04.677Z	
+2026-01-20T13:47:04.677Z	  
+2026-01-20T13:47:04.683Z	  If there is code to deploy, you can either:
+2026-01-20T13:47:04.683Z	  - Specify an entry-point to your Worker script via the command line (ex: `npx wrangler deploy src/index.ts`)
+2026-01-20T13:47:04.683Z	  - Or add the following to your "wrangler.toml" file:
+2026-01-20T13:47:04.684Z	  
+2026-01-20T13:47:04.684Z	  ```
+2026-01-20T13:47:04.684Z	  main = "src/index.ts"
+2026-01-20T13:47:04.684Z	  
+2026-01-20T13:47:04.684Z	  ```
+2026-01-20T13:47:04.684Z	  
+2026-01-20T13:47:04.685Z	  
+2026-01-20T13:47:04.685Z	  If are uploading a directory of assets, you can either:
+2026-01-20T13:47:04.685Z	  - Specify the path to the directory of assets via the command line: (ex: `npx wrangler deploy --assets=./dist`)
+2026-01-20T13:47:04.685Z	  - Or add the following to your "wrangler.toml" file:
+2026-01-20T13:47:04.685Z	  
+2026-01-20T13:47:04.685Z	  ```
+2026-01-20T13:47:04.685Z	  [assets]
+2026-01-20T13:47:04.685Z	  directory = "./dist"
+2026-01-20T13:47:04.685Z	  
+2026-01-20T13:47:04.685Z	  ```
+2026-01-20T13:47:04.686Z	  
+2026-01-20T13:47:04.686Z	
+2026-01-20T13:47:04.686Z	
+2026-01-20T13:47:04.695Z	
+2026-01-20T13:47:04.695Z	Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+2026-01-20T13:47:04.710Z	🪵  Logs were written to "/opt/buildhome/.config/.wrangler/logs/wrangler-2026-01-20_13-47-04_097.log"
+2026-01-20T13:47:04.818Z	Failed: error occurred while running deploy command

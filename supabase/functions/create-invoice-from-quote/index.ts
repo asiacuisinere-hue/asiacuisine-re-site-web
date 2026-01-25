@@ -1,12 +1,32 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { format } from "https://deno.land/std@0.168.0/datetime/mod.ts";
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// --- Helper Functions ---
+function getWeekNumber(d: Date): number {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+    return weekNo;
+}
+
+function randomString(length: number): string {
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
 serve(async (req) => {
+    console.log("--- [create-invoice-from-quote] Executing version 2: No auto-complete to 'completed' ---");
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
     }
@@ -35,10 +55,35 @@ serve(async (req) => {
         const { data: existingInvoice } = await supabaseAdmin.from('invoices').select('id').eq('quote_id', quoteId).maybeSingle();
         if (existingInvoice) throw new Error(`An invoice already exists for quote ${quoteId}`);
 
-        const invoicePayload = {
+        // --- Generate Invoice Document Number (FR_...) ---
+        const now = new Date();
+        const year = format(now, "yyyy");
+        const month = format(now, "MM");
+        const week = getWeekNumber(now);
+        const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+        
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        
+        const { count, error: countError } = await supabaseAdmin
+            .from("invoices")
+            .select("*", { count: "exact", head: true })
+            .gte("created_at", todayStart.toISOString());
+
+        if (countError) throw new Error(`Erreur comptage factures: ${countError.message}`);
+
+        const orderNumber = (count || 0) + 1;
+        const paddedOrderNumber = String(orderNumber).padStart(4, "0");
+        const randomCode = randomString(6);
+        
+        const invoiceDocumentNumber = `FR_${year}_${month}_${week}_${dayOfWeek}_${paddedOrderNumber}_${randomCode}`;
+
+        const invoicePayload: any = {
             quote_id: quote.id,
             client_id: quote.client_id,
             entreprise_id: quote.entreprise_id,
+            document_number: invoiceDocumentNumber,
+            demand_id: null, // Start with null
             total_amount: quote.total_amount,
             deposit_amount: quote.deposit_amount || 0,
             status: (quote.deposit_amount && quote.deposit_amount > 0) ? 'deposit_paid' : 'pending',
@@ -59,15 +104,8 @@ serve(async (req) => {
         const { data: newInvoice, error: invoiceError } = await supabaseAdmin.from('invoices').insert(invoicePayload).select('id, demand_id').single();
         if (invoiceError) throw new Error(`Failed to create invoice: ${invoiceError.message}`);
 
-        if (newInvoice.demand_id) {
-            const { data: linkedDemande } = await supabaseAdmin.from('demandes').select('type').eq('id', newInvoice.demand_id).single();
-            if (linkedDemande?.type === 'RESERVATION_SERVICE') {
-                await supabaseAdmin.from('demandes').update({ status: 'completed' }).eq('id', newInvoice.demand_id);
-            }
-        }
-
         return new Response(
-            JSON.stringify({ success: true, invoiceId: newInvoice.id }),
+            JSON.stringify({ success: true, invoiceId: newInvoice.id, workflow: newInvoice.demand_id ? 'with_demande' : 'direct' }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 201 }
         );
 

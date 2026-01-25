@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@3.2.0";
+import { encodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,8 +29,9 @@ serve(async (req) => {
   }
 
   try {
-    const { demandeId } = await req.json();
+    const { demandeId, companySettings } = await req.json();
     if (!demandeId) throw new Error("ID de demande manquant.");
+    if (!companySettings) throw new Error("Paramètres de l'entreprise manquants.");
 
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const resendApiKey = Deno.env.get("RESEND_API_KEY")!;
@@ -54,30 +56,43 @@ serve(async (req) => {
     const qrData = encodeURIComponent(`https://www.asiacuisine.re/suivi?id=${demande.id}&date=${urlDate}`);
     const qrCodeApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&color=${weeklyColor}`;
 
+    // --- Fetch QR code image to embed it directly ---
+    const qrCodeResponse = await fetch(qrCodeApiUrl);
+    if (!qrCodeResponse.ok) throw new Error('Failed to fetch QR code image.');
+    const qrCodeImageBuffer = await qrCodeResponse.arrayBuffer();
+    const qrCodeBase64 = encodeBase64(qrCodeImageBuffer);
+
     await resend.emails.send({
-        from: 'contact@asiacuisine.re',
+        from: `${companySettings.name || 'Asiacuisine.re'} <qrcode@asiacuisine.re>`,
         to: clientEmail,
         subject: `Votre QR code pour votre commande du ${displayDate}`,
         html: `
-                <div style="font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
-                    <div style="max-width: 400px; margin: auto; background-color: #ffffff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                        <div style="background-color: #${weeklyColor}; color: white; padding: 15px;">
-                            <h1 style="margin: 0; font-size: 20px;">Commande du ${displayDate}</h1>
-                        </div>
-                        <div style="padding: 30px 20px;">
-                            <p>Bonjour ${clientName},</p>
-                            <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
-                            <img src="${qrCodeApiUrl}" alt="QR Code de suivi" style="width: 200px; height: 200px; margin: 20px auto; display: block;"/>
-                            <p style="font-size: 1.4em; font-weight: bold; margin-top: 10px; letter-spacing: 2px;">
-                                ${demande.clients?.client_id || 'N/A'}
-                            </p>
-                        </div>
-                        <div style="background-color: #f9f9f9; padding: 15px; font-size: 12px; color: #666;">
-                            L'équipe Asiacuisine.re
-                        </div>
+            <div style="font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
+                <div style="max-width: 400px; margin: auto; background-color: #ffffff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <div style="background-color: #${weeklyColor}; color: white; padding: 15px;">
+                        <h1 style="margin: 0; font-size: 20px;">Commande du ${displayDate}</h1>
+                    </div>
+                    <div style="padding: 30px 20px;">
+                        <p>Bonjour ${clientName},</p>
+                        <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
+                        <img src="cid:qrcode" alt="QR Code de suivi" style="width: 200px; height: 200px; margin: 20px auto; display: block;"/>
+                        <p style="font-size: 1.4em; font-weight: bold; margin-top: 10px; letter-spacing: 2px;">
+                            ${demande.clients?.client_id || 'N/A'}
+                        </p>
+                    </div>
+                    <div style="background-color: #f9f9f9; padding: 15px; font-size: 12px; color: #666;">
+                        L'équipe Asiacuisine.re
                     </div>
                 </div>
-            `,
+            </div>
+        `,
+        attachments: [
+            {
+                filename: 'qrcode.png',
+                content: qrCodeBase64,
+                content_id: 'qrcode', // Correspond au cid:qrcode dans le HTML
+            }
+        ]
     });
 
     // 3. Update Demande Status

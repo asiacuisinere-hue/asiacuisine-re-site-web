@@ -1,12 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
-// Embedded Translations (copied from fr.json, en.json, zh.json email sections)
+// Embedded Translations
 const translations = {
     fr: {
         translation: {
             email: {
-                confirmation: {
+                confirmation: { 
                     subject: "Confirmation de votre demande chez Asiacuisine.re",
                     title: "Merci pour votre demande !",
                     greeting: "Bonjour ${clientName},",
@@ -48,7 +48,7 @@ const translations = {
     en: {
         translation: {
             email: {
-                confirmation: {
+                confirmation: { 
                     subject: "Confirmation of your request at Asiacuisine.re",
                     title: "Thank you for your request!",
                     greeting: "Hello ${clientName},",
@@ -90,7 +90,7 @@ const translations = {
     zh: {
         translation: {
             email: {
-                confirmation: {
+                confirmation: { 
                     subject: "您的 Asiacuisine.re 请求已确认",
                     title: "感谢您的请求！",
                     greeting: "您好 ${clientName},",
@@ -133,7 +133,7 @@ const t = (lang, key) => {
 };
 
 const getEmailFooter = (t_func, lang) => {
-    const baseUrl = 'https://www.asiacuisine.re';
+    const baseUrl = 'https://www.asiacuisine.re'; 
     const tagline = t_func(lang, 'email.footer.tagline');
 
     return `
@@ -142,8 +142,8 @@ const getEmailFooter = (t_func, lang) => {
             <p style="margin: 0;"><strong>Asiacuisine.re</strong></p>
             <p style="margin: 0;">${tagline}</p>
             <p style="margin: 10px 0 0 0;">
-                <a href="${baseUrl}?lang=${lang}" style="color: #888888; text-decoration: none;">Site Web</a> |
-                <a href="https://www.instagram.com/asiacuisine.re/" style="color: #888888; text-decoration: none;">Instagram</a> |
+                <a href="${baseUrl}?lang=${lang}" style="color: #888888; text-decoration: none;">Site Web</a> | 
+                <a href="https://www.instagram.com/asiacuisine.re/" style="color: #888888; text-decoration: none;">Instagram</a> | 
                 <a href="https://www.facebook.com/profile.php?id=100090025515349" style="color: #888888; text-decoration: none;">Facebook</a>
             </p>
         </div>
@@ -154,49 +154,50 @@ const formatDateToISOString = (date) => {
     return date.toISOString().split('T')[0];
 };
 
-export default {
-    async scheduled(event, env, ctx) {
-        console.log('--- [DEBUG] Scheduled tasks Worker triggered.');
+async function runJob(env) {
+    console.log('--- [DEBUG] Scheduled tasks Worker triggered.');
 
-        const resendApiKey = env.RESEND_API_KEY;
-        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+    const resendApiKey = env.RESEND_API_KEY; 
+    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
-        if (!resendApiKey || !supabase) {
-            console.error('Environment variables for Resend or Supabase are not set for the Worker.');
-            throw new Error('Critical environment variables missing for scheduled Worker.');
-        }
+    if (!resendApiKey || !supabase) {
+        console.error('Environment variables for Resend or Supabase are not set for the Worker.');
+        throw new Error('Critical environment variables missing for scheduled Worker.');
+    }
 
-        const resend = new Resend(resendApiKey);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+    const resend = new Resend(resendApiKey);
+    const today = new Date();
+    const now = new Date();
 
-        // --- Task 1: Send Pre-Service Reminders (48h before) ---
-        try {
-            const twoDaysFromNow = new Date(today);
-            twoDaysFromNow.setDate(today.getDate() + 2);
-            const twoDaysFromNowISO = formatDateToISOString(twoDaysFromNow);
+    // --- Task 1: Send Pre-Service Reminders (48h before) ---
+    try {
+        const checkDate = new Date(today);
+        checkDate.setHours(0, 0, 0, 0);
+        const twoDaysFromNow = new Date(checkDate);
+        twoDaysFromNow.setDate(checkDate.getDate() + 2);
+        const twoDaysFromNowISO = formatDateToISOString(twoDaysFromNow);
 
-            const { data: reminderDemands, error: reminderError } = await supabase
-                .from('demandes')
-                .select('id, request_date, type, details_json, clients ( email, first_name, last_name ), entreprises ( contact_email, contact_name )')
-                .eq('type', 'RESERVATION_SERVICE')
-                .eq('status', 'confirmed')
-                .eq('request_date', twoDaysFromNowISO)
-                .is('reminder_sent', null);
+        const { data: reminderDemands, error: reminderError } = await supabase
+            .from('demandes')
+            .select('id, request_date, type, details_json, clients ( email, first_name, last_name ), entreprises ( contact_email, contact_name )')
+            .eq('type', 'RESERVATION_SERVICE')
+            .eq('status', 'confirmed')
+            .eq('request_date', twoDaysFromNowISO)
+            .is('reminder_sent', null);
 
-            if (reminderError) throw reminderError;
+        if (reminderError) throw reminderError;
 
-            console.log(`Found ${reminderDemands.length} demands for reminders on ${twoDaysFromNowISO}`);
+        console.log(`Found ${reminderDemands?.length || 0} demands for reminders on ${twoDaysFromNowISO}`);
 
-            for (const demand of reminderDemands) {
-                const clientEmail = demand.clients?.email || demand.entreprises?.contact_email;
-                const clientName = (demand.clients ? `${demand.clients.first_name || ''} ${demand.clients.last_name || ''}` : (demand.entreprises?.contact_name || '')).trim();
-                const clientLang = demand.details_json?.lang || 'fr';
-                const formattedRequestDate = new Date(demand.request_date).toLocaleDateString(clientLang === 'zh' ? 'zh-CN' : clientLang, { year: 'numeric', month: 'long', day: 'numeric' });
+        for (const demand of (reminderDemands || [])) {
+            const clientEmail = demand.clients?.email || demand.entreprises?.contact_email;
+            const clientName = (demand.clients ? `${demand.clients.first_name || ''} ${demand.clients.last_name || ''}` : (demand.entreprises?.contact_name || '')).trim();
+            const clientLang = demand.details_json?.lang || 'fr';
+            const formattedRequestDate = new Date(demand.request_date).toLocaleDateString(clientLang === 'zh' ? 'zh-CN' : clientLang, { year: 'numeric', month: 'long', day: 'numeric' });
 
-                if (!clientEmail) continue;
+            if (!clientEmail) continue;
 
-                const emailBody = `
+            const emailBody = `
                     <h2>${t(clientLang, 'email.reminder.title')}</h2>
                     <p>${t(clientLang, 'email.reminder.greeting').replace('${clientName}', clientName)}</p>
                     <p>${t(clientLang, 'email.reminder.body').replace('${requestDate}', `<strong>${formattedRequestDate}</strong>`)}</p>
@@ -210,52 +211,55 @@ export default {
                     <p><strong>${t(clientLang, 'email.reminder.signature')}</strong></p>
                 `;
 
-                await resend.emails.send({
-                    from: 'Asiacuisine.re <no-reply@asiacuisine.re>',
-                    to: clientEmail,
-                    subject: t(clientLang, 'email.reminder.subject'),
-                    html: `
+            await resend.emails.send({
+                from: 'Asiacuisine.re <no-reply@asiacuisine.re>',
+                to: clientEmail,
+                reply_to: 'contact@asiacuisine.re',
+                subject: t(clientLang, 'email.reminder.subject'),
+                html: `
                         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
                             ${emailBody}
                             ${getEmailFooter(t, clientLang)}
                         </div>
                     `
-                });
+            });
 
-                await supabase.from('demandes').update({ reminder_sent: true }).eq('id', demand.id);
-                console.log(`Reminder sent and marked for demand ID ${demand.id}`);
-            }
-        } catch (error) {
-            console.error('Error processing pre-service reminders:', error);
+            await supabase.from('demandes').update({ reminder_sent: true }).eq('id', demand.id);
+            console.log(`Reminder sent and marked for demand ID ${demand.id}`);
         }
+    } catch (error) {
+        console.error('Error processing pre-service reminders:', error);
+    }
 
-        // --- Task 2: Send Post-Service Follow-ups (1 day after) ---
-        try {
-            const yesterday = new Date(today);
-            yesterday.setDate(today.getDate() - 1);
-            const yesterdayISO = formatDateToISOString(yesterday);
+    // --- Task 2: Send Post-Service Follow-ups (1 day after) ---
+    try {
+        const checkDate = new Date(today);
+        checkDate.setHours(0, 0, 0, 0);
+        const yesterday = new Date(checkDate);
+        yesterday.setDate(checkDate.getDate() - 1);
+        const yesterdayISO = formatDateToISOString(yesterday);
 
-            const { data: followupDemands, error: followupError } = await supabase
-                .from('demandes')
-                .select('id, request_date, type, details_json, clients ( email, first_name, last_name ), entreprises ( contact_email, contact_name )')
-                .eq('type', 'RESERVATION_SERVICE')
-                .eq('status', 'completed')
-                .eq('request_date', yesterdayISO)
-                .is('followup_sent', null);
+        const { data: followupDemands, error: followupError } = await supabase
+            .from('demandes')
+            .select('id, request_date, type, details_json, clients ( email, first_name, last_name ), entreprises ( contact_email, contact_name )')
+            .eq('type', 'RESERVATION_SERVICE')
+            .eq('status', 'completed')
+            .eq('request_date', yesterdayISO)
+            .is('followup_sent', null);
 
-            if (followupError) throw followupError;
+        if (followupError) throw followupError;
 
-            console.log(`Found ${followupDemands.length} demands for follow-up on ${yesterdayISO}`);
+        console.log(`Found ${followupDemands?.length || 0} demands for follow-up on ${yesterdayISO}`);
 
-            for (const demand of followupDemands) {
-                const clientEmail = demand.clients?.email || demand.entreprises?.contact_email;
-                const clientName = (demand.clients ? `${demand.clients.first_name || ''} ${demand.clients.last_name || ''}` : (demand.entreprises?.contact_name || '')).trim();
-                const clientLang = demand.details_json?.lang || 'fr';
-                const formattedRequestDate = new Date(demand.request_date).toLocaleDateString(clientLang === 'zh' ? 'zh-CN' : clientLang, { year: 'numeric', month: 'long', day: 'numeric' });
+        for (const demand of (followupDemands || [])) {
+            const clientEmail = demand.clients?.email || demand.entreprises?.contact_email;
+            const clientName = (demand.clients ? `${demand.clients.first_name || ''} ${demand.clients.last_name || ''}` : (demand.entreprises?.contact_name || '')).trim();
+            const clientLang = demand.details_json?.lang || 'fr';
+            const formattedRequestDate = new Date(demand.request_date).toLocaleDateString(clientLang === 'zh' ? 'zh-CN' : clientLang, { year: 'numeric', month: 'long', day: 'numeric' });
 
-                if (!clientEmail) continue;
+            if (!clientEmail) continue;
 
-                const emailBody = `
+            const emailBody = `
                     <h2>${t(clientLang, 'email.followup.title')}</h2>
                     <p>${t(clientLang, 'email.reminder.greeting').replace('${clientName}', clientName)}</p>
                     <p>${t(clientLang, 'email.followup.body').replace('${requestDate}', `<strong>${formattedRequestDate}</strong>`)}</p>
@@ -268,6 +272,7 @@ export default {
                 await resend.emails.send({
                     from: 'Asiacuisine.re <no-reply@asiacuisine.re>',
                     to: clientEmail,
+                    reply_to: 'contact@asiacuisine.re',
                     subject: t(clientLang, 'email.followup.subject'),
                     html: `
                         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -284,6 +289,96 @@ export default {
             console.error('Error processing post-service follow-ups:', error);
         }
 
+        // --- Task 3: Internal Management Alerts (Alerts for Chef/Team) ---
+        try {
+            const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000)).toISOString();
+            const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000)).toISOString();
+
+            // 1. Get NEW demands older than 24h
+            const { data: oldNewDemands } = await supabase
+                .from('demandes')
+                .select('id, type, created_at, clients(last_name), entreprises(nom_entreprise)')
+                .eq('status', 'Nouvelle')
+                .lt('created_at', twentyFourHoursAgo);
+
+            // 2. Get PENDING demands with no activity for 48h (using updated_at)
+            const { data: stalledDemands } = await supabase
+                .from('demandes')
+                .select('id, type, updated_at, clients(last_name), entreprises(nom_entreprise)')
+                .eq('status', 'En attente de traitement')
+                .lt('updated_at', fortyEightHoursAgo);
+
+            if ((oldNewDemands?.length || 0) > 0 || (stalledDemands?.length || 0) > 0) {
+                console.log('Generating internal alert email...');
+                
+                let alertHtml = `
+                    <h2 style="color: #dc3545;">⚠️ Alerte : Demandes nécessitant votre attention</h2>
+                    <p>Certaines demandes n'ont pas progressé dans les délais impartis. Voici un récapitulatif :</p>
+                `;
+
+                if (oldNewDemands?.length > 0) {
+                    alertHtml += `<h3>📁 Nouvelles demandes (non traitées depuis > 24h)</h3><ul>`;
+                    oldNewDemands.forEach(d => {
+                        const name = d.clients?.last_name || d.entreprises?.nom_entreprise || 'Client inconnu';
+                        alertHtml += `<li><strong>${name}</strong> (ID: ${d.id.substring(0,8)}) - Reçue le ${new Date(d.created_at).toLocaleDateString('fr-FR')}</li>`;
+                    });
+                    alertHtml += `</ul>`;
+                }
+
+                if (stalledDemands?.length > 0) {
+                    alertHtml += `<h3>⏳ Demandes bloquées (pas d'activité depuis > 48h)</h3><ul>`;
+                    stalledDemands.forEach(d => {
+                        const name = d.clients?.last_name || d.entreprises?.nom_entreprise || 'Client inconnu';
+                        alertHtml += `<li><strong>${name}</strong> (ID: ${d.id.substring(0,8)}) - Dernier mouvement : ${new Date(d.updated_at).toLocaleDateString('fr-FR')}</li>`;
+                    });
+                    alertHtml += `</ul>`;
+                }
+
+                alertHtml += `
+                    <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+                        <p style="margin: 0;">👉 <a href="https://gestion.asiacuisine.re" style="color: #d4af37; font-weight: bold; text-decoration: none;">Accéder au Tableau de Bord</a> pour traiter ces demandes.</p>
+                    </div>
+                `;
+
+                await resend.emails.send({
+                    from: 'Système Asiacuisine.re <no-reply@asiacuisine.re>',
+                    to: 'contact@asiacuisine.re',
+                    subject: '⚠️ ALERTE GESTION : Demandes en attente',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                            ${alertHtml}
+                            ${getEmailFooter(t, 'fr')}
+                        </div>
+                    `
+                });
+                console.log('Internal alert email sent.');
+            }
+        } catch (error) {
+            console.error('Error processing internal management alerts:', error);
+        }
+
         console.log('Scheduled tasks Worker finished processing.');
+    }
+
+export default {
+    async fetch(request, env, ctx) {
+        const url = new URL(request.url);
+        if (url.pathname === '/trigger-cron') {
+            const authHeader = request.headers.get('Authorization');
+            if (authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+                return new Response('Unauthorized', { status: 401 });
+            }
+            try {
+                await runJob(env);
+                return new Response('✅ Cron job executed successfully!', { status: 200 });
+            } catch (error) {
+                return new Response(`❌ Error: ${error.message}`, { status: 500 });
+            }
+        }
+        return new Response('Worker is running.', { status: 200 });
+    },
+
+    async scheduled(event, env, ctx) {
+        await runJob(env);
     },
 };

@@ -3,10 +3,10 @@ main = "src/index.js"
 compatibility_date = "2024-01-20"
 
 [triggers]
-crons = ["0 9 * * *"]  # Tous les jours à 9h UTC
+crons = ["0 2 * * *", "0 16 * * *"]  # Tous les jours ï¿½ 9h UTC
 
 [vars]
 SUPABASE_URL = "https://zgniojabjywrnwovlmaf.supabase.co" # REMPLACEZ PAR VOTRE URL SUPABASE
 
-# Les secrets (RESEND_API_KEY et SUPABASE_SERVICE_ROLE_KEY) devront être ajoutés
+# Les secrets (RESEND_API_KEY et SUPABASE_SERVICE_ROLE_KEY) devront ï¿½tre ajoutï¿½s
 # via la commande `wrangler secret put NOM_DU_SECRET` ou via le tableau de bord Cloudflare Worker.

@@ -153,6 +153,20 @@ async function generateInvoicePDF(invoice, companySettings) {
     page.drawText(`Conditions: ${companySettings.payment_conditions || 'Paiement à la commande'}`, { x: 300, y: y, size: 9, font, color: gray });
     page.drawText(`Moyens: ${companySettings.payment_methods || 'Virement, Espèces, CB'}`, { x: 300, y: y - 13, size: 9, font, color: gray });
 
+    y -= 26;
+    page.drawText("Pour les virements :", { x: 300, y: y, size: 9, font: fontBold, color: black });
+    y -= 13;
+    page.drawText("Établissement: 20041", { x: 300, y: y, size: 9, font, color: gray });
+    y -= 13;
+    page.drawText("Guichet: 01021", { x: 300, y: y, size: 9, font, color: gray });
+    y -= 13;
+    page.drawText("N° Compte: 0941814D018", { x: 300, y: y, size: 9, font, color: gray });
+    y -= 13;
+    page.drawText("Clé RIB: 29", { x: 300, y: y, size: 9, font, color: gray });
+    y -= 13;
+    page.drawText("Domiciliation: LA BANQUE POSTALE ST DENIS CENTRE FINANCIER", { x: 300, y: y, size: 8, font, color: gray });
+
+
 
     // --- Absolute Footer ---
     page.drawLine({ start: { x: 50, y: 45 }, end: { x: 545, y: 45 }, thickness: 1, color: gold });
@@ -194,6 +208,7 @@ async function sendEmailWithResend(apiKey, toEmail, customerName, documentNumber
 serve(async (req) => {
   if (req.method === "OPTIONS") { return new Response('ok', { headers: corsHeaders }); }
   try {
+    // Check for invoiceId or demandeId in the request body
     const { demandeId, invoiceId } = await req.json();
     if (!demandeId && !invoiceId) { throw new Error("ID de demande ou de facture manquant."); }
 
@@ -207,7 +222,7 @@ serve(async (req) => {
     let currentDemande;
 
     if (invoiceId) {
-        const { data, error } = await supabase.from("invoices").select(`*, clients(*), entreprises(*)`).eq("id", invoiceId).single();
+        const { data, error } = await supabase.from("invoices").select(`*, clients(*), entreprises(*), document_number`).eq("id", invoiceId).single();
         if (error) throw new Error(`Facture non trouvée: ${error.message}`);
         invoice = data;
     } else if (demandeId) {
@@ -215,7 +230,7 @@ serve(async (req) => {
         if (demandeError) { throw new Error(`Demande non trouvée: ${demandeError.message}`); }
         currentDemande = demandeData;
 
-        const { data: existingInvoice } = await supabase.from('invoices').select(`*, clients(*), entreprises(*)`).eq('demande_id', demandeId).maybeSingle();
+        const { data: existingInvoice } = await supabase.from('invoices').select(`*, clients(*), entreprises(*), document_number`).eq('demande_id', demandeId).maybeSingle();
 
         if (existingInvoice) {
             invoice = existingInvoice;
@@ -226,18 +241,47 @@ serve(async (req) => {
             const week = getWeekNumber(now);
             const dayOfWeek = now.getDay() || 7;
             const { count } = await supabase.from("invoices").select("*", { count: "exact", head: true }).gte("created_at", new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString());
-            const docNum = `FR_${year}_${month}_${week}_${dayOfWeek}_${String((count || 0) + 1).padStart(4, "0")}_${randomString(6)}`;
             
+            let docPrefix = 'FR_'; // Default prefix
+            if (currentDemande.type === 'COMMANDE_MENU' || currentDemande.type === 'COMMANDE_SPECIALE') {
+                docPrefix = 'FC_';
+            }
+            const docNum = `${docPrefix}${year}_${month}_${week}_${dayOfWeek}_${String((count || 0) + 1).padStart(4, "0")}_${randomString(6)}`;
+            
+            const { data: settingsData } = await supabase.from("settings").select("key, value");
+            const settings = settingsData ? settingsData.reduce((acc, { key, value }) => {
+                acc[key] = value;
+                return acc;
+            }, {}) : {};
+
             const depositAmount = currentDemande.deposit_amount || 0;
             let items = [];
             let total = 0;
-            
+
             if (currentDemande.type === 'COMMANDE_MENU') {
-                const formulaPrices = { "Formule Découverte (39€)": 39, "Formule Standard (49€)": 49, "Formule Confort (59€)": 59, "Option Duo (94€)": 94 };
-                const unitPrice = formulaPrices[currentDemande.details_json?.formulaName || 'N/A'] || 0;
-                total = unitPrice * (currentDemande.details_json?.numberOfPeople || 1);
-                items = [{ name: currentDemande.details_json?.formulaName || 'N/A', quantity: currentDemande.details_json?.numberOfPeople || 1, unit_price: unitPrice }];
-            } else {
+                const formulaPrices = {
+                    "Formule Découverte": settings.menu_decouverte_price || '39',
+                    "Formule Standard": settings.menu_standard_price || '49',
+                    "Formule Confort": settings.menu_confort_price || '59',
+                    "Option Duo": settings.menu_duo_price || '94',
+                };
+                const formulaName = currentDemande.details_json?.formulaName.split('(')[0].trim();
+                const unitPrice = parseFloat(formulaPrices[formulaName] || '0');
+                total = unitPrice; // Quantity is always 1 for menu orders
+                items = [{ 
+                    name: currentDemande.details_json?.formulaName || 'N/A', 
+                    quantity: 1, 
+                    unit_price: unitPrice 
+                }];
+            } else if (currentDemande.type === 'COMMANDE_SPECIALE') {
+                const specialOfferDetails = currentDemande.details_json;
+                items = (specialOfferDetails.items || []).map(item => ({
+                    name: `${item.name} (${item.portion})`,
+                    quantity: item.quantity,
+                    unit_price: parseFloat(item.price || '0'),
+                }));
+                total = parseFloat(specialOfferDetails.total || '0');
+            } else { // Fallback for RESERVATION_SERVICE etc.
                 const servicePrice = currentDemande.estimated_price || currentDemande.total_amount || 0;
                 total = servicePrice;
                 let serviceName = 'Service';
@@ -248,7 +292,7 @@ serve(async (req) => {
             }
 
             const { data: newInvoice, error } = await supabase.from('invoices').insert({
-                demande_id: currentDemande.id, client_id: currentDemande.client_id, entreprise_id: currentDemande.entreprise_id,
+                demand_id: currentDemande.id, client_id: currentDemande.client_id, entreprise_id: currentDemande.entreprise_id,
                 document_number: docNum, total_amount: total, deposit_amount: depositAmount,
                 status: depositAmount > 0 ? 'deposit_paid' : 'pending', items: items,
             }).select('*').single();
@@ -260,10 +304,35 @@ serve(async (req) => {
     }
 
     if (!invoice) { throw new Error("Impossible de trouver ou créer la facture."); }
+    console.log("--- [send-invoice-by-email] Fetched Invoice Object:", JSON.stringify(invoice, null, 2));
     if (invoice.deposit_amount && typeof invoice.deposit_amount === 'string') { invoice.deposit_amount = parseFloat(invoice.deposit_amount); }
     if (invoice.total_amount && typeof invoice.total_amount === 'string') { invoice.total_amount = parseFloat(invoice.total_amount); }
 
     const pdfBytes = await generateInvoicePDF(invoice, companySettings);
+
+    // --- NOUVEAU : Sauvegarde sur Supabase Storage ---
+    const filePath = `factures/${invoice.document_number}.pdf`;
+    const { error: uploadError } = await supabase.storage
+      .from('documents')
+      .upload(filePath, pdfBytes, {
+        contentType: 'application/pdf',
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error(`--- [send-invoice-by-email] Erreur upload PDF: ${uploadError.message}`);
+    } else {
+      const { error: updateError } = await supabase
+        .from('invoices')
+        .update({ storage_path: filePath })
+        .eq('id', invoice.id);
+      if (updateError) {
+        console.error(`--- [send-invoice-by-email] Erreur mise à jour BDD avec storage_path: ${updateError.message}`);
+      }
+    }
+    // --- FIN MODIFICATION ---
+
+    // Send email with PDF attachment
     const customerEmail = invoice.clients?.email || invoice.entreprises?.contact_email;
     const customerName = invoice.clients ? `${invoice.clients.first_name || ""} ${invoice.clients.last_name}`.trim() : invoice.entreprises?.nom_entreprise || "";
 

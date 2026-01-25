@@ -85,3 +85,15 @@ Ce fichier contient une liste des idées et des fonctionnalités que nous avons 
 *   **Complexité :** Élevée. Demande une refonte majeure de la section services (HTML, CSS, et JavaScript).
 
 ---
+
+### 9. Notifications Push (WebPush) pour l'Équipe
+
+*   **Idée :** Permettre aux administrateurs et employés de recevoir des alertes en temps réel sur leur téléphone ou ordinateur, même si le navigateur est totalement fermé.
+*   **Fonctionnement :** 
+    1.  Installation d'un **Service Worker** dans le navigateur de l'utilisateur.
+    2.  Enregistrement d'un **Token d'abonnement** unique dans Supabase.
+    3.  Déclenchement automatique d'un message via un **Serveur de Push** (ex: OneSignal ou Firebase) lors d'une nouvelle demande ou d'un retard de traitement.
+*   **Avantages :** Réactivité maximale, plus besoin de surveiller le dashboard en permanence, idéal pour les employés en cuisine ou en livraison.
+*   **Complexité :** Élevée. Nécessite la mise en place d'un Service Worker, d'une infrastructure de serveur de push et d'une gestion sécurisée des tokens d'abonnement.
+
+---
