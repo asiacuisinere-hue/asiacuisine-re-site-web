@@ -47,7 +47,8 @@
     "hero": {
       "title": "Asiacuisine.re",
       "subtitle": "From Guangzhou to Réunion Island — an experienced private chef brings you the authentic taste of Asia, right in the comfort of your home.",
-      "cta_button": "Book Your Experience"
+      "cta_button": "Book a Chef",
+      "cta_menu": "Weekly Menus"
     },
     "services": {
       "section_title": "My Services",

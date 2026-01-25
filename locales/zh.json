@@ -57,7 +57,8 @@
     "hero": {
       "title": "Asiacuisine.re",
       "subtitle": "从广州到留尼汪岛——资深私人厨师为您呈现正宗亚洲美味，让您在家中也能享受舌尖上的旅程。",
-      "cta_button": "立即预订美食体验"
+      "cta_button": "预约厨师",
+      "cta_menu": "每周菜单"
     },
     "services": {
       "section_title": "我的服务",

@@ -2,7 +2,7 @@
 *.log
 
 # Build artifacts and local development files
-dashboard/
+node_modules/
 
 
 
@@ -25,3 +25,9 @@ Thumbs.db
 
 # Build Edge Functions
 supabase/
+worker-cron/
+dashboard/
+
+# Files
+/*.md
+/*.txt

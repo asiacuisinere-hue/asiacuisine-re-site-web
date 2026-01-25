@@ -78,6 +78,7 @@ function initializePageContent() {
         initializeScrollBasedEffects();
         initializeServiceMenu();
         initializeMobileMenu();
+        initializeMobileBottomNav();
         initializeBackToTopButton();
         initializeLightbox();
         initializeForm();
@@ -156,6 +157,52 @@ function initializeMobileMenu() {
             navLinks.classList.toggle('active');
         });
     }
+}
+
+function initializeMobileBottomNav() {
+    const bottomNavItems = document.querySelectorAll('.mobile-bottom-nav .nav-item');
+    if (bottomNavItems.length === 0) return;
+
+    bottomNavItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Si c'est une ancre sur la même page
+            if (href.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    // Mettre à jour l'état actif
+                    bottomNavItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            }
+        });
+    });
+
+    // Mettre à jour l'état actif au scroll
+    window.addEventListener('scroll', () => {
+        let current = "";
+        const sections = document.querySelectorAll("section");
+        sections.forEach((section) => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute("id");
+            }
+        });
+
+        bottomNavItems.forEach((item) => {
+            item.classList.remove("active");
+            if (item.getAttribute("href") === `#${current}`) {
+                item.classList.add("active");
+            }
+            // Cas particulier pour la page menu
+            if (window.location.pathname.includes('menu.html') && item.getAttribute('href') === 'menu.html') {
+                item.classList.add('active');
+            }
+        });
+    }, { passive: true });
 }
 
 function initializeBackToTopButton() {

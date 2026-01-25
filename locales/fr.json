@@ -47,7 +47,8 @@
     "hero": {
       "title": "Asiacuisine.re",
       "subtitle": "Découvrez l'art de la cuisine asiatique authentique avec un chef privé expérimenté. De Guangzhou à La Réunion, une expérience culinaire unique à domicile.",
-      "cta_button": "Réserver une expérience"
+      "cta_button": "Réserver un Chef",
+      "cta_menu": "Menus de la Semaine"
     },
     "services": {
       "section_title": "Mes Services",
