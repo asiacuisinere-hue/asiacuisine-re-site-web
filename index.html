@@ -449,9 +449,9 @@
                     <label for="message" data-i18n="booking.message_label">Message (préférences ou demandes spéciales) :</label>
                     <textarea id="message" name="message" rows="3" data-i18n="[placeholder]booking.message_placeholder" placeholder="Avez-vous des préférences pour le menu, ou une demande particulière pour l'organisation ?"></textarea>
                 </div>
-                <div class="form-group" style="display: flex; align-items: flex-start; gap: 10px; margin-top: 1rem;">
-                    <input type="checkbox" id="cgv_acceptance" name="cgv_acceptance" required style="width: 20px; height: 20px; flex-shrink: 0; margin-top: 3px;">
-                    <label for="cgv_acceptance" style="font-size: 0.9rem; line-height: 1.4;" data-i18n="booking.cgv_checkbox_label">J'ai lu et j'accepte les Conditions Générales de Vente (CGV)</label>
+                <div class="checkbox-group" style="display: flex; align-items: flex-start; gap: 10px; margin-top: 1rem; margin-bottom: 2rem;">
+                    <input type="checkbox" id="cgv_acceptance" name="cgv_acceptance" required style="width: 20px !important; height: 20px !important; flex-shrink: 0; margin-top: 3px; cursor: pointer;">
+                    <label for="cgv_acceptance" style="font-size: 0.9rem; line-height: 1.4; color: #fff; cursor: pointer;" data-i18n="booking.cgv_checkbox_label">J'ai lu et j'accepte les Conditions Générales de Vente (CGV)</label>
                 </div>
                 <button type="submit" class="submit-btn" data-i18n="booking.submit_button">Envoyer la demande de réservation</button>
             </form>

@@ -326,17 +326,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const weeklyMenuContent = document.getElementById('weekly-menu-content');
             const infoSection = document.querySelector('.info-section');
             const specialOfferContainer = document.getElementById('special-offer-container');
+            const cgvContainer = document.getElementById('cgv-checkbox-container');
 
             // Reset all displays
             if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
             if (specialOfferContainer) specialOfferContainer.style.display = 'none';
             if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
             if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
+            if (cgvContainer) cgvContainer.style.display = '';
             
             const disableRegularContent = (disable) => {
                 const display = disable ? 'none' : '';
                 if (weeklyMenuContent) weeklyMenuContent.style.display = display;
                 if (formulaCardsContainer) formulaCardsContainer.style.display = display;
+                if (cgvContainer) cgvContainer.style.display = display;
             };
 
             // Highest priority: Menu Override
