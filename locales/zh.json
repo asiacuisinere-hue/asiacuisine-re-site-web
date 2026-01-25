@@ -146,7 +146,8 @@
       "siret_label": "SIRET号码：",
       "contact_name_label": "联系人姓名：",
       "contact_email_label": "联系人邮箱：",
-      "contact_phone_label": "联系人电话："
+      "contact_phone_label": "联系人电话：",
+      "cgv_checkbox_label": "我已阅读并接受 <a href='cgv.html' target='_blank' style='text-decoration: underline; color: inherit;'>销售条款 (CGV)</a>"
     },
     "footer": {
       "contact_title": "联系方式",

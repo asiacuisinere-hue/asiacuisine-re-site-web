@@ -136,7 +136,8 @@
       "siret_label": "SIRET Number:",
       "contact_name_label": "Contact Name:",
       "contact_email_label": "Contact Email:",
-      "contact_phone_label": "Contact Phone:"
+      "contact_phone_label": "Contact Phone:",
+      "cgv_checkbox_label": "I have read and I accept the <a href='cgv.html' target='_blank' style='text-decoration: underline; color: inherit;'>Terms and Conditions (CGV)</a>"
     },
     "footer": {
       "contact_title": "Contact",
