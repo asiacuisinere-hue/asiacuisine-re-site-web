@@ -83,6 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
             `<option value="${index}">${dish.name}</option>`
         ).join('');
 
+        // Pre-render portion options for the first dish to initialize correctly
+        const firstDish = offer.dishes[0] || {};
+        const portionOptions = `
+            <option value="1">${firstDish.label1 || 'Option 1'}</option>
+            <option value="2">${firstDish.label2 || 'Option 2'}</option>
+        `;
+
         container.innerHTML = `
             <h2>${offer.title || i18next.t('menu.special_offer_title')}</h2>
             <p class="subtitle">${offer.description || ''}</p>
@@ -95,10 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="form-group">
                         <label for="special-offer-portion">${i18next.t('menu.special_offer_portion')}</label>
-                        <select id="special-offer-portion" class="form-control">
-                            <option value="500">500g</option>
-                            <option value="1000">1000g</option>
-                        </select>
+                        <select id="special-offer-portion" class="form-control">${portionOptions}</select>
                     </div>
                     <div class="form-group">
                         <label for="special-offer-quantity">${i18next.t('menu.special_offer_quantity')}</label>
@@ -114,25 +118,36 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
+        // Update portions dropdown when dish changes
+        document.getElementById('special-offer-dish').addEventListener('change', (e) => {
+            const dish = offer.dishes[e.target.value];
+            const portionSelect = document.getElementById('special-offer-portion');
+            portionSelect.innerHTML = `
+                <option value="1">${dish.label1 || 'Option 1'}</option>
+                <option value="2">${dish.label2 || 'Option 2'}</option>
+            `;
+        });
+
         document.getElementById('add-to-cart-btn').addEventListener('click', handleAddToCart);
     }
 
     function handleAddToCart() {
         const dishIndex = document.getElementById('special-offer-dish').value;
-        const portion = document.getElementById('special-offer-portion').value;
+        const portionOption = document.getElementById('special-offer-portion').value;
         const quantity = parseInt(document.getElementById('special-offer-quantity').value, 10);
         
-        if (!dishIndex || !portion || !quantity || quantity < 1) {
+        if (!dishIndex || !portionOption || !quantity || quantity < 1) {
             alert('Veuillez sélectionner un plat, une portion et une quantité valide.');
             return;
         }
 
         const dish = specialOfferDetails.dishes[dishIndex];
-        const price = portion === '500' ? dish.price500 : dish.price1000;
+        const price = portionOption === '1' ? dish.price1 : dish.price2;
+        const portionLabel = portionOption === '1' ? dish.label1 : dish.label2;
         
         cart.push({
             name: dish.name,
-            portion: `${portion}g`,
+            portion: portionLabel,
             quantity: quantity,
             price: parseFloat(price)
         });
