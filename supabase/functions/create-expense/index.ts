@@ -18,7 +18,7 @@ serve(async (req) => {
     }
 
     try {
-        const { expense_date, description, amount, category, demand_id } = await req.json();
+        const { expense_date, description, amount, category, demand_id, business_unit } = await req.json();
 
         // Validate required fields
         if (!expense_date || !description || !amount || !category) {
@@ -35,7 +35,14 @@ serve(async (req) => {
 
         const { data, error } = await supabase
             .from('expenses')
-            .insert([{ expense_date, description, amount, category, demand_id }])
+            .insert([{ 
+                expense_date, 
+                description, 
+                amount, 
+                category, 
+                demand_id,
+                business_unit: business_unit || 'cuisine' // Par défaut 'cuisine' si non spécifié
+            }])
             .select();
 
         if (error) {

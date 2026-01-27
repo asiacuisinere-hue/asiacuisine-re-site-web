@@ -22,6 +22,7 @@ serve(async (req) => {
         const category = url.searchParams.get('category');
         const start_date = url.searchParams.get('start_date');
         const end_date = url.searchParams.get('end_date');
+        const businessUnit = url.searchParams.get('business_unit');
 
         const supabase = createClient(
             Deno.env.get("SUPABASE_URL") ?? "",
@@ -30,8 +31,11 @@ serve(async (req) => {
 
         let query = supabase
             .from('expenses')
-            .select('*'); // Select all columns
+            .select('*');
 
+        if (businessUnit) {
+            query = query.eq('business_unit', businessUnit);
+        }
         if (category) {
             query = query.eq('category', category);
         }
@@ -41,7 +45,7 @@ serve(async (req) => {
         if (end_date) {
             query = query.lte('expense_date', end_date);
         }
-        
+
         query = query.order('expense_date', { ascending: false });
 
         const { data, error } = await query;
