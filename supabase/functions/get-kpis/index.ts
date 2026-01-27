@@ -12,16 +12,17 @@ serve(async (req) => {
         return new Response('ok', { headers: corsHeaders });
     }
     if (req.method !== "GET") {
-        return new Response(JSON.stringify({ error: `Method ${req.method} Not Allowed` }), { 
-            status: 405, 
-            headers: { ...corsHeaders, 'Allow': 'GET' } 
+        return new Response(JSON.stringify({ error: `Method ${req.method} Not Allowed` }), {
+            status: 405,
+            headers: { ...corsHeaders, 'Allow': 'GET' }
         });
     }
 
     try {
         const url = new URL(req.url);
         const period = url.searchParams.get('period') || 'last30days';
-        console.log(`[get-kpis] Period requested: ${period}`);
+        const businessUnit = url.searchParams.get('businessUnit') || 'cuisine';
+        console.log(`[get-kpis] Period requested: ${period}, Business Unit: ${businessUnit}`);
 
         const supabase = createClient(
             Deno.env.get("SUPABASE_URL") ?? "",
@@ -31,7 +32,7 @@ serve(async (req) => {
         // Calculate dates for the current period
         let startDate: Date;
         let endDate = new Date();
-        
+
         // Calculate dates for the previous period (for comparisons)
         let previousStartDate: Date;
         let previousEndDate: Date;
@@ -53,16 +54,16 @@ serve(async (req) => {
             // Previous period = last month
             previousEndDate = new Date(startDate);
             previousEndDate.setDate(previousEndDate.getDate() - 1);
-            previousStartDate = new Date(previousEndDate.getFullYear(), previousEndDate.getMonth(), 1);
+            previousStartDate = new Date(previousEndDate.getFullYear(), previousEndDate.getMonth(), 1);   
         } else if (period === 'currentYear') {
             startDate = new Date(endDate.getFullYear(), 0, 1);
             // Previous period = last year
             previousStartDate = new Date(endDate.getFullYear() - 1, 0, 1);
             previousEndDate = new Date(endDate.getFullYear() - 1, 11, 31);
         } else {
-            return new Response(JSON.stringify({ error: 'Invalid period parameter' }), { 
-                status: 400, 
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            return new Response(JSON.stringify({ error: 'Invalid period parameter' }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             });
         }
 
@@ -72,7 +73,7 @@ serve(async (req) => {
         const previousEndDateISO = previousEndDate.toISOString();
 
         console.log(`[get-kpis] Current period: ${startDateISO} to ${endDateISO}`);
-        console.log(`[get-kpis] Previous period: ${previousStartDateISO} to ${previousEndDateISO}`);
+        console.log(`[get-kpis] Previous period: ${previousStartDateISO} to ${previousEndDateISO}`);      
 
         // --- 1. Calculate Revenue (current period) ---
         console.log("[get-kpis] Fetching current revenue...");
@@ -80,6 +81,7 @@ serve(async (req) => {
             .from('invoices')
             .select('total_amount')
             .eq('status', 'paid')
+            .eq('business_unit', businessUnit)
             .gte('created_at', startDateISO)
             .lte('created_at', endDateISO);
 
@@ -91,6 +93,7 @@ serve(async (req) => {
             .from('invoices')
             .select('total_amount')
             .eq('status', 'paid')
+            .eq('business_unit', businessUnit)
             .gte('created_at', previousStartDateISO)
             .lte('created_at', previousEndDateISO);
 
@@ -104,9 +107,10 @@ serve(async (req) => {
         const { data: expensesData, error: expensesError } = await supabase
             .from('expenses')
             .select('amount')
+            .eq('business_unit', businessUnit)
             .gte('expense_date', startDateISO)
             .lte('expense_date', endDateISO);
-        
+
         if (expensesError) throw new Error(`Expenses query failed: ${expensesError.message}`);
         const totalExpenses = (expensesData || []).reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
 
@@ -114,12 +118,13 @@ serve(async (req) => {
         const { data: prevExpensesData } = await supabase
             .from('expenses')
             .select('amount')
+            .eq('business_unit', businessUnit)
             .gte('expense_date', previousStartDateISO)
             .lte('expense_date', previousEndDateISO);
-        
+
         const previousExpenses = (prevExpensesData || []).reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
         const expensesChange = previousExpenses > 0 ? ((totalExpenses - previousExpenses) / previousExpenses * 100) : (totalExpenses > 0 ? 100 : 0);
-        
+
         console.log(`[get-kpis] Expenses: ${totalExpenses} (change: ${expensesChange}%)`);
 
         // --- 2. Calculate Total Orders ---
@@ -127,6 +132,7 @@ serve(async (req) => {
         const { count: totalOrders, error: ordersError } = await supabase
             .from('demandes')
             .select('id', { count: 'exact', head: true })
+            .eq('business_unit', businessUnit)
             .not('status', 'in', '("Refusée", "Annulée")')
             .gte('created_at', startDateISO)
             .lte('created_at', endDateISO);
@@ -137,6 +143,7 @@ serve(async (req) => {
         const { count: previousOrders } = await supabase
             .from('demandes')
             .select('id', { count: 'exact', head: true })
+            .eq('business_unit', businessUnit)
             .not('status', 'in', '("Refusée", "Annulée")')
             .gte('created_at', previousStartDateISO)
             .lte('created_at', previousEndDateISO);
@@ -145,6 +152,7 @@ serve(async (req) => {
         console.log(`[get-kpis] Total orders: ${totalOrders} (change: ${ordersChange}%)`);
 
         // --- 3. Calculate New Clients ---
+        // Clients are shared between units
         console.log("[get-kpis] Fetching new clients...");
         const { count: newClients, error: clientsError } = await supabase
             .from('clients')
@@ -168,7 +176,7 @@ serve(async (req) => {
         const totalGrossMargin = totalRevenue - totalExpenses;
         const previousGrossMargin = previousRevenue - previousExpenses;
         const grossMarginChange = previousGrossMargin > 0 ? ((totalGrossMargin - previousGrossMargin) / previousGrossMargin * 100) : (totalGrossMargin > 0 ? 100 : 0);
-        console.log(`[get-kpis] Gross Margin: ${totalGrossMargin} (change: ${grossMarginChange}%)`);
+        console.log(`[get-kpis] Gross Margin: ${totalGrossMargin} (change: ${grossMarginChange}%)`);      
 
         // --- 4.5. Calculate Average Order Value ---
         const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders) : 0;
@@ -180,6 +188,7 @@ serve(async (req) => {
             .from('invoices')
             .select('created_at, total_amount')
             .eq('status', 'paid')
+            .eq('business_unit', businessUnit)
             .gte('created_at', startDateISO)
             .lte('created_at', endDateISO)
             .order('created_at', { ascending: true });
@@ -206,11 +215,12 @@ serve(async (req) => {
         const { data: orderTypes, error: orderTypesError } = await supabase
             .from('demandes')
             .select('type')
+            .eq('business_unit', businessUnit)
             .not('status', 'in', '("Refusée", "Annulée")')
             .gte('created_at', startDateISO)
             .lte('created_at', endDateISO);
 
-        if (orderTypesError) throw new Error(`Order types query failed: ${orderTypesError.message}`);
+        if (orderTypesError) throw new Error(`Order types query failed: ${orderTypesError.message}`);     
 
         const typeCount = {};
         orderTypes.forEach(order => {
@@ -227,16 +237,18 @@ serve(async (req) => {
         const { data: weekdayOrders, error: weekdayError } = await supabase
             .from('demandes')
             .select('created_at')
+            .eq('business_unit', businessUnit)
             .not('status', 'in', '("Refusée", "Annulée")')
             .gte('created_at', startDateISO)
             .lte('created_at', endDateISO);
 
-        if (weekdayError) throw new Error(`Weekday orders query failed: ${weekdayError.message}`);
+        if (weekdayError) throw new Error(`Weekday orders query failed: ${weekdayError.message}`);        
 
         const { data: weekdayRevenue } = await supabase
             .from('invoices')
             .select('created_at, total_amount')
             .eq('status', 'paid')
+            .eq('business_unit', businessUnit)
             .gte('created_at', startDateISO)
             .lte('created_at', endDateISO);
 
@@ -271,21 +283,22 @@ serve(async (req) => {
                 const { data: orderItems, error: itemsError } = await supabase
                     .from('demandes')
                     .select('details_json, total_amount')
+                    .eq('business_unit', businessUnit)
                     .not('status', 'in', '("Refusée", "Annulée")')
                     .gte('created_at', startDateISO)
                     .lte('created_at', endDateISO);
-        
-                if (itemsError) throw new Error(`Order items query failed: ${itemsError.message}`);
-        
+
+                if (itemsError) throw new Error(`Order items query failed: ${itemsError.message}`);       
+
                 const productStats = {};
-        
+
                 orderItems.forEach(order => {
                     const items = order.details_json?.items;
                     if (items && Array.isArray(items)) {
                         items.forEach(item => {
                             const itemName = item.name || item.title || 'Produit inconnu';
                             const itemPrice = parseFloat(item.price || item.total || 0);
-        
+
                             if (!productStats[itemName]) {
                                 productStats[itemName] = { total_orders: 0, total_revenue: 0 };
                             }
@@ -303,12 +316,13 @@ serve(async (req) => {
             }))
             .sort((a, b) => parseFloat(b.total_revenue) - parseFloat(a.total_revenue))
             .slice(0, 10);
-            
+
         // --- 9. Expense Distribution ---
         console.log("[get-kpis] Fetching expense distribution...");
         const { data: expenseDistribution, error: expenseDistributionError } = await supabase
             .from('expenses')
             .select('category, amount')
+            .eq('business_unit', businessUnit)
             .gte('expense_date', startDateISO)
             .lte('expense_date', endDateISO);
 
@@ -320,7 +334,7 @@ serve(async (req) => {
             expenseByCategory[category] = (expenseByCategory[category] || 0) + (parseFloat(expense.amount) || 0);
         });
 
-        const expenseDistributionData = Object.entries(expenseByCategory).map(([category, amount]) => ({
+        const expenseDistributionData = Object.entries(expenseByCategory).map(([category, amount]) => ({  
             name: category,
             value: Number(amount)
         }));
@@ -328,7 +342,7 @@ serve(async (req) => {
         // --- 10. Monthly Performance ---
         console.log("[get-kpis] Fetching monthly performance...");
         const { data: monthlyPerformance, error: monthlyPerformanceError } = await supabase
-            .rpc('get_monthly_performance');
+            .rpc('get_monthly_performance', { p_business_unit: businessUnit });
 
         if (monthlyPerformanceError) throw new Error(`Monthly performance query failed: ${monthlyPerformanceError.message}`);
 
@@ -370,8 +384,6 @@ serve(async (req) => {
             eventsData: eventsData // Include events data
         };
 
-        console.log("[get-kpis] Final KPIs:", JSON.stringify(kpis, null, 2));
-
         return new Response(JSON.stringify(kpis), {
             status: 200,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -379,9 +391,9 @@ serve(async (req) => {
 
     } catch (error) {
         console.error('[get-kpis] FATAL ERROR:', error);
-        return new Response(JSON.stringify({ 
-            error: 'Internal Server Error', 
-            details: error.message 
+        return new Response(JSON.stringify({
+            error: 'Internal Server Error',
+            details: error.message
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 500,
