@@ -93,6 +93,14 @@ export async function onRequest(context) {
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
+        // --- NEW: Fetch current prices from settings ---
+        const { data: settings } = await supabase.from('settings').select('*').single();
+        const prices = {
+            'Formule Découverte': settings?.menu_decouverte_price || 0,
+            'Formule Standard': settings?.menu_standard_price || 0,
+            'Option Duo': settings?.menu_duo_price || 0
+        };
+
         let clientId = null;
         let entrepriseId = null;
         let customerDetailsForEmail = {};
@@ -126,7 +134,7 @@ export async function onRequest(context) {
                         last_name: formData.customer.lastName || null,
                         phone: formData.customer.phone || null,
                         client_id: newId,
-                        type: 'Particulier' // Ajout du champ type
+                        type: 'Particulier'
                     })
                     .select()
                     .single();
@@ -193,8 +201,16 @@ export async function onRequest(context) {
         }
 
         let details = {};
+        let calculatedTotal = null;
+
         if (formData.type === 'COMMANDE_MENU') {
             details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity };
+            
+            // Auto-calculate price
+            if (formData.formulaName.includes('Découverte')) calculatedTotal = prices['Formule Découverte'];
+            else if (formData.formulaName.includes('Standard')) calculatedTotal = prices['Formule Standard'];
+            else if (formData.formulaName.includes('Duo')) calculatedTotal = prices['Option Duo'];
+
         } else if (formData.type === 'RESERVATION_SERVICE') {
             details = { 
                 customerType: formData.customerType,
@@ -212,6 +228,7 @@ export async function onRequest(context) {
                 total: formData.total,
                 deliveryCity: formData.deliveryCity
             };
+            calculatedTotal = parseFloat(formData.total);
         }
 
         const demandePayload = {
@@ -220,7 +237,8 @@ export async function onRequest(context) {
             type: formData.type,
             status: 'Nouvelle',
             request_date: formData.requestDate,
-            details_json: details
+            details_json: details,
+            total_amount: calculatedTotal // Auto-populated amount
         };
         
         const { data: newDemande, error: demandeError } = await supabase

@@ -25,10 +25,14 @@ serve(async (req) => {
             Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
         );
 
-        // 1. Récupérer les infos de la demande
+        // 1. Récupérer les infos de la demande (clients ET entreprises)
         const { data: demande, error: demandeError } = await supabase
             .from('demandes')
-            .select('*, clients(email, first_name, last_name)')
+            .select(`
+                *,
+                clients (email, first_name, last_name),
+                entreprises (contact_email, nom_entreprise, contact_name)
+            `)
             .eq('id', demand_id)
             .single();
 
@@ -36,8 +40,28 @@ serve(async (req) => {
             throw new Error("Demande introuvable");
         }
 
-        // 2. Définir le montant
+        // 2. Déterminer l'identité du payeur
+        let customerEmail = '';
+        let customerName = '';
+
+        if (demande.clients) {
+            customerEmail = demande.clients.email;
+            customerName = `${demande.clients.first_name} ${demande.clients.last_name}`;
+        } else if (demande.entreprises) {
+            customerEmail = demande.entreprises.contact_email;
+            customerName = `${demande.entreprises.nom_entreprise} (${demande.entreprises.contact_name})`;
+        } else {
+            // Cas rare : client supprimé ou données incohérentes
+            customerName = "Client inconnu";
+        }
+
+        // 3. Définir le montant et vérifier sa validité
         let amount = parseFloat(demande.total_amount);
+        
+        if (isNaN(amount) || amount <= 0) {
+            throw new Error("Le montant de la commande est invalide (0 ou vide). Veuillez mettre à jour le montant dans le dashboard.");
+        }
+
         let description = `Paiement pour commande #${demande.id.substring(0, 8)}`;
 
         if (amount_type === 'deposit') {
@@ -45,17 +69,21 @@ serve(async (req) => {
             description = `Acompte (30%) pour commande #${demande.id.substring(0, 8)}`;
         }
 
-        // 3. Créer la session Stripe Checkout
-        const session = await stripe.checkout.sessions.create({
+        // Vérification montant minimum Stripe (50 centimes environ)
+        if (amount < 0.50) {
+             throw new Error("Le montant est trop faible pour être encaissé via Stripe.");
+        }
+
+        // 4. Préparer les paramètres Stripe
+        const sessionParams: any = {
             payment_method_types: ['card'],
-            customer_email: demande.clients.email,
             line_items: [
                 {
                     price_data: {
                         currency: 'eur',
                         product_data: {
                             name: description,
-                            description: `Client: ${demande.clients.first_name} ${demande.clients.last_name}`,
+                            description: `Client: ${customerName}`,
                         },
                         unit_amount: Math.round(amount * 100), // Montant en centimes
                     },
@@ -63,17 +91,23 @@ serve(async (req) => {
                 },
             ],
             mode: 'payment',
-            // URL de retour (à adapter à votre domaine final)
             success_url: `https://asiacuisine.re/suivi?id=${demande.id}&status=success`,
             cancel_url: `https://asiacuisine.re/suivi?id=${demande.id}&status=cancel`,
             metadata: {
                 demand_id: demande.id,
                 amount_type: amount_type
             }
-        });
+        };
 
-        // 4. Stocker l'ID de la session dans la table 'demandes' (ou une table de suivi)
-        // Optionnel mais recommandé pour la traçabilité
+        // N'ajouter l'email que s'il est valide
+        if (customerEmail && customerEmail.includes('@')) {
+            sessionParams.customer_email = customerEmail;
+        }
+
+        // 5. Créer la session Stripe Checkout
+        const session = await stripe.checkout.sessions.create(sessionParams);
+
+        // 6. Stocker l'ID de la session
         await supabase
             .from('demandes')
             .update({ 
