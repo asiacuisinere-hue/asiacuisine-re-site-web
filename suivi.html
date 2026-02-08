@@ -6,22 +6,151 @@
     <title>Suivi de votre demande – Asiacuisine.re</title>
     <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        .payment-card {
+            padding: 40px 20px;
+            border-radius: 24px;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: none;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .success-icon { color: #28a745; font-size: 60px; margin-bottom: 15px; display: block; }
+        .cancel-icon { color: #dc3545; font-size: 60px; margin-bottom: 15px; display: block; }
+        
+        /* Layout vertical pour insérer le message entre les liens */
+        .choices-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .choice-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 25px;
+            border-radius: 16px;
+            border: 2px solid #f0f0f0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+        }
+        .choice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        .choice-card.asiacuisine:hover { border-color: #d4af37; }
+        .choice-card.luxilo:hover { border-color: #3b82f6; }
+        
+        .choice-card .logo-img { height: 50px; width: auto; margin-bottom: 10px; object-fit: contain; }
+        .choice-card h3 { margin: 10px 0 5px 0; color: #333; font-size: 18px; }
+        .choice-card p { font-size: 13px; color: #666; line-height: 1.4; margin: 0; }
+        
+        /* Styles SPLIT-FLAP (Gare) */
+        .split-flap-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+            margin: 20px 0;
+            perspective: 400px;
+        }
+        .flap-char {
+            position: relative;
+            width: 24px;
+            height: 36px;
+            background-color: #222;
+            color: #fff;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 36px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .flap-char::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+        .flap-anim {
+            animation: flip 0.4s ease-in;
+        }
+        @keyframes flip {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(-90deg); background-color: #444; }
+            100% { transform: rotateX(0deg); }
+        }
+
+        .timer-info { margin-top: 40px; font-size: 12px; color: #bbb; }
+        .countdown { font-weight: bold; color: #d4af37; }
+    </style>
 </head>
 <body>
 
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo"><img src="favicon.png" alt="Asiacuisine.re Logo"></a>
             <ul class="nav-links">
-                <li><a href="index.html">← Retour à l'accueil</a></li>
+                <li><a href="index.html">← Accueil</a></li>
             </ul>
         </div>
     </nav>
 
-    <main class="container" style="padding-top: 100px; text-align: center; max-width: 700px; margin: auto;">
-        <h1>Suivi de votre demande</h1>
-        <p>Entrez votre numéro de suivi à 8 caractères (reçu par e-mail) pour consulter le statut de votre demande.</p>
+    <main class="container" style="padding-top: 100px; text-align: center; max-width: 800px; margin: auto;">
+        
+        <div id="payment-status-card" class="payment-card">
+            <div id="payment-icon"></div>
+            <h2 id="payment-title"></h2>
+            <p id="payment-message" style="color: #555; max-width: 500px; margin: 0 auto;"></p>
+
+            <div id="cross-sell-section" style="display: none;">
+                <div class="choices-stack">
+                    
+                    <!-- 1. LUXILO EN PREMIER -->
+                    <a href="https://www.luxilo.fr" target="_blank" class="choice-card luxilo">
+                        <img src="boussole_nom.svg" alt="Logo Luxilo" class="logo-img">
+                        <h3>Luxilo.fr</h3>
+                        <p>Accompagnement import & sourcing en Chine.</p>
+                    </a>
+
+                    <!-- 2. MESSAGE ANIMÉ AU MILIEU -->
+                    <div id="split-flap-msg" class="split-flap-container"></div>
+
+                    <!-- 3. ASIACUISINE EN DEUXIÈME -->
+                    <a href="index.html" class="choice-card asiacuisine">
+                        <img src="favicon.png" alt="Logo Asiacuisine" class="logo-img">
+                        <h3>Asiacuisine.re</h3>
+                        <p>Retourner découvrir nos menus de la semaine.</p>
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="timer-info">
+                Redirection automatique vers l'accueil dans <span id="timer" class="countdown">20</span> secondes...
+            </div>
+        </div>
+
+        <h1 id="page-title">Suivi de votre demande</h1>
+        <p id="page-desc">Entrez votre numéro de suivi à 8 caractères pour consulter le statut de votre demande.</p>
 
         <form id="suivi-form" style="margin-top: 2rem;">
             <div class="form-group" style="display: flex; flex-direction: column; align-items: center;">
@@ -31,9 +160,7 @@
             <button type="submit" class="cta-button">Suivre</button>
         </form>
 
-        <div id="suivi-result" style="margin-top: 3rem; text-align: left; padding: 2rem; background: #f9f9f9; border-radius: 8px; display: none;">
-            <!-- Les résultats seront affichés ici -->
-        </div>
+        <div id="suivi-result" style="margin-top: 3rem; text-align: left; padding: 2rem; background: #f9f9f9; border-radius: 8px; display: none;"></div>
     </main>
 
     <script src="suivi.js" defer></script>
