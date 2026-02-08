@@ -30,6 +30,7 @@ const itemsToCopy = [
     'legal.html',
     'suivi.html',
     'confirmation.html',
+    'accepter-devis.html',
     'abonnements.html',
     'admin.html',
     'calculateur.html',
