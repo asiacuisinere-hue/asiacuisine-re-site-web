@@ -131,6 +131,12 @@ async function generateInvoicePDF(invoice, companySettings) {
         page.drawText(`${remaining.toFixed(2)} €`, { x: 470, y: totalsY, size: 12, font: fontBold, color: gold });
     }
 
+    // === MENTIONS PAIEMENT ===
+    y -= (depositAmount > 0 ? 80 : 60);
+    page.drawText('Moyens de paiement acceptés:', { x: 50, y, size: 9, font: fontBold, color: black });
+    y -= 13;
+    page.drawText('Carte Bancaire via lien sécurisé Stripe (envoyé par e-mail)', { x: 50, y, size: 9, font, color: gray });
+
     return await pdfDoc.save();
 }
 

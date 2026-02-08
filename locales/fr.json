@@ -136,7 +136,7 @@
       "siret_label": "Numéro SIRET :",
       "contact_name_label": "Nom du contact :",
       "contact_email_label": "Email du contact :",
-      "customer_phone_label": "Téléphone du contact :",
+      "contact_phone_label": "Téléphone du contact :",
       "cgv_checkbox_label": "J'ai lu et j'accepte les <a href='cgv.html' target='_blank' style='text-decoration: underline; color: inherit;'>Conditions Générales de Vente (CGV)</a>"
     },
     "footer": {

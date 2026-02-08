@@ -253,34 +253,8 @@ export async function generateQuotePDF(quote: any, customer: any, items: any[], 
         x: 50, y, size: 9, font: fontBold, color: black 
     });
     y -= 13;
-    page.drawText(companySettings.payment_methods || 'Virement, Espèces, CB', { 
+    page.drawText('Carte Bancaire via lien sécurisé Stripe (envoyé par e-mail)', { 
         x: 50, y, size: 9, font, color: gray 
-    });
-
-    // Informations bancaires (à droite)
-    let yBank = y - 50;
-    page.drawText('Pour les virements :', { 
-        x: 300, y: yBank, size: 9, font: fontBold, color: black 
-    });
-    yBank -= 13;
-    page.drawText('Établissement: 20041', { 
-        x: 300, y: yBank, size: 9, font, color: gray 
-    });
-    yBank -= 13;
-    page.drawText('Guichet: 01021', { 
-        x: 300, y: yBank, size: 9, font, color: gray 
-    });
-    yBank -= 13;
-    page.drawText('N° Compte: 0941814D018', { 
-        x: 300, y: yBank, size: 9, font, color: gray 
-    });
-    yBank -= 13;
-    page.drawText('Clé RIB: 29', { 
-        x: 300, y: yBank, size: 9, font, color: gray 
-    });
-    yBank -= 13;
-    page.drawText('Domiciliation: LA BANQUE POSTALE ST DENIS CENTRE FINANCIER', { 
-        x: 300, y: yBank, size: 8, font, color: gray 
     });
 
     // === PIED DE PAGE ===

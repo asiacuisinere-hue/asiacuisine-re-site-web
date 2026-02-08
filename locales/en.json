@@ -100,7 +100,7 @@
       "item8": "Hunan-style pork",
       "item9": "Spicy and sweet chicken with green vegetables",
       "item10": "Homemade chicken ramen",
-      "item11": "Sautéed pork with marinated vegetables",
+      "item11": "Sautéeed pork with marinated vegetables",
       "item12": "Tonkatsu"
     },
     "booking": {
@@ -151,7 +151,7 @@
       "schedules_p2": "Sunday: By appointment",
       "schedules_p3": "Bookings recommended 48 hours in advance",
       "copyright": "© 2025 Asiacuisine.re - All Rights Reserved",
-      "legal": "[EN]Mentions Légales & RGPD",
+      "legal": "Legal Notice & GDPR",
       "legal_link": "Legal Notice & GDPR",
       "brokerage_title": "Brokerage Services"
     },
@@ -223,14 +223,11 @@
         "page_title": "Terms and Conditions of Sale – Asiacuisine.re",
         "title": "Terms and Conditions of Sale (TCS)",
         "update_date": "Last updated: 06/09/2025",
-
         "section1_title": "1. Purpose",
         "section1_p1": "These Terms and Conditions of Sale govern all orders placed on the website Asiacuisine.re for meal delivery or pickup services as offered by the micro-enterprise Asiacuisine.re.",
         "section1_p2": "Placing an order implies full and unreserved acceptance of these TCS.",
-
         "section2_title": "2. Seller Information",
         "section2_p1": "Asiacuisine.re<br>Sole proprietorship – Micro-enterprise<br>284, chemin Rivière du Mât les Hauts<br>97440 Saint-André – La Réunion<br>Email: contact@asiacuisine.re",
-
         "section3_title": "3. Products",
         "section3_1_title": "3.1 Nature of Products",
         "section3_1_p1": "The products offered are fresh food preparations. Some may contain allergens.",
@@ -238,7 +235,6 @@
         "section3_2_p1": "Photographs are not contractually binding.",
         "section3_3_title": "3.3 Availability",
         "section3_3_p1": "Available quantities may be limited depending on supply and production capacity.",
-
         "section4_title": "4. Orders",
         "section4_1_title": "4.1 Ordering Process",
         "section4_1_p1": "Orders can be placed via:",
@@ -254,12 +250,10 @@
         "section4_2_p3": "The website includes calendar automation that prevents selecting a date that does not comply with these rules.",
         "section4_3_title": "4.3 Accuracy of Information",
         "section4_3_p1": "The customer is responsible for the accuracy of the information provided (identity, address, contact details, delivery location).",
-
         "section5_title": "5. Prices",
         "section5_p1": "Prices are indicated in euros (€), all taxes included.",
         "section5_p2": "The applicable price is the one displayed at the time of the order.",
         "section5_p3": "Asiacuisine.re reserves the right to change its prices.",
-
         "section6_title": "6. Payment Terms",
         "section6_1_title": "6.1 Payment Methods",
         "section6_1_p1": "The website lists the accepted payment methods.",
@@ -267,7 +261,6 @@
         "section6_2_title": "6.2 Prepayment",
         "section6_2_p1": "No products will be prepared until payment is received within the specified deadlines.",
         "section6_2_p2": "An unpaid order is not a confirmed order.",
-
         "section7_title": "7. Delivery and Pickup",
         "section7_1_title": "7.1 Delivery Locations",
         "section7_1_p1": "Delivery locations and pickup points are announced regularly:",
@@ -280,19 +273,16 @@
         "section7_3_p1": "In case of the customer's absence:",
         "section7_3_li1": "no refund is possible for fresh products,",
         "section7_3_li2": "a second delivery attempt is not guaranteed.",
-
         "section8_title": "8. No Right of Withdrawal",
         "section8_p1": "In accordance with Article L221-28 of the French Consumer Code, the purchase of fresh and perishable food products does not grant a right of withdrawal.",
         "section8_p2": "No returns or refunds can be requested after delivery.",
-
         "section9_title": "9. Cancellation, Modification, Refund",
         "section9_1_title": "9.1 By the Customer",
         "section9_1_p1": "Before the order deadline (48 hours / 11:00 a.m.): cancellation or modification is possible.",
         "section9_1_p2": "After this deadline: non-modifiable and non-refundable.",
         "section9_2_title": "9.2 By Asiacuisine.re",
         "section9_2_p1": "In case of impossibility (supplier issue, logistical problem, illness, force majeure), the order may be canceled and fully refunded.",
-
-        "section10_title": "10. Liability",
+        "section10_title": "10. Responsibilities",
         "section10_1_title": "10.1 Storage",
         "section10_1_p1": "After delivery, the customer is responsible for the proper storage of the products (cold chain, consumption within deadlines).",
         "section10_2_title": "10.2 Allergens",
@@ -303,11 +293,9 @@
         "section10_3_li2": "cyclones,",
         "section10_3_li3": "Internet outages,",
         "section10_3_li4": "or any external event making the service impossible.",
-
         "section11_title": "11. Intellectual Property",
         "section11_p1": "All content on the site (text, code, images, videos) is protected by copyright.",
         "section11_p2": "Any reproduction without authorization is prohibited.",
-
         "section12_title": "12. Personal Data (GDPR)",
         "section12_1_title": "12.1 Data Collected",
         "section12_1_p1": "Name, first name, address, phone number, email, and information necessary for the order.",
@@ -316,7 +304,6 @@
         "section12_3_title": "12.3 Rights",
         "section12_3_p1": "The customer can exercise their rights (access, rectification, erasure, portability) by contacting: contact@asiacuisine.re",
         "section12_3_p2": "No data is sold or transferred to third parties.",
-
         "section13_title": "13. Applicable Law",
         "section13_p1": "These TCS are subject to French law.",
         "section13_p2": "Any dispute falls under the jurisdiction of the courts of La Réunion."
