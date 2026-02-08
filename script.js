@@ -256,7 +256,7 @@ function initializeForm() {
         if (typeof grecaptcha === 'undefined') return showNotification('Erreur de configuration de la sécurité.', 'error');
         
         grecaptcha.ready(() => {
-            grecaptcha.execute('%%RECAPTCHA_SITE_KEY%%', {action: 'submit'}).then(async (recaptchaToken) => {
+            grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async (recaptchaToken) => {
                 const formData = new FormData(this);
                 const data = Object.fromEntries(formData.entries());
                 const originalText = submitBtn.textContent;
