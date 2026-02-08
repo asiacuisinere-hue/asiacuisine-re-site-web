@@ -316,14 +316,31 @@ export async function onRequest(context) {
                 // --- Email to Client ---
                 const clientEmail = customerDetailsForEmail.type === 'Particulier' ? customerDetailsForEmail.email : customerDetailsForEmail.contactEmail;
                 const clientName = customerDetailsForEmail.type === 'Particulier' ? (customerDetailsForEmail.name || 'client(e)') : (customerDetailsForEmail.contactName || 'client(e)');
-                const requestId = newDemande.id.substring(0, 8);
+                const requestId = newDemande.id; // Use full UUID for security
+                const requestIdShort = requestId.substring(0, 8);
                 const requestDate = new Date(formData.requestDate).toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, { year: 'numeric', month: 'long', day: 'numeric' });
-                const trackingPageUrl = `https://www.asiacuisine.re/suivi.html?id=${requestId}`;
+                const trackingPageUrl = `https://www.asiacuisine.re/suivi.html?id=${requestIdShort}`;
+                const confirmationUrl = `https://www.asiacuisine.re/confirmation.html?id=${requestId}`;
+
+                let confirmationBlock = "";
+                // On n'affiche le bouton de validation que pour les prestations hors menu
+                if (formData.type !== 'COMMANDE_MENU' && formData.type !== 'COMMANDE_SPECIALE') {
+                    confirmationBlock = `
+                        <div style="margin: 30px 0; padding: 20px; background-color: #fff9e6; border: 1px solid #ffeeba; border-radius: 12px; text-align: center;">
+                            <p style="margin-bottom: 15px; color: #856404; font-weight: bold;">Action souhaitée : Confirmez votre demande</p>
+                            <p style="margin-bottom: 20px; color: #555; font-size: 14px;">Pour que le Chef traite votre demande en priorité, merci de confirmer votre intérêt en cliquant sur le bouton ci-dessous :</p>
+                            <a href="${confirmationUrl}" style="background-color: #d4af37; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Valider ma demande en priorité</a>
+                        </div>
+                    `;
+                }
                 
                 const emailBody = `
                     <h2>${t('email.confirmation.title')}</h2>
                     <p>${t('email.confirmation.greeting').replace('${clientName}', clientName)}</p>
-                    <p>${t('email.confirmation.body').replace('${requestId}', `<strong>${requestId}</strong>`).replace('${trackingPageUrl}', `<a href="${trackingPageUrl}">${t('email.confirmation.tracking_link_text')}</a>`)}</p>
+                    <p>${t('email.confirmation.body').replace('${requestId}', `<strong>${requestIdShort}</strong>`).replace('${trackingPageUrl}', `<a href="${trackingPageUrl}">${t('email.confirmation.tracking_link_text')}</a>`)}</p>
+                    
+                    ${confirmationBlock}
+
                     <p>${t('email.confirmation.summary_title')}</p>
                     <ul>
                         <li><strong>${t('email.confirmation.request_type')}</strong> ${formData.type}</li>

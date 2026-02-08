@@ -29,6 +29,7 @@ const itemsToCopy = [
     'cgv.html',
     'legal.html',
     'suivi.html',
+    'confirmation.html',
     'abonnements.html',
     'admin.html',
     'calculateur.html',
