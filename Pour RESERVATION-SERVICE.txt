@@ -1,0 +1,6 @@
+Pour RESERVATION-SERVICE, il y a une fonction d'envoi de devis par email via la fonction send-quote (Supabase).
+Les devis sont bien enregistrés dans le bucket.
+Le problème est que les devis ne sont pas reçus par email et que les logs n'apparaissent pas dans Supabase.
+Les adresses d'envoi via Resend ont été vérifiés et cela fonctionnait avant les dernières modifications.
+L'adresse pour l'envoi de factures est utilisée mais il n'y a eu aucun changement.
+L'envoi de factures n'a aucun problème.

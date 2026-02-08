@@ -20,7 +20,6 @@ serve(async (req) => {
     const body = await req.text();
     let event;
 
-    // 1. Vérifier l'authenticité de l'événement
     try {
       event = await stripe.webhooks.constructEventAsync(
         body,
@@ -32,31 +31,62 @@ serve(async (req) => {
       return new Response(`Webhook Error: ${err.message}`, { status: 400 });
     }
 
-    // 2. Gérer l'événement de paiement réussi
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-      const demandId = session.metadata?.demand_id;
+      const { demand_id, invoice_id, amount_type } = session.metadata || {};
 
-      if (demandId) {
-        const supabase = createClient(
-          Deno.env.get("SUPABASE_URL") ?? "",
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-        );
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      );
 
-        console.log(`[Webhook] Payment successful for demand ${demandId}`);
+      // --- CAS A : Paiement direct via une DEMANDE (Menu Semaine) ---
+      if (demand_id) {
+        console.log(`[Webhook] Processing demand payment: ${demand_id}`);
+        await supabase.from('demandes').update({ status: 'Payée', payment_status: 'paid' }).eq('id', demand_id);
+      }
 
-        // Mettre à jour la demande
-        const { error: updateError } = await supabase
-          .from('demandes')
-          .update({ 
-            status: 'Payée', // Passe en violet dans votre dashboard
-            payment_status: 'paid'
-          })
-          .eq('id', demandId);
+      // --- CAS B : Paiement via une FACTURE (Réservation / Abonnement) ---
+      if (invoice_id) {
+        console.log(`[Webhook] Processing invoice payment: ${invoice_id} (Type: ${amount_type})`);
+        
+        if (amount_type === 'deposit') {
+          const depositPaid = session.amount_total / 100;
+          const { error } = await supabase
+            .from('invoices')
+            .update({ 
+              status: 'deposit_paid',
+              deposit_amount: depositPaid,
+              deposit_date: new Date().toISOString()
+            })
+            .eq('id', invoice_id);
+          
+          if (error) throw error;
 
-        if (updateError) throw updateError;
+          // --- AUTO-TRIGGER : Envoi de la facture acquittée de l'acompte ---
+          console.log(`[Webhook] Triggering automated email for invoice ${invoice_id}`);
+          await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-invoice-by-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`
+            },
+            body: JSON.stringify({ invoiceId: invoice_id })
+          });
 
-        // Optionnel : On peut aussi créer/mettre à jour la facture ici si besoin
+        } else {
+          await supabase.from('invoices').update({ status: 'paid' }).eq('id', invoice_id);
+          
+          // Envoi de la facture finale payée
+          await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-invoice-by-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`
+            },
+            body: JSON.stringify({ invoiceId: invoice_id })
+          });
+        }
       }
     }
 
