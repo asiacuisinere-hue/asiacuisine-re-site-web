@@ -44,6 +44,18 @@ serve(async (req) => {
       if (demand_id) {
         console.log(`[Webhook] Processing demand payment: ${demand_id}`);
         await supabase.from('demandes').update({ status: 'Payée', payment_status: 'paid' }).eq('id', demand_id);
+
+        // --- AUTO-TRIGGER : Envoi du QR Code par Email ---
+        console.log(`[Webhook] Triggering automated QR code for demand ${demand_id}`);
+        const { data: companySettings } = await supabase.from('company_settings').select('*').limit(1).single();
+        await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-qrcode`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`
+          },
+          body: JSON.stringify({ demandeId: demand_id, companySettings })
+        });
       }
 
       // --- CAS B : Paiement via une FACTURE (Réservation / Abonnement) ---

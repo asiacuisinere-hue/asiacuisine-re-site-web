@@ -74,7 +74,7 @@ serve(async (req) => {
                     </div>
                     <div style="padding: 30px 20px;">
                         <p>Bonjour ${clientName},</p>
-                        <p>Veuillez présenter le QR code ci-dessous lors de la réception de votre commande.</p>
+                        <p>Veuillez présenter le QR code ci-dessous <strong>le jour de votre livraison</strong> pour valider la réception de votre commande.</p>
                         <img src="cid:qrcode" alt="QR Code de suivi" style="width: 200px; height: 200px; margin: 20px auto; display: block;"/>
                         <p style="font-size: 1.4em; font-weight: bold; margin-top: 10px; letter-spacing: 2px;">
                             ${demande.clients?.client_id || 'N/A'}
