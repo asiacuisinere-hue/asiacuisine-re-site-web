@@ -37,6 +37,7 @@ const itemsToCopy = [
     'locales', 
     'functions', 
     'api', 
+    'boussole_nom.svg',
 ];
 
 itemsToCopy.forEach(item => {
