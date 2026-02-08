@@ -38,6 +38,7 @@ const itemsToCopy = [
     'functions', 
     'api', 
     'boussole_nom.svg',
+    'logo_luxilo.png',
 ];
 
 itemsToCopy.forEach(item => {
