@@ -64,6 +64,14 @@ serve(async (req) => {
         
         if (amount_type === 'deposit') {
           const depositPaid = session.amount_total / 100;
+          
+          // Récupérer la demande liée pour bloquer la date
+          const { data: invoiceData } = await supabase
+            .from('invoices')
+            .select('demand_id, demandes(request_date, type)')
+            .eq('id', invoice_id)
+            .single();
+
           const { error } = await supabase
             .from('invoices')
             .update({ 
@@ -74,6 +82,16 @@ serve(async (req) => {
             .eq('id', invoice_id);
           
           if (error) throw error;
+
+          // --- AUTO-BLOCK : Bloquer la date dans le calendrier si c'est une prestation ---
+          if (invoiceData?.demandes?.request_date && invoiceData?.demandes?.type === 'RESERVATION_SERVICE') {
+            console.log(`[Webhook] Auto-blocking date: ${invoiceData.demandes.request_date}`);
+            await supabase.from('indisponibilites').insert([{
+                date: invoiceData.demandes.request_date,
+                reason: 'Réservation confirmée (acompte payé)',
+                service_type: 'RESERVATION_SERVICE'
+            }]);
+          }
 
           // --- AUTO-TRIGGER : Envoi de la facture acquittée de l'acompte ---
           console.log(`[Webhook] Triggering automated email for invoice ${invoice_id}`);
