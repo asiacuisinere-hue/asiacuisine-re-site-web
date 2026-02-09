@@ -22,7 +22,7 @@ async function fetchAndDisplayAnnouncement() {
             const style = announcementStyles[data.announcement_style] || announcementStyles.info;
             announcementContent.innerHTML = htmlContent;
             announcementContent.style.padding = '1.5rem';
-            announcementContent.style.backgroundColor = style.background; // Use backgroundColor
+            announcementContent.style.backgroundColor = style.background;
             announcementContent.style.borderLeft = `4px solid ${style.border}`;
             announcementContent.style.borderRadius = '4px';
             announcementContainer.style.display = 'block';
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const parts = dateString.split('/');
         return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateString;
     }
-    
+
     function openWhatsAppLink(phone, message) {
         const encodedMessage = encodeURIComponent(message.trim());
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -63,42 +63,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isIOS || isSafari) {
             const appLink = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
-            const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
-
+            const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;        
             window.location.href = appLink;
-
-            setTimeout(() => {
-                window.location.href = webLink;
-            }, 1000);
+            setTimeout(() => { window.location.href = webLink; }, 1000);
         } else {
             window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
         }
     }
-    
+
     function renderSpecialOffer(offer) {
         const container = document.getElementById('special-offer-container');
         if (!container) return;
-
-        const dishOptions = offer.dishes.map((dish, index) => 
-            `<option value="${index}">${dish.name}</option>`
-        ).join('');
-
-        // Pre-render portion options for the first dish to initialize correctly
+        const dishOptions = offer.dishes.map((dish, index) => `<option value="${index}">${dish.name}</option>`).join('');
         const firstDish = offer.dishes[0] || {};
-        const portionOptions = `
-            <option value="1">${firstDish.label1 || 'Option 1'}</option>
-            <option value="2">${firstDish.label2 || 'Option 2'}</option>
-        `;
+        const portionOptions = `<option value="1">${firstDish.label1 || 'Option 1'}</option><option value="2">${firstDish.label2 || 'Option 2'}</option>`;
 
         container.innerHTML = `
             <h2>${offer.title || i18next.t('menu.special_offer_title')}</h2>
             <p class="subtitle">${offer.description || ''}</p>
-            
             <div id="special-offer-creator" style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
                 <div class="form-grid" style="align-items: flex-end;">
                     <div class="form-group">
-                        <label for="special-offer-dish">${i18next.t('menu.special_offer_dish')}</label>
-                        <select id="special-offer-dish" class="form-control">${dishOptions}</select>
+                        <label for="special-offer-dish">${i18next.t('menu.special_offer_dish')}</label>   
+                        <select id="special-offer-dish" class="form-control">${dishOptions}</select>      
                     </div>
                     <div class="form-group">
                         <label for="special-offer-portion">${i18next.t('menu.special_offer_portion')}</label>
@@ -113,21 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             </div>
-
-            <div id="special-offer-summary">
-            </div>
+            <div id="special-offer-summary"></div>
         `;
 
-        // Update portions dropdown when dish changes
         document.getElementById('special-offer-dish').addEventListener('change', (e) => {
             const dish = offer.dishes[e.target.value];
-            const portionSelect = document.getElementById('special-offer-portion');
-            portionSelect.innerHTML = `
-                <option value="1">${dish.label1 || 'Option 1'}</option>
-                <option value="2">${dish.label2 || 'Option 2'}</option>
-            `;
+            document.getElementById('special-offer-portion').innerHTML = `<option value="1">${dish.label1 || 'Option 1'}</option><option value="2">${dish.label2 || 'Option 2'}</option>`;
         });
-
         document.getElementById('add-to-cart-btn').addEventListener('click', handleAddToCart);
     }
 
@@ -135,87 +114,47 @@ document.addEventListener('DOMContentLoaded', () => {
         const dishIndex = document.getElementById('special-offer-dish').value;
         const portionOption = document.getElementById('special-offer-portion').value;
         const quantity = parseInt(document.getElementById('special-offer-quantity').value, 10);
-        
-        if (!dishIndex || !portionOption || !quantity || quantity < 1) {
-            alert('Veuillez sélectionner un plat, une portion et une quantité valide.');
-            return;
-        }
-
+        if (!dishIndex || !portionOption || !quantity || quantity < 1) return alert('Veuillez remplir tous les champs.');
         const dish = specialOfferDetails.dishes[dishIndex];
         const price = portionOption === '1' ? dish.price1 : dish.price2;
         const portionLabel = portionOption === '1' ? dish.label1 : dish.label2;
-        
-        cart.push({
-            name: dish.name,
-            portion: portionLabel,
-            quantity: quantity,
-            price: parseFloat(price)
-        });
-
+        cart.push({ name: dish.name, portion: portionLabel, quantity: quantity, price: parseFloat(price) });
         renderCart();
     }
 
     function renderCart() {
         const summaryContainer = document.getElementById('special-offer-summary');
-        if (!summaryContainer) return;
-
-        if (cart.length === 0) {
-            summaryContainer.innerHTML = '';
-            return;
-        }
-
+        if (!summaryContainer || cart.length === 0) { if(summaryContainer) summaryContainer.innerHTML = ''; return; }
         let total = 0;
         const itemsHTML = cart.map((item, index) => {
-            const itemTotal = item.quantity * item.price;
-            total += itemTotal;
-            return `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
-                    <span>${item.quantity} x ${item.name} (${item.portion})</span>
-                    <span style="display: flex; align-items: center;">
-                        <span style="margin-right: 20px;">${itemTotal.toFixed(2)} €</span>
-                        <button type="button" class="remove-from-cart-btn" data-index="${index}" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">&times;</button>
-                    </span>
-                </div>
-            `;
+            total += item.quantity * item.price;
+            return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
+                <span>${item.quantity} x ${item.name} (${item.portion})</span>
+                <span style="display: flex; align-items: center;">
+                    <span style="margin-right: 20px;">${(item.quantity * item.price).toFixed(2)} €</span>
+                    <button type="button" class="remove-from-cart-btn" data-index="${index}" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">&times;</button>
+                </span></div>`;
         }).join('');
-
-        summaryContainer.innerHTML = `
-            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">${i18next.t('menu.cart_title')}</h3>
-            ${itemsHTML}
-            <div style="text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 1rem;">
-                ${i18next.t('menu.cart_total')} ${total.toFixed(2)} €
-            </div>
-        `;
-
-        document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const index = parseInt(e.target.dataset.index, 10);
-                cart.splice(index, 1);
-                renderCart();
-            });
-        });
+        summaryContainer.innerHTML = `<h3 style="margin-top: 2rem; margin-bottom: 1rem;">${i18next.t('menu.cart_title')}</h3>${itemsHTML}<div style="text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 1rem;">${i18next.t('menu.cart_total')} ${total.toFixed(2)} €</div>`;
+        document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => { cart.splice(parseInt(e.target.dataset.index, 10), 1); renderCart(); }));
     }
 
     async function fetchUnavailableDates() {
         try {
             const response = await fetch('/disponibilites?service_type=COMMANDE_MENU');
-            if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
             unavailableDates = await response.json() || [];
             if (!isOverrideEnabled) renderCalendar();
-        } catch (error) {
-            console.error('Error fetching unavailable dates:', error);
-            if (!isOverrideEnabled) renderCalendar();
-        }
+        } catch (error) { if (!isOverrideEnabled) renderCalendar(); }
     }
 
     function renderCalendar(monthOffset = 0) {
         if (isOverrideEnabled) return;
-
         calendarContainer.innerHTML = '';
         const calendarDiv = document.createElement('div');
         calendarDiv.className = 'calendar';
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        
         const displayDate = new Date();
         displayDate.setMonth(displayDate.getMonth() + monthOffset);
         displayDate.setDate(1);
@@ -223,22 +162,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const year = displayDate.getFullYear();
         const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
         const dayNames = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+
+        // --- CALCULATION LOGIC: DELIVERY WEEK (Mon-Sat) ---
+        const allowedStart = new Date(today);
+        const dayOfToday = today.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
         
+        if (dayOfToday === 0) {
+            // Sunday: Allow NEXT week (from tomorrow Monday)
+            allowedStart.setDate(today.getDate() + 1);
+        } else {
+            // Mon-Sat: Allow CURRENT week (from Monday)
+            allowedStart.setDate(today.getDate() - (dayOfToday - 1));
+        }
+        allowedStart.setHours(0,0,0,0);
+
+        const allowedEnd = new Date(allowedStart);
+        allowedEnd.setDate(allowedStart.getDate() + 5); // Saturday (+5 days from Monday)
+        allowedEnd.setHours(23,59,59,999);
+
         const calendarHeaderDiv = document.createElement('div');
         calendarHeaderDiv.className = 'calendar-header';
         const prevMonthButton = document.createElement('button');
-        prevMonthButton.id = 'prevMonth';
-        prevMonthButton.innerHTML = '&lt;';
+        prevMonthButton.id = 'prevMonth'; prevMonthButton.innerHTML = '&lt;';
         prevMonthButton.addEventListener('click', () => renderCalendar(monthOffset - 1));
         const monthYearH2 = document.createElement('h2');
         monthYearH2.textContent = `${monthNames[month]} ${year}`;
         const nextMonthButton = document.createElement('button');
-        nextMonthButton.id = 'nextMonth';
-        nextMonthButton.innerHTML = '&gt;';
+        nextMonthButton.id = 'nextMonth'; nextMonthButton.innerHTML = '&gt;';
         nextMonthButton.addEventListener('click', () => renderCalendar(monthOffset + 1));
-        calendarHeaderDiv.appendChild(prevMonthButton);
-        calendarHeaderDiv.appendChild(monthYearH2);
-        calendarHeaderDiv.appendChild(nextMonthButton);
+        calendarHeaderDiv.appendChild(prevMonthButton); calendarHeaderDiv.appendChild(monthYearH2); calendarHeaderDiv.appendChild(nextMonthButton);
         calendarDiv.appendChild(calendarHeaderDiv);
 
         const calendarGrid = document.createElement('div');
@@ -252,36 +204,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const firstDayOfMonth = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        for (let i = 0; i < firstDayOfMonth; i++) {
-            calendarGrid.appendChild(document.createElement('div'));
-        }
+        for (let i = 0; i < firstDayOfMonth; i++) calendarGrid.appendChild(document.createElement('div'));
+        
         for (let i = 1; i <= daysInMonth; i++) {
             const date = new Date(year, month, i);
             date.setHours(0, 0, 0, 0);
             const dateStringDDMMYYYY = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-            
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day current-month';
             dayElement.textContent = i;
-            
+
+            // --- STRICT RESTRICTION TO ONE WEEK (Mon-Sat) ---
             let isDisabled = false;
+            // Disable if out of allowed week window OR is a Sunday (0)
+            if (date < allowedStart || date > allowedEnd || date.getDay() === 0) isDisabled = true;
+            if (unavailableDates.includes(dateStringDDMMYYYY)) isDisabled = true;
 
-            if (date < today) {
-                isDisabled = true;
-            }
-
-            if (unavailableDates.includes(dateStringDDMMYYYY)) {
-                isDisabled = true;
-            }
-
+            // Cutoff logic (Time to prepare)
             const cutOffDate = new Date(date);
             cutOffDate.setDate(date.getDate() - orderCutoffDays);
             cutOffDate.setHours(orderCutoffHour, 0, 0, 0);
-
-            const now = new Date();
-            if (now > cutOffDate) {
-                isDisabled = true;
-            }
+            if (new Date() > cutOffDate) isDisabled = true;
 
             if (isDisabled) {
                 dayElement.classList.add('disabled');
@@ -294,12 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderCalendar(monthOffset);
                 });
             }
-            if (selectedDate && dateStringDDMMYYYY === `${String(selectedDate.getDate()).padStart(2, '0')}/${String(selectedDate.getMonth() + 1).padStart(2, '0')}/${selectedDate.getFullYear()}`) {
-                dayElement.classList.add('selected');
-            }
-            if (dateStringDDMMYYYY === `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`) {
-                dayElement.classList.add('today');
-            }
+            if (selectedDate && dateStringDDMMYYYY === `${String(selectedDate.getDate()).padStart(2, '0')}/${String(selectedDate.getMonth() + 1).padStart(2, '0')}/${selectedDate.getFullYear()}`) dayElement.classList.add('selected');
+            if (dateStringDDMMYYYY === `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`) dayElement.classList.add('today');
             calendarGrid.appendChild(dayElement);
         }
         calendarDiv.appendChild(calendarGrid);
@@ -307,8 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatDateForDisplay(date) {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('fr-FR', options);
+        return date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }
 
     async function fetchMenuContent() {
@@ -316,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/get-menus');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-
             orderCutoffDays = data.order_cutoff_days || 2;
             orderCutoffHour = data.order_cutoff_hour || 11;
 
@@ -328,21 +265,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const specialOfferContainer = document.getElementById('special-offer-container');
             const cgvContainer = document.getElementById('cgv-checkbox-container');
 
-            // Reset all displays
             if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
             if (specialOfferContainer) specialOfferContainer.style.display = 'none';
             if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
             if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
             if (cgvContainer) cgvContainer.style.display = '';
-            
-            const disableRegularContent = (disable) => {
-                const display = disable ? 'none' : '';
-                if (weeklyMenuContent) weeklyMenuContent.style.display = display;
-                if (formulaCardsContainer) formulaCardsContainer.style.display = display;
-                if (cgvContainer) cgvContainer.style.display = display;
-            };
 
-            // Highest priority: Menu Override
             const isMenuOverrideEnabled = data.menu_override_enabled === true || data.menu_override_enabled === 'true';
             if (isMenuOverrideEnabled && data.menu_override_message) {
                 isOverrideEnabled = true;
@@ -350,91 +278,63 @@ document.addEventListener('DOMContentLoaded', () => {
                     menuOverrideMessage.querySelector('p').innerHTML = marked.parse(data.menu_override_message);
                     menuOverrideMessage.style.display = 'block';
                 }
-                disableRegularContent(true);
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = 'none';
                 if (infoSection) infoSection.style.display = 'none';
                 if (calendarContainer) calendarContainer.style.display = 'none';
-                if (form) {
-                    form.style.pointerEvents = 'none';
-                    form.style.opacity = '0.5';
-                }
-                return; // Stop further processing
+                if (form) { form.style.pointerEvents = 'none'; form.style.opacity = '0.5'; }
+                return;
             }
 
-            // Not overridden, so set up the page for ordering
             isOverrideEnabled = false;
-
-            // Check for special offer
             const isSpecialOfferEnabled = data.special_offer_enabled === true || data.special_offer_enabled === 'true';
             isSpecialOfferActive = isSpecialOfferEnabled && data.special_offer_details;
             if (isSpecialOfferActive) {
                 try {
                     specialOfferDetails = JSON.parse(data.special_offer_details);
-                    if (specialOfferContainer) {
-                        specialOfferContainer.style.display = 'block';
-                        renderSpecialOffer(specialOfferDetails);
-                    }
-                } catch (e) {
-                    console.error("Failed to parse special offer details:", e);
-                    isSpecialOfferActive = false; 
-                }
+                    if (specialOfferContainer) { specialOfferContainer.style.display = 'block'; renderSpecialOffer(specialOfferDetails); }
+                } catch (e) { isSpecialOfferActive = false; }
             }
 
-            // Regular content visibility
             const isSpecialOfferDisablesFormulas = data.special_offer_disables_formulas === true || data.special_offer_disables_formulas === 'true';
-            const shouldDisableRegularContent = isSpecialOfferActive && isSpecialOfferDisablesFormulas;
-            disableRegularContent(shouldDisableRegularContent);
-
+            const shouldDisableRegularContent = isSpecialOfferActive && isSpecialOfferDisablesFormulas;   
+            
             if (!shouldDisableRegularContent) {
                 if (weeklyMenuContent) weeklyMenuContent.style.display = '';
                 if (formulaCardsContainer) formulaCardsContainer.style.display = '';
                 if (whatsappButtonContainer) whatsappButtonContainer.style.display = '';
                 if (infoSection) infoSection.style.display = '';
                 if (calendarContainer) calendarContainer.style.display = '';
-                if (form) {
-                    form.style.pointerEvents = '';
-                    form.style.opacity = '';
-                }
+                if (form) { form.style.pointerEvents = ''; form.style.opacity = ''; }
 
-                // Remplir le contenu des menus
                 const contentDecouverte = document.getElementById('content-decouverte');
                 if (contentDecouverte) {
                     if (data.menu_decouverte && data.menu_decouverte.trim()) {
                         contentDecouverte.innerHTML = `<strong>${i18next.t('menu.formula_discovery_label')}</strong> ${marked.parse(data.menu_decouverte)}`;
                         contentDecouverte.style.display = '';
-                    } else {
-                        contentDecouverte.style.display = 'none';
-                    }
+                    } else contentDecouverte.style.display = 'none';
                 }
                 const contentStandard = document.getElementById('content-standard');
                 if (contentStandard) {
                     if (data.menu_standard && data.menu_standard.trim()) {
                         contentStandard.innerHTML = `<strong>${i18next.t('menu.formula_standard_label')}</strong> ${marked.parse(data.menu_standard)}`;
                         contentStandard.style.display = '';
-                    } else {
-                        contentStandard.style.display = 'none';
-                    }
+                    } else contentStandard.style.display = 'none';
                 }
                 const contentConfort = document.getElementById('content-confort');
                 if (contentConfort) {
                     if (data.menu_confort && data.menu_confort.trim()) {
                         contentConfort.innerHTML = `<strong>${i18next.t('menu.formula_comfort_label')}</strong> ${marked.parse(data.menu_confort)}`;
                         contentConfort.style.display = '';
-                    } else {
-                        contentConfort.style.display = 'none';
-                    }
+                    } else contentConfort.style.display = 'none';
                 }
                 const contentDuo = document.getElementById('content-duo');
                 if (contentDuo) {
                     if (data.menu_duo && data.menu_duo.trim()) {
                         contentDuo.innerHTML = `<strong>${i18next.t('menu.formula_duo_label')}</strong> ${marked.parse(data.menu_duo)}`;
                         contentDuo.style.display = '';
-                    } else {
-                        contentDuo.style.display = 'none';
-                    }
+                    } else contentDuo.style.display = 'none';
                 }
 
-                // Mettre à jour les prix
                 if (data.menu_decouverte_price) {
                     document.getElementById('price-decouverte').textContent = `${data.menu_decouverte_price} €`;
                     document.getElementById('formule-decouverte').value = `Formule Découverte (${data.menu_decouverte_price}€)`;
@@ -448,16 +348,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('formule-confort').value = `Formule Confort (${data.menu_confort_price}€)`;
                 }
                 if (data.menu_duo_price) {
-                    document.getElementById('price-duo').textContent = `${data.menu_duo_price} €`;
+                    document.getElementById('price-duo').textContent = `${data.menu_duo_price} €`;      
                     document.getElementById('formule-duo').value = `Option Duo (${data.menu_duo_price}€)`;
                 }
             }
-            
             fetchUnavailableDates();
-
-        } catch (error) {
-            console.error('Error fetching menu content:', error);
-        }
+        } catch (error) { console.error(error); }
     }
 
     fetchAndDisplayAnnouncement();
@@ -466,14 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
     cards.forEach(card => {
         card.addEventListener('click', () => {
             if (isOverrideEnabled) return;
-            // Clear special offer cart when selecting a regular formula
             if (cart.length > 0) {
-                if (confirm("Votre panier d'offre spéciale sera vidé si vous sélectionnez une formule. Continuer ?")) {
-                    cart = [];
-                    renderCart();
-                } else {
-                    return;
-                }
+                if (confirm("Votre panier d'offre spéciale sera vidé. Continuer ?")) { cart = []; renderCart(); } else return;
             }
             cards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
@@ -483,131 +373,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-
-        if (isOverrideEnabled) {
-            alert('Les commandes sont temporairement suspendues. Veuillez consulter le message affiché.');
-            return;
-        }
-
+        if (isOverrideEnabled) return alert('Les commandes sont suspendues.');
         const submitBtn = form.querySelector('.cta-button');
         const originalText = submitBtn.textContent;
-
-        if (typeof grecaptcha === 'undefined') {
-            alert('Erreur de configuration de la sécurité. Veuillez rafraîchir la page.');
-            return;
-        }
+        if (typeof grecaptcha === 'undefined') return alert('Erreur de sécurité. Rafraîchissez.');
         
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-
-        if (!data.jour || !data.email) {
-            alert('Veuillez remplir vos informations et la date de livraison/retrait.');
-            return;
-        }
+        if (!data.jour || !data.email) return alert('Veuillez remplir la date et votre email.');
 
         let message;
         let orderPayload;
 
-        // Si le panier de l'offre spéciale n'est pas vide, on traite cette commande
         if (cart.length > 0) {
             let total = 0;
             const orderDetails = cart.map(item => {
-                const itemTotal = item.quantity * item.price;
-                total += itemTotal;
-                return `- ${item.quantity} x ${item.name} (${item.portion}) : ${itemTotal.toFixed(2)} €`;
+                total += item.quantity * item.price;
+                return `- ${item.quantity} x ${item.name} (${item.portion}) : ${(item.quantity * item.price).toFixed(2)} €`;
             }).join('\n');
-            
-            message = `Bonjour, je souhaite passer une commande pour l'offre spéciale "${specialOfferDetails.title}" :\n\n${orderDetails}\n\nTotal : ${total.toFixed(2)} €\n\n- Nom : ${data.nom} ${data.prenom || ''}\n- Téléphone : ${data.telephone}\n- Livraison/Retrait : ${data.livraison}, le ${data.jour}\n\nMerci !\n`;
-            
-            orderPayload = {
-                type: 'COMMANDE_SPECIALE',
-                details: JSON.stringify(cart),
-                total: total.toFixed(2),
-                customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
-                deliveryCity: data.livraison,
-                requestDate: convertDateToISO(data.jour),
-                recaptchaToken: null,
-                customerType: 'Particulier'
-            };
-
-        // Sinon, on traite une commande de formule classique
+            message = `Bonjour, intention pour l'offre "${specialOfferDetails.title}" :\n\n${orderDetails}\n\nTotal : ${total.toFixed(2)} €\n\n- Nom : ${data.nom} ${data.prenom || ''}\n- Date : ${data.jour}\n- Ville : ${data.livraison}`;
+            orderPayload = { type: 'COMMANDE_SPECIALE', details: JSON.stringify(cart), total: total.toFixed(2), customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email }, deliveryCity: data.livraison, requestDate: convertDateToISO(data.jour), recaptchaToken: null, customerType: 'Particulier' };
         } else {
-            if (!data.formule) {
-                alert('Veuillez choisir une formule ou composer une commande avec l\'offre spéciale.');
-                return;
-            }
-            
+            if (!data.formule) return alert('Veuillez choisir une formule.');
             let formulaOption = null;
-            if (data.formule.includes("Formule Standard")) {
-                const selectedOptionStandard = document.querySelector('input[name="optionStandard"]:checked');
-                if (!selectedOptionStandard) {
-                    alert('Veuillez choisir une option (A ou B) pour la Formule Standard.');
-                    return;
-                }
-                formulaOption = selectedOptionStandard.value;
-            } else if (data.formule.includes("Formule Confort")) {
-                const selectedOptionConfort = document.querySelector('input[name="optionConfort"]:checked');
-                if (!selectedOptionConfort) {
-                    alert('Veuillez choisir une option (A ou B) pour la Formule Confort.');
-                    return;
-                }
-                formulaOption = selectedOptionConfort.value;
-            } else if (data.formule.includes("Option Duo")) {
-                const selectedOptionDuo = document.querySelector('input[name="optionDuo"]:checked');
-                if (!selectedOptionDuo) {
-                    alert("Veuillez choisir une option (A ou B) pour l'Option Duo.");
-                    return;
-                }
-                formulaOption = selectedOptionDuo.value;
+            if (data.formule.includes("Standard")) {
+                const opt = document.querySelector('input[name="optionStandard"]:checked');
+                if (!opt) return alert('Choisissez l\'option A ou B.');
+                formulaOption = opt.value;
+            } else if (data.formule.includes("Confort")) {
+                const opt = document.querySelector('input[name="optionConfort"]:checked');
+                if (!opt) return alert('Choisissez l\'option A ou B.');
+                formulaOption = opt.value;
+            } else if (data.formule.includes("Duo")) {
+                const opt = document.querySelector('input[name="optionDuo"]:checked');      
+                if (!opt) return alert("Choisissez l'option A ou B.");
+                formulaOption = opt.value;
             }
-            
-            const formuleDetails = data.formule + (formulaOption ? ` (${formulaOption})` : '');
-            message = `Bonjour, je souhaite passer une commande :\n\n- Formule : ${formuleDetails}\n- Nom : ${data.nom} ${data.prenom || ''}\n- Téléphone : ${data.telephone}\n- Livraison/Retrait : ${data.livraison}, le ${data.jour}\n\nMerci !\n`;
-
-            orderPayload = {
-                type: 'COMMANDE_MENU',
-                customerType: 'Particulier',
-                formulaName: data.formule,
-                formulaOption: formulaOption,
-                customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
-                deliveryCity: data.livraison,
-                requestDate: convertDateToISO(data.jour),
-                recaptchaToken: null
-            };
+            const details = data.formule + (formulaOption ? ` (${formulaOption})` : '');
+            message = `Bonjour, intention de commande :\n\n- Formule : ${details}\n- Nom : ${data.nom} ${data.prenom || ''}\n- Date : ${data.jour}\n- Ville : ${data.livraison}`;
+            orderPayload = { type: 'COMMANDE_MENU', customerType: 'Particulier', formulaName: data.formule, formulaOption: formulaOption, customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email }, deliveryCity: data.livraison, requestDate: convertDateToISO(data.jour), recaptchaToken: null };
         }
 
         submitBtn.textContent = 'Vérification...';
         submitBtn.disabled = true;
 
         grecaptcha.ready(function() {
-            grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async function(recaptchaToken) {
-                orderPayload.recaptchaToken = recaptchaToken;
-                
-                submitBtn.textContent = 'Envoi en cours...';
-
+            grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async function(token) {
+                orderPayload.recaptchaToken = token;
+                submitBtn.textContent = 'Envoi...';
                 try {
-                    const response = await fetch('/create-request/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(orderPayload)
-                    });
-                    if (!response.ok) {
-                        const errorResult = await response.json();
-                        throw new Error(errorResult.error || 'Une erreur serveur est survenue.');
-                    }
-
+                    const res = await fetch('/create-request/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderPayload) });
+                    if (!res.ok) throw new Error('Erreur serveur.');
                     openWhatsAppLink('33767644714', message);
                     form.reset();
                     cards.forEach(c => c.classList.remove('selected'));
-                    cart = [];
-                    renderCart();
-                } catch (error) {
-                    console.error('Erreur lors de la soumission:', error);
-                    alert(`Une erreur est survenue : ${error.message}`);
-                } finally {
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }
+                    cart = []; renderCart();
+                } catch (error) { alert(error.message); } 
+                finally { submitBtn.textContent = originalText; submitBtn.disabled = false; }
             });
         });
     });
