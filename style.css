@@ -147,8 +147,6 @@ body {
     transition: all 0.3s ease;
     box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
     min-width: 220px;
-    cursor: pointer;
-    border: none;
 }
 
 .bento-btn {
@@ -184,6 +182,7 @@ body {
 
 /* General Section Styling */
 .services, .about, .gallery, .booking, .footer, .testimonials { padding: 100px 0; }
+.testimonials { display: none; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
 .section-title { text-align: center; font-size: 3rem; margin-bottom: 3rem; color: #1a1a1a; }
 
@@ -319,7 +318,15 @@ body {
     color: #ffffff !important;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
-.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 1rem; border: none; border-radius: 10px; background: rgba(255,255,255,0.9); font-size: 1rem; transition: all 0.3s ease; }       
+.form-group input, .form-group select, .form-group textarea { 
+    width: 100%; 
+    padding: 1rem; 
+    border: 1px solid #ddd; 
+    border-radius: 10px; 
+    background: #fff; 
+    font-size: 1rem; 
+    transition: all 0.3s ease; 
+}       
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
 .radio-group {
     display: flex;
@@ -398,6 +405,88 @@ body {
     width: auto;
 }
 
+/* Lightbox Styles */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.lightbox-bg {
+    position: absolute;
+    top: -20px; 
+    left: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+}
+
+.lightbox-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.lightbox-image {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    cursor: default;
+    border-radius: 5px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+    text-shadow: 0 0 8px rgba(0,0,0,0.8);
+}
+
+/* Cookie Consent Banner */
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(20, 20, 20, 0.98);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #ccc;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1500;
+    transform: translateY(200%); 
+    transition: transform 0.5s ease-in-out;
+}
+
+.cookie-banner.is-visible {
+    transform: translateY(0);
+}
+
+.cookie-banner p {
+    margin: 0;
+    padding-right: 2rem;
+    font-size: 0.9rem;
+}
+
 /* Welcome Popup */
 .welcome-popup {
     position: fixed;
@@ -433,27 +522,28 @@ body {
 .welcome-popup.is-visible .welcome-popup-content {
     transform: scale(1);
 }
-.welcome-popup-content h2 {
-    color: #d4af37;
-    margin-bottom: 1rem;
-    font-size: 2.5rem;
-}
-.welcome-popup-content p {
-    font-size: 1.2rem;
-    opacity: 0.9;
-}
-.popup-close {
-    position: absolute;
-    top: 10px;
+
+/* Custom Notification */
+.notification {
+    position: fixed;
+    top: 20px;
     right: 20px;
-    font-size: 30px;
-    color: #ccc;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-.popup-close:hover {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
     color: #fff;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 3000;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.4s ease;
 }
+.notification.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.notification.success { background-color: #28a745; }
+.notification.error { background-color: #dc3545; }
 
 /* Animations & Helpers */
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
@@ -462,159 +552,89 @@ body {
 .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+/* Datepicker text color fix */
+.datepicker-picker { background: #fff; }
+.datepicker .day, .datepicker .dow, .datepicker-header .datepicker-title, .datepicker-header .next-btn, .datepicker-header .prev-btn { color: #333; }
+.datepicker .day.disabled, .datepicker .day.disabled:hover { color: #999; }
+.datepicker .day.focused:not(.selected) { background-color: #f0f0f0; }
+.datepicker .day.selected, .datepicker .day.selected:hover { background-color: #d4af37; color: #fff; }    
+.datepicker .day.prev, .datepicker .day.next { visibility: hidden; }
+
 /* Back to Top Button */
 .back-to-top-btn { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(45deg, #d4af37, #ffd700); color: #1a1a1a; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; text-decoration: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.4s ease; z-index: 1000; }
 .back-to-top-btn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
 
-/* Menu Page Styles - Refonte Ergonomique */
-.menu-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 120px 1.5rem 4rem;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-    margin-top: 4rem;
-    margin-bottom: 4rem;
-}
+/* Floating Social Links */
+.floating-social-links { position: fixed; top: 50%; left: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 5px; z-index: 999; }
+.social-link { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; text-decoration: none; border-radius: 0 10px 10px 0; transition: all 0.3s ease; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); background: white; padding: 8px; }
+.social-link img { width: 100%; height: auto; display: block; }
+.social-link:hover { padding-left: 12px; width: 50px; }
 
-.formula-card {
-    border: 2px solid #eee;
-    border-radius: 20px;
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: #fff;
-    position: relative;
-}
+.service-text-mobile { display: none; }
 
-.formula-label {
-    display: block;
-    padding: 1.5rem;
-    cursor: pointer;
-    width: 100%;
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.formula-card input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.custom-radio {
-    width: 24px;
-    height: 24px;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    display: inline-block;
-    position: relative;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-}
-
-.formula-card input[type="radio"]:checked + .custom-radio {
-    border-color: #d4af37;
-    background: #d4af37;
-}
-
-.formula-card input[type="radio"]:checked + .custom-radio::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 10px;
-    background: white;
-    border-radius: 50%;
-}
-
-.formula-card.selected {
-    border-color: #d4af37;
-    background: #fffdf5;
-    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
-    transform: translateY(-2px);
-}
-
-.formula-card h3 {
-    margin: 0;
-    text-align: left !important;
-    font-size: 1.2rem;
-    color: #1a1a1a;
-}
-
-.formula-card .price {
-    font-size: 1.8rem;
-    font-weight: 900;
-    color: #d4af37;
-    margin: 0.5rem 0 0.5rem 2.5rem;
-}
-
-.formula-card .desc {
-    margin-left: 2.5rem;
-    font-size: 0.9rem;
-    color: #666;
-    line-height: 1.4;
-}
-
-.sub-options {
-    background: #f9f9f9;
-    padding: 1rem 1.5rem 1.5rem 4rem;
-    border-top: 1px solid #eee;
-    display: none;
-}
-
-.formula-card.selected .sub-options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.sub-option-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 8px 0;
-}
-
-.sub-option-item input[type="radio"] {
-    position: relative;
-    opacity: 1;
-    width: 20px;
-    height: 20px;
-    accent-color: #d4af37;
-}
-
-.formula-card:active {
-    transform: scale(0.98);
-}
-
+/* ========================================================================= */
+/*                      Responsive Design (Consolidated)                   */
+/* ========================================================================= */
 @media (max-width: 800px) {
-    .navbar .nav-links { display: none; } /* Simplified mobile nav for restoration */
+    .floating-social-links { display: none; }
+    .service-text-desktop { display: none; }
+    .service-text-mobile { display: block; }
+    .section-title { font-size: 2.2rem; }
+    .nav-toggle { display: block; z-index: 1001; }
+    .language-switcher { margin-top: 2rem; order: 10; }
+    .nav-links { position: fixed; top: 0; right: 0; height: 100vh; width: 280px; background: rgba(20, 20, 20, 0.98); backdrop-filter: blur(12px); flex-direction: column; justify-content: center; align-items: center; gap: 3rem; transform: translateX(100%); transition: transform 0.4s ease-in-out; z-index: 1000; display: flex; }
+    .nav-links.active { transform: translateX(0); }
     .hero h1 { font-size: 2.5rem; }
-    .footer-content { flex-direction: column; text-align: center; }
+    .hero p { font-size: 1.1rem; }
+    .book { display: block; height: auto; }
+    .static-cover, .flippable-pages-container { flex: none; width: 100%; }
+    .static-cover { border-radius: 15px; text-align: center; margin-bottom: 2rem; }
+    .flippable-page { position: relative; transform: none !important; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 15px; }
+    .page-face { position: static; transform: none !important; display: block !important; border-radius: 15px; cursor: default; }
+    .page-back { border-top: 1px dashed #ddd; margin-top: 2rem; }
+    .about-content { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+    .experience-highlights { flex-direction: column; }
+    .chef-placeholder { width: 80%; max-width: 300px; height: auto; aspect-ratio: 3 / 4; }
+    .booking-form { padding: 2rem 1.5rem; }
+    .footer-content { flex-direction: column; align-items: center; }
+    .footer-section { text-align: center; margin-bottom: 2rem; }
 }
 
-@media (max-width: 600px) {
-    .menu-container {
-        padding-top: 100px;
-        margin-top: 2rem;
-    }
-    .formula-card h3 {
-        font-size: 1.1rem;
-    }
-    .formula-card .price {
-        font-size: 1.5rem;
-    }
+/* --- MENU PAGE STYLES (KEEPING THEM) --- */
+.menu-container { max-width: 800px; margin: 4rem auto; padding: 120px 1.5rem 4rem; background: #fff; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+.menu-container h1, .menu-container h2 { text-align: center; }
+.menu-container .subtitle { text-align: center; font-style: italic; color: #666; margin-bottom: 3rem; }
+.formula-card { border: 2px solid #eee; border-radius: 20px; margin-bottom: 1.5rem; transition: all 0.3s ease; background: #fff; position: relative; }
+.formula-card.selected { border-color: #d4af37; background: #fffdf5; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15); }
+.formula-label { display: block; padding: 1.5rem; cursor: pointer; }
+.card-header { display: flex; align-items: center; gap: 1rem; }
+.custom-radio { width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 50%; position: relative; flex-shrink: 0; }
+input[type="radio"]:checked + .custom-radio { border-color: #d4af37; background: #d4af37; }
+input[type="radio"]:checked + .custom-radio::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: white; border-radius: 50%; }
+.formula-card h3 { text-align: left !important; margin: 0; font-size: 1.2rem; }
+.formula-card .price { font-size: 1.8rem; font-weight: 900; color: #d4af37; margin: 0.5rem 2.5rem; }
+.formula-card .desc { margin-left: 2.5rem; font-size: 0.9rem; color: #666; }
+.sub-options { background: #f9f9f9; padding: 1rem 1.5rem 1.5rem 4rem; border-top: 1px solid #eee; display: none; flex-direction: column; gap: 0.8rem; }
+.formula-card.selected .sub-options { display: flex; }
+.sub-option-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; padding: 5px 0; }
+.sub-option-item input { width: 20px; height: 20px; accent-color: #d4af37; }
+
+/* CALENDAR */
+#calendar-container { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 15px; margin-top: 10px; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; border-radius: 10px; cursor: pointer; }
+.calendar-day.available { background: #f8f8f8; }
+.calendar-day.selected { background: #d4af37 !important; color: #fff !important; }
+.calendar-day.disabled { color: #ddd; cursor: not-allowed; }
+
+/* Mobile Bottom Nav */
+.mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(20, 20, 20, 0.98); backdrop-filter: blur(10px); border-top: 1px solid rgba(212, 175, 55, 0.3); z-index: 1100; justify-content: space-around; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); }
+@media (max-width: 768px) {
+    .mobile-bottom-nav { display: flex; }
+    .back-to-top-btn { bottom: 80px; }
 }
+.mobile-bottom-nav .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #888; flex: 1; }
+.mobile-bottom-nav .nav-icon { font-size: 1.4rem; }
+.mobile-bottom-nav .nav-label { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+.mobile-bottom-nav .nav-item.active { color: #d4af37; }
