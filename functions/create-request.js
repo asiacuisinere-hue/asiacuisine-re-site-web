@@ -4,17 +4,20 @@ import fr from '../locales/fr.json' assert { type: 'json' };
 import en from '../locales/en.json' assert { type: 'json' };
 import zh from '../locales/zh.json' assert { type: 'json' };
 
-// Helper function to generate a random 6-character alphanumeric string
 function generateClientId() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
-    for (let i = 0; i < 6; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    for (let i = 0; i < 6; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); }
     return result;
 }
 
-// Helper to send WhatsApp notification via CallMeBot (Admin Alert)
+const getEmailFooter = (t, lang) => {
+    const baseUrl = 'https://www.asiacuisine.re';
+    return `<div style="margin-top: 30px; border-top: 1px solid #eeeeee; text-align: center; color: #888; font-size: 12px; padding-top: 20px;">
+        <p><strong>Asiacuisine.re</strong></p><p>${t('email.footer.tagline')}</p>
+    </div>`;
+};
+
 async function sendWhatsAppAdminAlert(context, message) {
   const phone = context.env.ADMIN_WHATSAPP_NUMBER; 
   const apiKey = context.env.ADMIN_WHATSAPP_API_KEY;
@@ -22,134 +25,97 @@ async function sendWhatsAppAdminAlert(context, message) {
   try {
     const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${apiKey}`;
     await fetch(url);
-  } catch (err) { console.error("[WhatsApp Alert Error]", err); }
+  } catch (err) { console.error(err); }
 }
 
 export async function onRequest(context) {
-    if (context.request.method !== 'POST') {
-        return new Response(JSON.stringify({ error: `Method ${context.request.method} Not Allowed` }), {  
-            status: 405,
-            headers: { 'Allow': 'POST' }
-        });
-    }
+    if (context.request.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
 
     try {
         const data = await context.request.json();
         const { recaptchaToken, ...formData } = data; 
 
-        // 1. Verify reCAPTCHA token
-        if (!recaptchaToken) {
-            return new Response(JSON.stringify({ error: 'reCAPTCHA token missing.' }), { status: 400 });
-        }
-
+        // 1. reCAPTCHA
         const RECAPTCHA_SECRET_KEY = context.env.RECAPTCHA_SECRET_KEY;
-        const recaptchaVerifyResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {  
+        const verify = await fetch('https://www.google.com/recaptcha/api/siteverify', {  
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
         });
-        const recaptchaResult = await recaptchaVerifyResponse.json();
+        const recaptcha = await verify.json();
+        if (!recaptcha.success) return new Response(JSON.stringify({ error: 'reCAPTCHA failed' }), { status: 403 });
 
-        if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
-            return new Response(JSON.stringify({ error: 'reCAPTCHA verification failed.' }), { status: 403 });
-        }
+        const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);
 
-        const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);   
-
-        // 2. Manage Client / Entreprise logic
+        // 2. Customer Management
         let clientId = null;
-        let entrepriseId = null;
         let customerName = "";
+        const c = formData.customer;
 
         if (formData.customerType === 'Particulier') {
-            let { data: client } = await supabase.from('clients').select('*').eq('email', formData.customer.email).single();
-            if (!client) {
-                const { data: newClient } = await supabase.from('clients').insert({
-                    email: formData.customer.email,
-                    first_name: formData.customer.firstName || null,
-                    last_name: formData.customer.lastName || null,
-                    phone: formData.customer.phone || null,
-                    client_id: generateClientId(),
-                    type: 'Particulier'
+            let { data: existing } = await supabase.from('clients').select('*').eq('email', c.email).single();
+            if (!existing) {
+                const { data: created } = await supabase.from('clients').insert({
+                    email: c.email, first_name: c.firstName, last_name: c.lastName, phone: c.phone, type: 'Particulier'
                 }).select().single();
-                client = newClient;
+                existing = created;
             }
-            clientId = client.id;
-            customerName = `${client.first_name || ''} ${client.last_name || ''}`.trim();
+            clientId = existing.id;
+            customerName = `${c.firstName || ''} ${c.lastName || ''}`.trim();
         } else {
-            let { data: entreprise } = await supabase.from('entreprises').select('*').eq('contact_email', formData.customer.contactEmail).single();
-            if (!entreprise) {
-                const { data: newEntreprise } = await supabase.from('entreprises').insert({
-                    nom_entreprise: formData.customer.companyName,
-                    siret: formData.customer.siret || null,
-                    contact_name: formData.customer.contactName || null,
-                    contact_email: formData.customer.contactEmail,
-                    contact_phone: formData.customer.contactPhone || null
+            let { data: existingEnt } = await supabase.from('entreprises').select('*').eq('contact_email', c.email).single();
+            if (!existingEnt) {
+                const { data: createdEnt } = await supabase.from('entreprises').insert({
+                    nom_entreprise: c.companyName, contact_email: c.email, contact_phone: c.phone, contact_name: c.contactName
                 }).select().single();
-                entreprise = newEntreprise;
+                existingEnt = createdEnt;
             }
-            entrepriseId = entreprise.id;
-            customerName = entreprise.nom_entreprise;
+            customerName = existingEnt.nom_entreprise;
         }
 
-        // 3. Prepare Details
-        let details = {};
-        if (formData.type === 'COMMANDE_MENU') {
-            details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity };
-        } else if (formData.type === 'RESERVATION_SERVICE') {
-            details = { serviceType: formData.serviceType, heure: formData.heure, numberOfPeople: formData.numberOfPeople, ville: formData.ville, customerMessage: formData.customerMessage };
-        } else if (formData.type === 'COMMANDE_SPECIALE') {
-            details = { items: JSON.parse(formData.details || '[]'), total: formData.total, deliveryCity: formData.deliveryCity };
+        // 3. Price Calculation (The missing part!)
+        let total = formData.total ? parseFloat(formData.total) : null;
+        
+        if (!total && formData.type === 'COMMANDE_MENU') {
+            const { data: settings } = await supabase.from('settings').select('key, value');
+            const prices = {};
+            settings?.forEach(s => prices[s.key] = parseFloat(s.value));
+            
+            const formula = formData.formulaName || "";
+            if (formula.includes('Découverte')) total = prices['menu_decouverte_price'];
+            else if (formula.includes('Standard')) total = prices['menu_standard_price'];
+            else if (formula.includes('Confort')) total = prices['menu_confort_price'];
+            else if (formula.includes('Duo')) total = prices['menu_duo_price'];
         }
 
-        // 4. Create Demand with "Intention WhatsApp" status
-        // WE DO NOT SEND EMAIL TO CLIENT HERE AS REQUESTED.
-        const { data: newDemande, error: demandeError } = await supabase
+        // 4. Create Demand
+        const { data: newDemande, error: demErr } = await supabase
             .from('demandes')
             .insert({
                 client_id: clientId,
-                entreprise_id: entrepriseId,
                 type: formData.type,
-                status: 'Intention WhatsApp', 
+                status: 'Intention WhatsApp',
                 request_date: formData.requestDate,
-                details_json: details,
-                total_amount: formData.total || null,
+                details_json: formData.type === 'COMMANDE_MENU' 
+                    ? { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity }
+                    : { ...formData.details },
+                total_amount: total,
                 business_unit: 'cuisine'
             })
-            .select()
-            .single();
+            .select().single();
 
-        if (demandeError) throw demandeError;
+        if (demErr) throw demErr;
 
-        // 5. Notification Email Admin (Keeping it for records)
-        const resendApiKey = context.env.RESEND_API_KEY;
-        if (resendApiKey) {
-            try {
-                const resend = new Resend(resendApiKey);
-                await resend.emails.send({
-                    from: 'reservation@asiacuisine.re',
-                    to: 'contact@asiacuisine.re',
-                    subject: `[INTENTION] Nouvelle demande (${formData.type})`,
-                    html: `<h1>Intention de commande reçue</h1>
-                           <p><strong>Client:</strong> ${customerName}</p>
-                           <p><strong>Type:</strong> ${formData.type}</p>
-                           <p><strong>Date:</strong> ${new Date(formData.requestDate).toLocaleDateString('fr-FR')}</p>
-                           <p><em>Note: Cette demande est en attente du message WhatsApp client.</em></p>`
-                });
-            } catch (e) { console.error("Admin Email Error:", e); }
-        }
-
-        // 6. WhatsApp Alert to Admin
-        const waMessage = `🛎️ *INTENTION DE COMMANDE*\n\n👤 *Client:* ${customerName}\n📅 *Date:* ${new Date(formData.requestDate).toLocaleDateString('fr-FR')}\n📍 *Ville:* ${details.ville || details.deliveryCity || '—'}\n\n_Le client a été redirigé vers son WhatsApp pour vous envoyer son message._`;
+        // 5. Notifications
+        const waMessage = `🛎️ *INTENTION DE COMMANDE*\n\n👤 *Client:* ${customerName}\n💰 *Montant:* ${total ? total+'€' : 'À fixer'}\n📍 *Ville:* ${formData.deliveryCity || '—'}\n\n_Le client vous contacte sur WhatsApp._`;
         await sendWhatsAppAdminAlert(context, waMessage);
 
-        return new Response(JSON.stringify({ message: 'Draft created', id: newDemande.id }), { 
-            status: 201,
-            headers: { 'Content-Type': 'application/json' }
+        return new Response(JSON.stringify({ message: 'Success', id: newDemande.id }), { 
+            status: 201, 
+            headers: { 'Content-Type': 'application/json' } 
         });
 
     } catch (error) {
-        console.error('[FATAL ERROR]', error);
-        return new Response(JSON.stringify({ error: 'Internal Error', details: error.message }), { status: 500 });
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
 }

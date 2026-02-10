@@ -10,28 +10,17 @@ const announcementStyles = {
 async function fetchAndDisplayAnnouncement() {
     try {
         const response = await fetch('/get-announcement');
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-
-        const announcementContainer = document.getElementById('announcement-container');
-        const announcementContent = document.getElementById('announcement-content');
-
-        const isAnnouncementEnabled = data.announcement_enabled === true || data.announcement_enabled === 'true';
-        if (isAnnouncementEnabled && data.announcement_message) {
-            const htmlContent = marked.parse(data.announcement_message);
+        const container = document.getElementById('announcement-container');
+        const content = document.getElementById('announcement-content');
+        if ((data.announcement_enabled === true || data.announcement_enabled === 'true') && data.announcement_message) {
             const style = announcementStyles[data.announcement_style] || announcementStyles.info;
-            announcementContent.innerHTML = htmlContent;
-            announcementContent.style.padding = '1.5rem';
-            announcementContent.style.backgroundColor = style.background;
-            announcementContent.style.borderLeft = `4px solid ${style.border}`;
-            announcementContent.style.borderRadius = '4px';
-            announcementContainer.style.display = 'block';
-        } else {
-            announcementContainer.style.display = 'none';
-        }
-    } catch (error) {
-        console.error('Error fetching announcement:', error);
-    }
+            content.innerHTML = marked.parse(data.announcement_message);
+            content.style.backgroundColor = style.background;
+            content.style.borderLeft = `4px solid ${style.border}`;
+            container.style.display = 'block';
+        } else container.style.display = 'none';
+    } catch (e) {}
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -56,399 +45,210 @@ document.addEventListener('DOMContentLoaded', () => {
         return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateString;
     }
 
+    // --- NEW: SIMPLE & ROBUST WHATSAPP LINK ---
     function openWhatsAppLink(phone, message) {
-        const encodedMessage = encodeURIComponent(message.trim());
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-        if (isIOS || isSafari) {
-            const appLink = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
-            const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;        
-            window.location.href = appLink;
-            setTimeout(() => { window.location.href = webLink; }, 1000);
-        } else {
-            window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-        }
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message.trim())}`;
+        window.location.assign(url); // More reliable than window.open on mobile browsers
     }
 
     function renderSpecialOffer(offer) {
         const container = document.getElementById('special-offer-container');
         if (!container) return;
-
-        const dishOptions = offer.dishes.map((dish, index) =>
-            `<option value="${index}">${dish.name}</option>`
-        ).join('');
-
-        const firstDish = offer.dishes[0] || {};
-        const portionOptions = `
-            <option value="1">${firstDish.label1 || 'Option 1'}</option>
-            <option value="2">${firstDish.label2 || 'Option 2'}</option>
-        `;
-
+        const dishOptions = offer.dishes.map((dish, index) => `<option value="${index}">${dish.name}</option>`).join('');
         container.innerHTML = `
-            <h2>${offer.title || i18next.t('menu.special_offer_title')}</h2>
-            <p class="subtitle">${offer.description || ''}</p>
+            <h2>${offer.title || 'Offre Spéciale'}</h2>
             <div id="special-offer-creator" style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
                 <div class="form-grid" style="align-items: flex-end;">
                     <div class="form-group">
-                        <label for="special-offer-dish">${i18next.t('menu.special_offer_dish')}</label>   
-                        <select id="special-offer-dish" class="form-control">${dishOptions}</select>      
+                        <label>Plat</label><select id="special-offer-dish" class="form-control">${dishOptions}</select>
                     </div>
                     <div class="form-group">
-                        <label for="special-offer-portion">${i18next.t('menu.special_offer_portion')}</label>
-                        <select id="special-offer-portion" class="form-control">${portionOptions}</select>
+                        <label>Portion</label><select id="special-offer-portion" class="form-control"></select>
                     </div>
                     <div class="form-group">
-                        <label for="special-offer-quantity">${i18next.t('menu.special_offer_quantity')}</label>
-                        <input type="number" id="special-offer-quantity" class="form-control" value="1" min="1" style="width: 80px;">
+                        <label>Qté</label><input type="number" id="special-offer-quantity" class="form-control" value="1" min="1">
                     </div>
                     <div class="form-group">
-                        <button type="button" id="add-to-cart-btn" class="cta-button" style="padding: 10px 15px; font-size: 14px;">${i18next.t('menu.special_offer_add')}</button>
+                        <button type="button" id="add-to-cart-btn" class="cta-button">Ajouter</button>
                     </div>
                 </div>
             </div>
             <div id="special-offer-summary"></div>
         `;
-
-        document.getElementById('special-offer-dish').addEventListener('change', (e) => {
-            const dish = offer.dishes[e.target.value];
-            document.getElementById('special-offer-portion').innerHTML = `
-                <option value="1">${dish.label1 || 'Option 1'}</option>
-                <option value="2">${dish.label2 || 'Option 2'}</option>
-            `;
+        const updatePortions = (idx) => {
+            const d = offer.dishes[idx];
+            document.getElementById('special-offer-portion').innerHTML = `<option value="1">${d.label1}</option><option value="2">${d.label2}</option>`;
+        };
+        document.getElementById('special-offer-dish').addEventListener('change', (e) => updatePortions(e.target.value));
+        updatePortions(0);
+        document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+            const idx = document.getElementById('special-offer-dish').value;
+            const port = document.getElementById('special-offer-portion').value;
+            const q = parseInt(document.getElementById('special-offer-quantity').value);
+            const d = offer.dishes[idx];
+            cart.push({ name: d.name, portion: port === '1' ? d.label1 : d.label2, quantity: q, price: parseFloat(port === '1' ? d.price1 : d.price2) });
+            renderCart();
         });
-        document.getElementById('add-to-cart-btn').addEventListener('click', handleAddToCart);
-    }
-
-    function handleAddToCart() {
-        const dishIndex = document.getElementById('special-offer-dish').value;
-        const portionOption = document.getElementById('special-offer-portion').value;
-        const quantity = parseInt(document.getElementById('special-offer-quantity').value, 10);
-        if (!dishIndex || !portionOption || !quantity || quantity < 1) {
-            alert('Veuillez sélectionner un plat, une portion et une quantité valide.');
-            return;
-        }
-        const dish = specialOfferDetails.dishes[dishIndex];
-        const price = portionOption === '1' ? dish.price1 : dish.price2;
-        const portionLabel = portionOption === '1' ? dish.label1 : dish.label2;
-        cart.push({ name: dish.name, portion: portionLabel, quantity: quantity, price: parseFloat(price) });
-        renderCart();
     }
 
     function renderCart() {
-        const summaryContainer = document.getElementById('special-offer-summary');
-        if (!summaryContainer) return;
-        if (cart.length === 0) { summaryContainer.innerHTML = ''; return; }
+        const container = document.getElementById('special-offer-summary');
+        if (!container) return;
+        if (cart.length === 0) { container.innerHTML = ''; return; }
         let total = 0;
-        const itemsHTML = cart.map((item, index) => {
-            const itemTotal = item.quantity * item.price;
-            total += itemTotal;
-            return `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
-                    <span>${item.quantity} x ${item.name} (${item.portion})</span>
-                    <span style="display: flex; align-items: center;">
-                        <span style="margin-right: 20px;">${itemTotal.toFixed(2)} €</span>
-                        <button type="button" class="remove-from-cart-btn" data-index="${index}" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">&times;</button>
-                    </span>
-                </div>
-            `;
+        const html = cart.map((item, i) => {
+            total += item.quantity * item.price;
+            return `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+                <span>${item.quantity} x ${item.name}</span>
+                <span>${(item.quantity * item.price).toFixed(2)}€ <button type="button" onclick="window.removeFromCart(${i})" style="color:red; background:none; border:none; cursor:pointer;">&times;</button></span>
+            </div>`;
         }).join('');
-        summaryContainer.innerHTML = `
-            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">${i18next.t('menu.cart_title')}</h3>       
-            ${itemsHTML}
-            <div style="text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 1rem;">      
-                ${i18next.t('menu.cart_total')} ${total.toFixed(2)} €
-            </div>
-        `;
-        document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                cart.splice(parseInt(e.target.dataset.index, 10), 1);
-                renderCart();
-            });
-        });
+        container.innerHTML = `<h3 style="margin-top:2rem;">Votre Panier</h3>${html}<div style="text-align:right; font-weight:bold; margin-top:1rem;">Total: ${total.toFixed(2)}€</div>`;
     }
-
-    async function fetchUnavailableDates() {
-        try {
-            const response = await fetch('/disponibilites?service_type=COMMANDE_MENU');
-            if (!response.ok) throw new Error(`Network response error`);
-            unavailableDates = await response.json() || [];
-            if (!isOverrideEnabled) renderCalendar();
-        } catch (error) { if (!isOverrideEnabled) renderCalendar(); }
-    }
+    window.removeFromCart = (i) => { cart.splice(i, 1); renderCart(); };
 
     function renderCalendar(monthOffset = 0) {
         if (isOverrideEnabled) return;
         calendarContainer.innerHTML = '';
-        const calendarDiv = document.createElement('div');
-        calendarDiv.className = 'calendar';
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        const displayDate = new Date();
-        displayDate.setMonth(displayDate.getMonth() + monthOffset);
-        displayDate.setDate(1);
-        const month = displayDate.getMonth();
-        const year = displayDate.getFullYear();
+        const today = new Date(); today.setHours(0,0,0,0);
+        const displayDate = new Date(); displayDate.setMonth(displayDate.getMonth() + monthOffset); displayDate.setDate(1);
+        const month = displayDate.getMonth(); const year = displayDate.getFullYear();
         const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-        const dayNames = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
-
-        // --- RESTRICTION LOGIC: ONE WEEK ONLY (MON-SAT) ---
-        const allowedStart = new Date(today);
-        const dayOfToday = today.getDay();
-        if (dayOfToday === 0) { // Sunday: allow next week
-            allowedStart.setDate(today.getDate() + 1);
-        } else { // Mon-Sat: allow current week
-            allowedStart.setDate(today.getDate() - (dayOfToday - 1));
-        }
-        allowedStart.setHours(0,0,0,0);
-        const allowedEnd = new Date(allowedStart);
-        allowedEnd.setDate(allowedStart.getDate() + 5); // Saturday
-        allowedEnd.setHours(23,59,59,999);
-
-        const calendarHeaderDiv = document.createElement('div');
-        calendarHeaderDiv.className = 'calendar-header';
-        const prevMonthButton = document.createElement('button');
-        prevMonthButton.innerHTML = '&lt;';
-        prevMonthButton.addEventListener('click', () => renderCalendar(monthOffset - 1));
-        const monthYearH2 = document.createElement('h2');
-        monthYearH2.textContent = `${monthNames[month]} ${year}`;
-        const nextMonthButton = document.createElement('button');
-        nextMonthButton.innerHTML = '&gt;';
-        nextMonthButton.addEventListener('click', () => renderCalendar(monthOffset + 1));
-        calendarHeaderDiv.appendChild(prevMonthButton);
-        calendarHeaderDiv.appendChild(monthYearH2);
-        calendarHeaderDiv.appendChild(nextMonthButton);
-        calendarDiv.appendChild(calendarHeaderDiv);
-
-        const calendarGrid = document.createElement('div');
-        calendarGrid.className = 'calendar-grid';
-        dayNames.forEach(day => {
-            const dayHeader = document.createElement('div');
-            dayHeader.className = 'calendar-day-header';
-            dayHeader.textContent = day;
-            calendarGrid.appendChild(dayHeader);
-        });
-
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        for (let i = 0; i < firstDayOfMonth; i++) calendarGrid.appendChild(document.createElement('div'));
         
-        for (let i = 1; i <= daysInMonth; i++) {
-            const date = new Date(year, month, i);
-            date.setHours(0, 0, 0, 0);
-            const dateStringDDMMYYYY = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-day current-month';
-            dayElement.textContent = i;
+        // Allowed week window
+        const allowedStart = new Date(today);
+        if (today.getDay() === 0) allowedStart.setDate(today.getDate() + 1);
+        else allowedStart.setDate(today.getDate() - (today.getDay() - 1));
+        allowedStart.setHours(0,0,0,0);
+        const allowedEnd = new Date(allowedStart); allowedEnd.setDate(allowedStart.getDate() + 5);
 
-            let isDisabled = false;
-            if (date < allowedStart || date > allowedEnd || date.getDay() === 0) isDisabled = true;
-            if (unavailableDates.includes(dateStringDDMMYYYY)) isDisabled = true;
+        const header = document.createElement('div');
+        header.className = 'calendar-header';
+        header.innerHTML = `<button type="button" onclick="window.changeMonth(-1)">&lt;</button><h2>${monthNames[month]} ${year}</h2><button type="button" onclick="window.changeMonth(1)">&gt;</button>`;
+        const grid = document.createElement('div');
+        grid.className = 'calendar-grid';
+        ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"].forEach(d => grid.innerHTML += `<div class="calendar-day-header">${d}</div>`);
+        
+        for (let i = 0; i < new Date(year, month, 1).getDay(); i++) grid.appendChild(document.createElement('div'));
+        for (let i = 1; i <= new Date(year, month + 1, 0).getDate(); i++) {
+            const d = new Date(year, month, i); d.setHours(0,0,0,0);
+            const ds = `${String(i).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
+            const el = document.createElement('div'); el.className = 'calendar-day current-month'; el.textContent = i;
+            let disabled = (d < allowedStart || d > allowedEnd || d.getDay() === 0 || unavailableDates.includes(ds));
+            
+            const cutoff = new Date(d); cutoff.setDate(d.getDate() - orderCutoffDays); cutoff.setHours(orderCutoffHour,0,0,0);
+            if (new Date() > cutoff) disabled = true;
 
-            const cutOffDate = new Date(date);
-            cutOffDate.setDate(date.getDate() - orderCutoffDays);
-            cutOffDate.setHours(orderCutoffHour, 0, 0, 0);
-            if (new Date() > cutOffDate) isDisabled = true;
-
-            if (isDisabled) {
-                dayElement.classList.add('disabled');
-            } else {
-                dayElement.classList.add('available');
-                dayElement.addEventListener('click', () => {
-                    selectedDate = date;
-                    jourInput.value = dateStringDDMMYYYY;
-                    selectedDateDisplay.value = formatDateForDisplay(date);
-                    renderCalendar(monthOffset);
-                });
+            if (disabled) el.classList.add('disabled');
+            else {
+                el.classList.add('available');
+                el.addEventListener('click', () => { selectedDate = d; jourInput.value = ds; selectedDateDisplay.value = d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'}); renderCalendar(monthOffset); });
             }
-            if (selectedDate && dateStringDDMMYYYY === `${String(selectedDate.getDate()).padStart(2, '0')}/${String(selectedDate.getMonth() + 1).padStart(2, '0')}/${selectedDate.getFullYear()}`) dayElement.classList.add('selected');
-            if (dateStringDDMMYYYY === `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`) dayElement.classList.add('today');
-            calendarGrid.appendChild(dayElement);
+            if (selectedDate && d.getTime() === selectedDate.getTime()) el.classList.add('selected');
+            grid.appendChild(el);
         }
-        calendarDiv.appendChild(calendarGrid);
-        calendarContainer.appendChild(calendarDiv);
+        calendarContainer.appendChild(header); calendarContainer.appendChild(grid);
     }
-
-    function formatDateForDisplay(date) {
-        return date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    }
+    window.changeMonth = (o) => { renderCalendar(o); };
 
     async function fetchMenuContent() {
         try {
             const response = await fetch('/get-menus');
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-
             orderCutoffDays = data.order_cutoff_days || 2;
             orderCutoffHour = data.order_cutoff_hour || 11;
-
-            const menuOverrideMessage = document.getElementById('menu-override-message');
-            const formulaCardsContainer = document.getElementById('formula-cards-container');
-            const whatsappButtonContainer = document.getElementById('whatsapp-button-container');
-            const weeklyMenuContent = document.getElementById('weekly-menu-content');
-            const infoSection = document.querySelector('.info-section');
-            const specialOfferContainer = document.getElementById('special-offer-container');
-            const cgvContainer = document.getElementById('cgv-checkbox-container');
-
-            if (menuOverrideMessage) menuOverrideMessage.style.display = 'none';
-            if (specialOfferContainer) specialOfferContainer.style.display = 'none';
-            if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
-            if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
-            if (cgvContainer) cgvContainer.style.display = '';
-
-            const isMenuOverrideEnabled = data.menu_override_enabled === true || data.menu_override_enabled === 'true';
-            if (isMenuOverrideEnabled && data.menu_override_message) {
+            
+            if (data.menu_override_enabled === true || data.menu_override_enabled === 'true') {
                 isOverrideEnabled = true;
-                if (menuOverrideMessage) {
-                    menuOverrideMessage.querySelector('p').innerHTML = marked.parse(data.menu_override_message);
-                    menuOverrideMessage.style.display = 'block';
-                }
-                if (weeklyMenuContent) weeklyMenuContent.style.display = 'none';
-                if (formulaCardsContainer) formulaCardsContainer.style.display = 'none';
-                if (whatsappButtonContainer) whatsappButtonContainer.style.display = 'none';
-                if (infoSection) infoSection.style.display = 'none';
-                if (calendarContainer) calendarContainer.style.display = 'none';
-                if (form) { form.style.pointerEvents = 'none'; form.style.opacity = '0.5'; }
+                document.getElementById('menu-override-message').style.display = 'block';
+                document.getElementById('menu-override-message').querySelector('p').innerHTML = marked.parse(data.menu_override_message);
+                document.querySelectorAll('.weekly-menu-content, #formula-cards-container, #calendar-container, #whatsapp-button-container').forEach(e => e.style.display = 'none');
                 return;
             }
 
-            isOverrideEnabled = false;
-            const isSpecialOfferEnabled = data.special_offer_enabled === true || data.special_offer_enabled === 'true';
-            isSpecialOfferActive = isSpecialOfferEnabled && data.special_offer_details;
-            if (isSpecialOfferActive) {
-                try {
-                    specialOfferDetails = JSON.parse(data.special_offer_details);
-                    if (specialOfferContainer) {
-                        specialOfferContainer.style.display = 'block';
-                        renderSpecialOffer(specialOfferDetails);
-                    }
-                } catch (e) { isSpecialOfferActive = false; }
-            }
-
-            const isSpecialOfferDisablesFormulas = data.special_offer_disables_formulas === true || data.special_offer_disables_formulas === 'true';
-            const shouldDisableRegularContent = isSpecialOfferActive && isSpecialOfferDisablesFormulas;   
+            // Fill prices and content
+            const fill = (id, val) => { if(document.getElementById(id)) document.getElementById(id).textContent = val; };
+            fill('price-decouverte', `${data.menu_decouverte_price}€`);
+            fill('price-standard', `${data.menu_standard_price}€`);
+            fill('price-confort', `${data.menu_confort_price}€`);
+            fill('price-duo', `${data.menu_duo_price}€`);
             
-            if (!shouldDisableRegularContent) {
-                if (weeklyMenuContent) weeklyMenuContent.style.display = '';
-                if (formulaCardsContainer) formulaCardsContainer.style.display = '';
-                if (whatsappButtonContainer) whatsappButtonContainer.style.display = '';
-                if (infoSection) infoSection.style.display = '';
-                if (calendarContainer) calendarContainer.style.display = '';
-                if (form) { form.style.pointerEvents = ''; form.style.opacity = ''; }
-
-                // Fill menu content
-                const updateContent = (id, content, label) => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        if (content && content.trim()) {
-                            el.innerHTML = `<strong>${label}</strong> ${marked.parse(content)}`;
-                            el.style.display = '';
-                        } else el.style.display = 'none';
-                    }
-                };
-                updateContent('content-decouverte', data.menu_decouverte, i18next.t('menu.formula_discovery_label'));
-                updateContent('content-standard', data.menu_standard, i18next.t('menu.formula_standard_label'));
-                updateContent('content-confort', data.menu_confort, i18next.t('menu.formula_comfort_label'));
-                updateContent('content-duo', data.menu_duo, i18next.t('menu.formula_duo_label'));
-
-                // Update prices
-                if (data.menu_decouverte_price) {
-                    document.getElementById('price-decouverte').textContent = `${data.menu_decouverte_price} €`;
-                    document.getElementById('formule-decouverte').value = `Formule Découverte (${data.menu_decouverte_price}€)`;
-                }
-                if (data.menu_standard_price) {
-                    document.getElementById('price-standard').textContent = `${data.menu_standard_price} €`;
-                    document.getElementById('formule-standard').value = `Formule Standard (${data.menu_standard_price}€)`;
-                }
-                if (data.menu_confort_price) {
-                    document.getElementById('price-confort').textContent = `${data.menu_confort_price} €`;
-                    document.getElementById('formule-confort').value = `Formule Confort (${data.menu_confort_price}€)`;
-                }
-                if (data.menu_duo_price) {
-                    document.getElementById('price-duo').textContent = `${data.menu_duo_price} €`;      
-                    document.getElementById('formule-duo').value = `Option Duo (${data.menu_duo_price}€)`;
-                }
+            if(data.special_offer_enabled === 'true') {
+                specialOfferDetails = JSON.parse(data.special_offer_details);
+                document.getElementById('special-offer-container').style.display = 'block';
+                renderSpecialOffer(specialOfferDetails);
             }
-            fetchUnavailableDates();
-        } catch (error) { console.error(error); }
+            
+            renderCalendar();
+        } catch (e) {}
     }
 
     fetchAndDisplayAnnouncement();
     fetchMenuContent();
 
-    cards.forEach(card => {
-        card.addEventListener('click', () => {
-            if (isOverrideEnabled) return;
-            if (cart.length > 0) {
-                if (confirm("Votre panier d'offre spéciale sera vidé. Continuer ?")) { cart = []; renderCart(); } else return;
-            }
-            cards.forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            card.querySelector('input[type="radio"]').checked = true;
-        });
-    });
+    cards.forEach(card => card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        card.querySelector('input[type="radio"]').checked = true;
+    }));
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        if (isOverrideEnabled) return alert('Les commandes sont suspendues.');
         const submitBtn = form.querySelector('.cta-button');
-        const originalText = submitBtn.textContent;
-        if (typeof grecaptcha === 'undefined') return alert('Erreur de sécurité. Rafraîchissez.');
-        
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
+
         if (!data.jour || !data.email) return alert('Veuillez remplir vos informations.');
 
-        let message;
-        let orderPayload;
+        let orderPayload = {
+            type: cart.length > 0 ? 'COMMANDE_SPECIALE' : 'COMMANDE_MENU',
+            customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email },
+            deliveryCity: data.livraison,
+            requestDate: convertDateToISO(data.jour),
+            customerType: 'Particulier'
+        };
 
         if (cart.length > 0) {
-            let total = 0;
-            const orderDetails = cart.map(item => {
-                total += item.quantity * item.price;
-                return `- ${item.quantity} x ${item.name} (${item.portion}) : ${(item.quantity * item.price).toFixed(2)} €`;
-            }).join('\n');
-            message = `Bonjour, intention de commande pour l'offre "${specialOfferDetails.title}" :\n\n${orderDetails}\n\nTotal : ${total.toFixed(2)} €\n\n- Client : ${data.nom} ${data.prenom || ''}\n- Livraison : ${data.livraison}, le ${data.jour}`;
-            orderPayload = { type: 'COMMANDE_SPECIALE', details: JSON.stringify(cart), total: total.toFixed(2), customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email }, deliveryCity: data.livraison, requestDate: convertDateToISO(data.jour), recaptchaToken: null, customerType: 'Particulier' };
+            orderPayload.details = JSON.stringify(cart);
+            orderPayload.total = cart.reduce((acc, item) => acc + (item.quantity * item.price), 0);
         } else {
-            if (!data.formule) return alert('Choisissez une formule.');
-            let formulaOption = null;
-            if (data.formule.includes("Standard")) {
-                const opt = document.querySelector('input[name="optionStandard"]:checked');
-                if (!opt) return alert('Choisissez une option.');
-                formulaOption = opt.value;
-            } else if (data.formule.includes("Confort")) {
-                const opt = document.querySelector('input[name="optionConfort"]:checked');
-                if (!opt) return alert('Choisissez une option.');
-                formulaOption = opt.value;
-            } else if (data.formule.includes("Duo")) {
-                const opt = document.querySelector('input[name="optionDuo"]:checked');      
-                if (!opt) return alert("Choisissez une option.");
-                formulaOption = opt.value;
-            }
-            const details = data.formule + (formulaOption ? ` (${formulaOption})` : '');
-            message = `Bonjour, intention de commande :\n\n- Formule : ${details}\n- Client : ${data.nom} ${data.prenom || ''}\n- Livraison : ${data.livraison}, le ${data.jour}`;
-            orderPayload = { type: 'COMMANDE_MENU', customerType: 'Particulier', formulaName: data.formule, formulaOption: formulaOption, customer: { firstName: data.prenom, lastName: data.nom, phone: data.telephone, email: data.email }, deliveryCity: data.livraison, requestDate: convertDateToISO(data.jour), recaptchaToken: null };
+            if (!data.formule) return alert('Veuillez choisir une formule.');
+            orderPayload.formulaName = data.formule;
+            // Get selected sub-option if exists
+            const opt = document.querySelector('input[name^="option"]:checked');
+            orderPayload.formulaOption = opt ? opt.value : null;
         }
 
-        submitBtn.textContent = 'Vérification...';
+        submitBtn.textContent = 'Envoi...';
         submitBtn.disabled = true;
 
-        grecaptcha.ready(function() {
-            grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async function(token) {
-                orderPayload.recaptchaToken = token;
-                submitBtn.textContent = 'Envoi...';
-                try {
-                    const res = await fetch('/create-request/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderPayload) });
-                    if (!res.ok) throw new Error('Erreur serveur.');
-                    openWhatsAppLink('33767644714', message);
-                    form.reset();
-                    cards.forEach(c => c.classList.remove('selected'));
-                    cart = []; renderCart();
-                } catch (error) { alert(error.message); } 
-                finally { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+        try {
+            const token = await grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'});
+            orderPayload.recaptchaToken = token;
+
+            // --- FIXED: USE ABSOLUTE PATH WITHOUT TRAILING SLASH ---
+            const res = await fetch('/create-request', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(orderPayload) 
             });
-        });
+
+            if (!res.ok) throw new Error('Erreur lors de la sauvegarde.');
+
+            // Success: Open WhatsApp
+            const waMessage = `Bonjour, intention de commande pour le ${data.jour} :\n- Client : ${data.nom}\n- Formule : ${data.formule || 'Spéciale'}`;
+            openWhatsAppLink('33767644714', waMessage);
+            
+            form.reset();
+            cards.forEach(c => c.classList.remove('selected'));
+            cart = []; renderCart();
+
+        } catch (error) {
+            alert("Une erreur est survenue. Veuillez réessayer.");
+            console.error(error);
+        } finally {
+            submitBtn.textContent = 'Valider ma commande';
+            submitBtn.disabled = false;
+        }
     });
 });
