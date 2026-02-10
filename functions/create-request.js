@@ -89,6 +89,17 @@ export async function onRequest(context) {
         }
 
         // 4. Create Demand
+        let details = {};
+        if (formData.type === 'COMMANDE_MENU') {
+            details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity };
+        } else if (formData.details) {
+            try {
+                details = typeof formData.details === 'string' ? JSON.parse(formData.details) : formData.details;
+            } catch (e) {
+                details = { raw: formData.details };
+            }
+        }
+
         const { data: newDemande, error: demErr } = await supabase
             .from('demandes')
             .insert({
@@ -96,9 +107,7 @@ export async function onRequest(context) {
                 type: formData.type,
                 status: 'Intention WhatsApp',
                 request_date: formData.requestDate,
-                details_json: formData.type === 'COMMANDE_MENU' 
-                    ? { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity }
-                    : { ...formData.details },
+                details_json: details,
                 total_amount: total,
                 business_unit: 'cuisine'
             })

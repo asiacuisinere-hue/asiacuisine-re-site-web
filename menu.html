@@ -13,11 +13,9 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://asiacuisine.re/menu.html">
 
-    <link rel="stylesheet" href="style.css?v=1.2">
+    <link rel="stylesheet" href="style.css?v=1.3">
     <link rel="icon" type="image/png" href="favicon.png">
-    <!-- Google reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render=6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq" async defer></script>
-    <!-- Juste avant la fermeture de </head> -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -35,14 +33,14 @@
     <main>
         <div class="menu-container">
             <h1 data-i18n="menu.title">Menus de la semaine</h1>
-                    <p class="subtitle" data-i18n="menu.subtitle">Choisissez votre formule et remplissez vos informations pour commander.</p>
+            <p class="subtitle" data-i18n="menu.subtitle">Choisissez votre formule et remplissez vos informations pour commander.</p>
             
-                    <!-- NOUVELLE ZONE D'ANNONCE -->
-                    <div id="announcement-container" style="display: none; margin-bottom: 2.5rem;">
-                        <div id="announcement-content"></div>
-                    </div>
-            
-                    <div id="weekly-menu-content" style="margin-bottom: 2.5rem; padding: 1.5rem; background: #f9f9f9; border-left: 4px solid #d4af37; border-radius: 4px;">                <h2 style="text-align: left; margin-top: 0; margin-bottom: 1rem;" data-i18n="menu.weekly_content_title">Contenu des formules cette semaine :</h2>
+            <div id="announcement-container" style="display: none; margin-bottom: 2.5rem;">
+                <div id="announcement-content"></div>
+            </div>
+    
+            <div id="weekly-menu-content" style="margin-bottom: 2.5rem; padding: 1.5rem; background: #f9f9f9; border-left: 4px solid #d4af37; border-radius: 4px;">
+                <h2 style="text-align: left; margin-top: 0; margin-bottom: 1rem;" data-i18n="menu.weekly_content_title">Contenu des formules cette semaine :</h2>
                 <p id="content-decouverte" style="margin-bottom: 0.5rem;"></p>
                 <p id="content-standard" style="margin-bottom: 0.5rem;"></p>
                 <p id="content-confort" style="margin-bottom: 0.5rem;"></p>
@@ -54,62 +52,83 @@
             </div>
 
             <form id="whatsapp-order-form">
-                <!-- NOUVELLE ZONE POUR L'OFFRE SPÉCIALE -->
-                <div id="special-offer-container" style="display: none; margin-bottom: 2.5rem;">
-                    {/* Le contenu sera généré par menu.js */}
-                </div>
+                <div id="special-offer-container" style="display: none; margin-bottom: 2.5rem;"></div>
 
                 <div id="formula-cards-container">
                     <h2 style="margin-bottom: 1.5rem;">1. Choisissez votre formule</h2>
                     
+                    <!-- FORMULE DÉCOUVERTE -->
                     <div class="formula-card" id="card-decouverte">
-                        <input type="radio" name="formule" value="Formule Découverte (39€)" id="formule-decouverte">
-                        <h3 data-i18n="menu.discovery_title">🔹 Formule Découverte</h3>
-                        <p class="price" id="price-decouverte">39 €</p>
-                        <p data-i18n="menu.discovery_desc">3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous</p>
+                        <label for="formule-decouverte" class="formula-label">
+                            <div class="card-header">
+                                <input type="radio" name="formule" value="Formule Découverte (39€)" id="formule-decouverte">
+                                <span class="custom-radio"></span>
+                                <h3 data-i18n="menu.discovery_title">🔹 Formule Découverte</h3>
+                            </div>
+                            <p class="price" id="price-decouverte">39 €</p>
+                            <p class="desc" data-i18n="menu.discovery_desc">3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous</p>
+                        </label>
                     </div>
 
+                    <!-- FORMULE STANDARD -->
                     <div class="formula-card" id="card-standard">
-                        <input type="radio" name="formule" value="Formule Standard (49€)" id="formule-standard">
-                        <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
-                        <p class="price" id="price-standard">49 €</p>
-                        <p data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
-                        <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                            <label style="display: block; margin-bottom: 0.5rem;">
-                                <input type="radio" name="optionStandard" value="Option A"> Option A
+                        <label for="formule-standard" class="formula-label">
+                            <div class="card-header">
+                                <input type="radio" name="formule" value="Formule Standard (49€)" id="formule-standard">
+                                <span class="custom-radio"></span>
+                                <h3 data-i18n="menu.standard_title">⭐ Formule Standard</h3>
+                            </div>
+                            <p class="price" id="price-standard">49 €</p>
+                            <p class="desc" data-i18n="menu.standard_desc">5 plats du menu de la semaine<br>🚚 Livraison incluse selon votre zone</p>
+                        </label>
+                        <div class="sub-options">
+                            <label class="sub-option-item">
+                                <input type="radio" name="optionStandard" value="Option A"> <span>Option A</span>
                             </label>
-                            <label style="display: block;">
-                                <input type="radio" name="optionStandard" value="Option B"> Option B
+                            <label class="sub-option-item">
+                                <input type="radio" name="optionStandard" value="Option B"> <span>Option B</span>
                             </label>
                         </div>
                     </div>
 
+                    <!-- FORMULE CONFORT -->
                     <div class="formula-card" id="card-confort">
-                        <input type="radio" name="formule" value="Formule Confort (59€)" id="formule-confort">
-                        <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
-                        <p class="price" id="price-confort">59 €</p>
-                        <p data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
-                        <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                            <label style="display: block; margin-bottom: 0.5rem;">
-                                <input type="radio" name="optionConfort" value="Option A"> Option A
+                        <label for="formule-confort" class="formula-label">
+                            <div class="card-header">
+                                <input type="radio" name="formule" value="Formule Confort (59€)" id="formule-confort">
+                                <span class="custom-radio"></span>
+                                <h3 data-i18n="menu.comfort_title">💎 Formule Confort</h3>
+                            </div>
+                            <p class="price" id="price-confort">59 €</p>
+                            <p class="desc" data-i18n="menu.comfort_desc">5 plats du menu de la semaine<br>🏡 Livraison à domicile (zones limitées)</p>
+                        </label>
+                        <div class="sub-options">
+                            <label class="sub-option-item">
+                                <input type="radio" name="optionConfort" value="Option A"> <span>Option A</span>
                             </label>
-                            <label style="display: block;">
-                                <input type="radio" name="optionConfort" value="Option B"> Option B
+                            <label class="sub-option-item">
+                                <input type="radio" name="optionConfort" value="Option B"> <span>Option B</span>
                             </label>
                         </div>
                     </div>
 
+                    <!-- FORMULE DUO -->
                     <div class="formula-card" id="card-duo">
-                        <input type="radio" name="formule" value="Option Duo (94€)" id="formule-duo">
-                        <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
-                        <p class="price" id="price-duo">94 €</p>
-                        <p data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV</p>
-                        <div class="sub-options" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                            <label style="display: block; margin-bottom: 0.5rem;">
-                                <input type="radio" name="optionDuo" value="Option A"> Option A
+                        <label for="formule-duo" class="formula-label">
+                            <div class="card-header">
+                                <input type="radio" name="formule" value="Option Duo (94€)" id="formule-duo">
+                                <span class="custom-radio"></span>
+                                <h3 data-i18n="menu.duo_title">👥 Option Duo</h3>
+                            </div>
+                            <p class="price" id="price-duo">94 €</p>
+                            <p class="desc" data-i18n="menu.duo_desc"><strong>2 Formules Standard identiques</strong><br>Livraison commune au même point de RDV</p>
+                        </label>
+                        <div class="sub-options">
+                            <label class="sub-option-item">
+                                <input type="radio" name="optionDuo" value="Option A"> <span>Option A</span>
                             </label>
-                            <label style="display: block;">
-                                <input type="radio" name="optionDuo" value="Option B"> Option B
+                            <label class="sub-option-item">
+                                <input type="radio" name="optionDuo" value="Option B"> <span>Option B</span>
                             </label>
                         </div>
                     </div>
@@ -118,54 +137,30 @@
                 <div class="info-section">
                     <h2 style="margin-bottom: 1.5rem;" data-i18n="menu.your_info_title">2. Vos informations</h2>
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label for="nom" data-i18n="menu.label_nom">Nom</label>
-                            <input type="text" id="nom" name="nom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="prenom" data-i18n="menu.label_prenom">Prénom</label>
-                            <input type="text" id="prenom" name="prenom" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="telephone" data-i18n="menu.label_phone">Numéro de téléphone</label>
-                            <input type="tel" id="telephone" name="telephone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" data-i18n="menu.label_email">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
+                        <div class="form-group"><label for="nom" data-i18n="menu.label_nom">Nom</label><input type="text" id="nom" name="nom" required></div>
+                        <div class="form-group"><label for="prenom" data-i18n="menu.label_prenom">Prénom</label><input type="text" id="prenom" name="prenom" required></div>
+                        <div class="form-group"><label for="telephone" data-i18n="menu.label_phone">Téléphone</label><input type="tel" id="telephone" name="telephone" required></div>
+                        <div class="form-group"><label for="email" data-i18n="menu.label_email">Email</label><input type="email" id="email" name="email" required></div>
                         <div class="form-group">
                             <label for="livraison" data-i18n="menu.label_delivery_city">Ville de livraison</label>
                             <select id="livraison" name="livraison" required>
                                 <option value="" data-i18n="menu.option_select_city">Sélectionnez une ville</option>
-                                <option value="Bras-Panon">Bras-Panon</option>
-                                <option value="Cilaos">Cilaos</option>
-                                <option value="Entre-Deux">Entre-Deux</option>
-                                <option value="L'Étang-Salé">L'Étang-Salé</option>
-                                <option value="La Plaine-des-Palmistes">La Plaine-des-Palmistes</option>
-                                <option value="La Possession">La Possession</option>
-                                <option value="Le Port">Le Port</option>
-                                <option value="Le Tampon">Le Tampon</option>
-                                <option value="Les Avirons">Les Avirons</option>
-                                <option value="Les Trois-Bassins">Les Trois-Bassins</option>
-                                <option value="Petite-Île">Petite-Île</option>
-                                <option value="Saint-André">Saint-André</option>
-                                <option value="Saint-Benoît">Saint-Benoît</option>
-                                <option value="Saint-Denis">Saint-Denis</option>
-                                <option value="Saint-Joseph">Saint-Joseph</option>
-                                <option value="Saint-Leu">Saint-Leu</option>
-                                <option value="Saint-Louis">Saint-Louis</option>
-                                <option value="Saint-Paul">Saint-Paul</option>
-                                <option value="Saint-Philippe">Saint-Philippe</option>
-                                <option value="Saint-Pierre">Saint-Pierre</option>
-                                <option value="Sainte-Marie">Sainte-Marie</option>
-                                <option value="Sainte-Rose">Sainte-Rose</option>
-                                <option value="Sainte-Suzanne">Sainte-Suzanne</option>
-                                <option value="Salazie">Salazie</option>
+                                <option value="Bras-Panon">Bras-Panon</option><option value="Cilaos">Cilaos</option>
+                                <option value="Entre-Deux">Entre-Deux</option><option value="L'Étang-Salé">L'Étang-Salé</option>
+                                <option value="La Plaine-des-Palmistes">La Plaine-des-Palmistes</option><option value="La Possession">La Possession</option>
+                                <option value="Le Port">Le Port</option><option value="Le Tampon">Le Tampon</option>
+                                <option value="Les Avirons">Les Avirons</option><option value="Les Trois-Bassins">Les Trois-Bassins</option>
+                                <option value="Petite-Île">Petite-Île</option><option value="Saint-André">Saint-André</option>
+                                <option value="Saint-Benoît">Saint-Benoît</option><option value="Saint-Denis">Saint-Denis</option>
+                                <option value="Saint-Joseph">Saint-Joseph</option><option value="Saint-Leu">Saint-Leu</option>
+                                <option value="Saint-Louis">Saint-Louis</option><option value="Saint-Paul">Saint-Paul</option>
+                                <option value="Saint-Philippe">Saint-Philippe</option><option value="Saint-Pierre">Saint-Pierre</option>
+                                <option value="Sainte-Marie">Sainte-Marie</option><option value="Sainte-Rose">Sainte-Rose</option>
+                                <option value="Sainte-Suzanne">Sainte-Suzanne</option><option value="Salazie">Salazie</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="selected-date-display" data-i18n="menu.label_delivery_date">Jour de livraison/retrait</label>
+                            <label for="selected-date-display" data-i18n="menu.label_delivery_date">Jour de livraison</label>
                             <input type="text" id="selected-date-display" name="selected-date-display" placeholder="Sélectionnez une date" readonly required>
                             <input type="hidden" id="jour" name="jour">
                             <div id="calendar-container" style="margin-top: 1rem;"></div>
@@ -188,7 +183,7 @@
     <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
     <script src="menu.js" defer></script>
     <script src="script.js" defer></script>
-    <!-- Footer Section -->
+
     <section id="contact" class="footer mt-16">
         <div class="container">
             <div class="footer-content">
@@ -215,7 +210,6 @@
                     <h3>Horaires</h3>
                     <p>Lundi - Samedi : 9h - 20h</p>
                     <p>Dimanche : Sur rendez-vous</p>
-                    <p>Réservation recommandée 48h à l'avance</p>
                 </div>
                 <div class="footer-section">
                     <h3 data-i18n="footer.brokerage_title">Services de courtage</h3>

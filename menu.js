@@ -186,10 +186,33 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAndDisplayAnnouncement();
     fetchMenuContent();
 
-    cards.forEach(card => card.addEventListener('click', () => {
-        cards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        card.querySelector('input[type="radio"]').checked = true;
+    // --- GESTION DES CARTES DE FORMULE ---
+    const updateSelectedCard = () => {
+        cards.forEach(card => {
+            const radio = card.querySelector('input[name="formule"]');
+            if (radio && radio.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+    };
+
+    // Écouter les changements sur tous les radios de formule
+    document.querySelectorAll('input[name="formule"]').forEach(radio => {
+        radio.addEventListener('change', updateSelectedCard);
+    });
+
+    // Optionnel: Garder le clic sur la carte au cas où le label ne couvrirait pas tout
+    cards.forEach(card => card.addEventListener('click', (e) => {
+        // Ne pas déclencher si on clique sur une sous-option
+        if (e.target.closest('.sub-options')) return;
+        
+        const radio = card.querySelector('input[name="formule"]');
+        if (radio) {
+            radio.checked = true;
+            updateSelectedCard();
+        }
     }));
 
     form.addEventListener('submit', async function(e) {
