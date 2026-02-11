@@ -28,6 +28,15 @@ async function sendWhatsAppAdminAlert(context, message) {
   } catch (err) { console.error(err); }
 }
 
+const getDeliveryFee = (city) => {
+    if (!city) return 0;
+    const c = city.toLowerCase();
+    if (c.includes('denis')) return 8;
+    if (c.includes('marie')) return 6;
+    if (c.includes('andré') || c.includes('panon')) return 4;
+    return 0;
+};
+
 export async function onRequest(context) {
     if (context.request.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
 
@@ -73,19 +82,27 @@ export async function onRequest(context) {
             customerName = existingEnt.nom_entreprise;
         }
 
-        // 3. Price Calculation (The missing part!)
+        // 3. Price Calculation
         let total = formData.total ? parseFloat(formData.total) : null;
+        const deliveryFee = getDeliveryFee(formData.deliveryCity);
         
-        if (!total && formData.type === 'COMMANDE_MENU') {
+        if (formData.type === 'COMMANDE_MENU') {
             const { data: settings } = await supabase.from('settings').select('key, value');
             const prices = {};
             settings?.forEach(s => prices[s.key] = parseFloat(s.value));
             
             const formula = formData.formulaName || "";
-            if (formula.includes('Découverte')) total = prices['menu_decouverte_price'];
-            else if (formula.includes('Standard')) total = prices['menu_standard_price'];
-            else if (formula.includes('Confort')) total = prices['menu_confort_price'];
-            else if (formula.includes('Duo')) total = prices['menu_duo_price'];
+            let basePrice = 0;
+            if (formula.includes('Découverte')) basePrice = prices['menu_decouverte_price'];
+            else if (formula.includes('Standard')) basePrice = prices['menu_standard_price'];
+            else if (formula.includes('Confort')) basePrice = prices['menu_confort_price'];
+            else if (formula.includes('Duo')) basePrice = prices['menu_duo_price'];
+
+            if (basePrice > 0) {
+                total = basePrice; // No auto-delivery fee for menus, handled manually by Chef if needed
+            }
+        } else if (formData.type === 'COMMANDE_SPECIALE' && total > 0) {
+            total += deliveryFee;
         }
 
         // 4. Create Demand

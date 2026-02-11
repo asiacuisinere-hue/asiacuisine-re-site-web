@@ -14,6 +14,7 @@
       "back_to_home": "← Retour à l'accueil",
       "title": "Menus de la semaine",
       "subtitle": "Choisissez votre formule et remplissez vos informations pour commander.",
+      "choose_formula_title": "1. Choisissez votre formule",
       "discovery_title": "🔹 Formule Découverte",
       "discovery_desc": "3 plats du menu de la semaine<br>📍 Retrait sur point de rendez-vous",
       "standard_title": "⭐ Formule Standard",
@@ -40,9 +41,35 @@
       "label_prenom": "Prénom",
       "label_phone": "Numéro de téléphone",
       "label_email": "Email",
+      "label_price": "Prix",
       "label_delivery_city": "Ville de livraison",
       "option_select_city": "Sélectionnez une ville",
-      "label_delivery_date": "Jour de livraison/retrait"
+      "label_delivery_date": "Jour de livraison/retrait",
+      "reception_mode_title": "3. Mode de réception",
+      "retrait_label": "Retrait",
+      "retrait_desc": "Gratuit - Jean Perrin, Saint-André",
+      "livraison_label": "Livraison",
+      "livraison_desc": "Dès 4€",
+      "zone_andre_bras": "Saint-André / Bras-Panon (Centre-ville)",
+      "zone_marie": "Sainte-Marie (Beauséjour et Centre-Ville)",
+      "zone_denis": "Saint-Denis (Sainte-Clotilde/Chaudron)",
+      "cart_subtotal": "Sous-total :",
+      "cart_mode": "Mode :",
+      "cart_total_label": "TOTAL :",
+      "from_price": "dès",
+      "alert_fill_info": "Veuillez remplir vos informations.",
+      "alert_choose_formula": "Veuillez choisir une formule.",
+      "sending": "Envoi...",
+      "error_occurred": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "calendar": {
+      "days": {
+        "sun": "Dim", "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu", "fri": "Ven", "sat": "Sam"
+      },
+      "months": {
+        "jan": "Janvier", "feb": "Février", "mar": "Mars", "apr": "Avril", "may": "Mai", "jun": "Juin",
+        "jul": "Juillet", "aug": "Août", "sep": "Septembre", "oct": "Octobre", "nov": "Novembre", "dec": "Décembre"
+      }
     },
     "hero": {
       "title": "Asiacuisine.re",

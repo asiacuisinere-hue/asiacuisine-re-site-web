@@ -14,6 +14,7 @@
       "back_to_home": "← Back to Home",
       "title": "Weekly Menus",
       "subtitle": "Choose your formula and fill in your information to order.",
+      "choose_formula_title": "1. Choose your formula",
       "discovery_title": "🔹 Discovery Formula",
       "discovery_desc": "3 dishes from the weekly menu<br>📍 Pickup at a meeting point",
       "standard_title": "⭐ Standard Formula",
@@ -40,9 +41,35 @@
       "label_prenom": "First Name",
       "label_phone": "Phone Number",
       "label_email": "Email",
+      "label_price": "Price",
       "label_delivery_city": "Delivery City",
       "option_select_city": "Select a city",
-      "label_delivery_date": "Delivery/Pickup Date"
+      "label_delivery_date": "Delivery/Pickup Date",
+      "reception_mode_title": "3. Reception Mode",
+      "retrait_label": "Pickup",
+      "retrait_desc": "Free - Jean Perrin, Saint-André",
+      "livraison_label": "Delivery",
+      "livraison_desc": "From 4€",
+      "zone_andre_bras": "Saint-André / Bras-Panon (City Center)",
+      "zone_marie": "Sainte-Marie (Beauséjour and City Center)",
+      "zone_denis": "Saint-Denis (Sainte-Clotilde/Chaudron)",
+      "cart_subtotal": "Subtotal:",
+      "cart_mode": "Mode:",
+      "cart_total_label": "TOTAL:",
+      "from_price": "from",
+      "alert_fill_info": "Please fill in your information.",
+      "alert_choose_formula": "Please choose a formula.",
+      "sending": "Sending...",
+      "error_occurred": "An error occurred. Please try again."
+    },
+    "calendar": {
+      "days": {
+        "sun": "Sun", "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat"
+      },
+      "months": {
+        "jan": "January", "feb": "February", "mar": "March", "apr": "April", "may": "May", "jun": "June",
+        "jul": "July", "aug": "August", "sep": "September", "oct": "October", "nov": "November", "dec": "December"
+      }
     },
     "hero": {
       "title": "Asiacuisine.re",

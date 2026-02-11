@@ -14,6 +14,7 @@
       "back_to_home": "← 返回首页",
       "title": "每周菜单 – 家常亚洲美食",
       "subtitle": "我们每周为您准备精选的的家常亚洲佳肴 🍱<br>根据当季新鲜食材精心搭配 🌿，让您吃得健康又满足。",
+      "choose_formula_title": "1. 选择您的套餐",
       "discovery_title": "🔹 体验套餐",
       "discovery_desc": "每周菜单中的3道菜<br>📍 在指定地点取餐",
       "discovery_note": "适合第一次尝试我们的口味，或偶尔想偷个懒的时候享用。",
@@ -50,9 +51,35 @@
       "label_prenom": "名字",
       "label_phone": "电话号码",
       "label_email": "电子邮件",
+      "label_price": "价格",
       "label_delivery_city": "送货城市",
       "option_select_city": "选择城市",
-      "label_delivery_date": "送货/取货日期"
+      "label_delivery_date": "送货/取货日期",
+      "reception_mode_title": "3. 领取方式",
+      "retrait_label": "自取",
+      "retrait_desc": "免费 - 圣安德烈 (Saint-André)",
+      "livraison_label": "配送",
+      "livraison_desc": "4€起",
+      "zone_andre_bras": "圣安德烈 / 布拉斯帕农 (市中心)",
+      "zone_marie": "圣玛丽 (市中心及Beauséjour)",
+      "zone_denis": "圣丹尼斯 (Sainte-Clotilde/Chaudron)",
+      "cart_subtotal": "小计：",
+      "cart_mode": "方式：",
+      "cart_total_label": "总计：",
+      "from_price": "起",
+      "alert_fill_info": "请填写您的信息。",
+      "alert_choose_formula": "请选择一个套餐。",
+      "sending": "正在发送...",
+      "error_occurred": "发生错误，请重试。"
+    },
+    "calendar": {
+      "days": {
+        "sun": "日", "mon": "一", "tue": "二", "wed": "三", "thu": "四", "fri": "五", "sat": "六"
+      },
+      "months": {
+        "jan": "一月", "feb": "二月", "mar": "三月", "apr": "四月", "may": "五月", "jun": "六月",
+        "jul": "七月", "aug": "八月", "sep": "九月", "oct": "十月", "nov": "十一月", "dec": "十二月"
+      }
     },
     "hero": {
       "title": "Asiacuisine.re",
