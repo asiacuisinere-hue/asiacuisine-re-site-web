@@ -1,1 +1,1 @@
-⚠️Repères avant mise à jour de la barre latérale pour business double
+⚠️Repères avant mise à jour de l'interface menu de la semaine en "Mobile-first"
