@@ -42,6 +42,7 @@ export async function onRequest(context) {
 
     try {
         const data = await context.request.json();
+        console.log("PAYLOAD_DEBUG:", JSON.stringify(data));
         const { recaptchaToken, ...formData } = data; 
 
         // 1. reCAPTCHA
@@ -109,6 +110,18 @@ export async function onRequest(context) {
         let details = {};
         if (formData.type === 'COMMANDE_MENU') {
             details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity };
+        } else if (formData.type === 'RESERVATION_SERVICE') {
+            details = {
+                serviceType: formData.serviceType,
+                heure: formData.heure,
+                numberOfPeople: formData.numberOfPeople,
+                ville: formData.ville,
+                budget: formData.budget,
+                allergies: formData.allergies,
+                customerMessage: formData.customerMessage,
+                customerType: formData.customerType
+            };
+            console.log("DETAILS_DEBUG:", JSON.stringify(details));
         } else if (formData.details) {
             try {
                 details = typeof formData.details === 'string' ? JSON.parse(formData.details) : formData.details;
