@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarContainer = document.getElementById('calendar-container');
     const stickyTotalEl = document.getElementById('sticky-total');
 
-    // Stepper elements
     const steps = document.querySelectorAll('.step-section');
     const progressSteps = document.querySelectorAll('.stepper-progress .step');
     const btnPrev = document.getElementById('prev-step');
@@ -54,25 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const getLangText = (dataField) => {
         if (!dataField) return "";
         let obj = dataField;
-        
-        // Si c'est déjà un objet (cas idéal)
+        if (typeof obj === 'string' && obj.trim().startsWith('{')) {
+            try { obj = JSON.parse(obj); } catch(e) { return dataField; }
+        }
         if (typeof obj === 'object' && obj !== null) {
             const lang = (typeof i18next !== 'undefined' && i18next.language) || 'fr';
             return obj[lang] || obj['fr'] || Object.values(obj).find(v => v !== "") || "";
         }
-
-        // Si c'est une chaîne de caractères (qui peut contenir du JSON)
-        if (typeof dataField === 'string') {
-            if (dataField.trim().startsWith('{')) {
-                try { 
-                    const parsed = JSON.parse(dataField);
-                    const lang = (typeof i18next !== 'undefined' && i18next.language) || 'fr';
-                    return parsed[lang] || parsed['fr'] || Object.values(parsed).find(v => v !== "") || dataField;
-                } catch(e) { return dataField; }
-            }
-            return dataField;
-        }
-        
         return String(dataField);
     };
 
@@ -304,13 +291,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const fillContent = (id, labelKey, val) => {
-                const el = document.getElementById(id); const translatedVal = getLangText(val);
+                const el = document.getElementById(id);
+                const translatedVal = getLangText(val);
                 if(el && translatedVal && translatedVal.trim() !== "") { el.innerHTML = `<strong>${t(labelKey)}</strong> ${marked.parseInline(translatedVal)}`; el.style.display = 'block'; } else if(el) { el.style.display = 'none'; }
             };
+
+            const standardContent = data.menu_standard;
             fillContent('content-decouverte', 'menu.formula_discovery_label', data.menu_decouverte);      
-            fillContent('content-standard', 'menu.formula_standard_label', data.menu_standard);
-            fillContent('content-confort', 'menu.formula_comfort_label', data.menu_confort);
-            fillContent('content-duo', 'menu.formula_duo_label', data.menu_duo);
+            fillContent('content-standard', 'menu.formula_standard_label', standardContent);
+            const confortVal = getLangText(data.menu_confort) === "" ? standardContent : data.menu_confort;
+            const duoVal = getLangText(data.menu_duo) === "" ? standardContent : data.menu_duo;
+            fillContent('content-confort', 'menu.formula_comfort_label', confortVal);
+            fillContent('content-duo', 'menu.formula_duo_label', duoVal);
 
             const d1 = document.getElementById('price-decouverte'); if(d1) d1.textContent = `${data.menu_decouverte_price}€`;
             const d2 = document.getElementById('price-standard'); if(d2) d2.textContent = `${data.menu_standard_price}€`;
@@ -329,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAndDisplayAnnouncement();
     fetchMenuContent();
 
-    // --- BOTTOM SHEET LOGIC ---
     const sheet = document.getElementById('bottom-sheet');
     const sheetBody = document.getElementById('sheet-body');
     const sheetTitle = document.getElementById('sheet-title');
