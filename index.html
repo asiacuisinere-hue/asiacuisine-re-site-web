@@ -449,6 +449,10 @@
                     <label for="message" data-i18n="booking.message_label">Message (préférences ou demandes spéciales) :</label>
                     <textarea id="message" name="message" rows="3" data-i18n="[placeholder]booking.message_placeholder" placeholder="Avez-vous des préférences pour le menu, ou une demande particulière pour l'organisation ?"></textarea>
                 </div>
+                <div class="validation-notice-box" style="margin-top: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px dashed #f59e0b; text-align: center;">
+                    <p style="font-size: 0.85rem; font-weight: 600; color: #f59e0b;" data-i18n="booking.validation_notice">Validation au plus tard le lendemain avant 7h00. Confirmation envoyée par e-mail.</p>
+                </div>
+
                 <div class="checkbox-group" style="display: flex; align-items: flex-start; gap: 10px; margin-top: 1rem; margin-bottom: 2rem;">
                     <input type="checkbox" id="cgv_acceptance" name="cgv_acceptance" required style="width: 20px !important; height: 20px !important; flex-shrink: 0; margin-top: 3px; cursor: pointer;">
                     <label for="cgv_acceptance" style="font-size: 0.9rem; line-height: 1.4; color: #fff; cursor: pointer;" data-i18n="booking.cgv_checkbox_label">J'ai lu et j'accepte les Conditions Générales de Vente (CGV)</label>
@@ -533,6 +537,23 @@
             <span id="welcome-popup-close" class="popup-close">&times;</span>
             <h2>Asiacuisine</h2>
             <p id="welcome-popup-message">De l'Asie à la bouche</p>
+        </div>
+    </div>
+
+    <!-- CGV MODAL -->
+    <div id="cgv-modal" class="app-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="cgv.title">Conditions Générales de Vente</h2>
+                <button type="button" class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="cgv-content-body">
+                <p>Chargement des CGV...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-submit close-modal">Fermer</button>
+            </div>
         </div>
     </div>
 </body>

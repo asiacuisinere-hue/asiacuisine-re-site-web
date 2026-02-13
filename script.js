@@ -87,6 +87,43 @@ function initializePageContent() {
     }
     initializeSubscriptionForm();
     initializeWhatsAppLinks();
+    initializeCgvModal();
+}
+
+function initializeCgvModal() {
+    const modal = document.getElementById('cgv-modal');
+    const cgvBody = document.getElementById('cgv-content-body');
+    const closeBtns = document.querySelectorAll('.close-modal');
+
+    // On utilise la délégation d'événement car le lien est injecté par i18next
+    document.body.addEventListener('click', (e) => {
+        if (e.target && e.target.id === 'open-cgv-link') {
+            e.preventDefault();
+            if (modal) modal.classList.add('is-visible');
+            
+            if (cgvBody && (cgvBody.innerHTML.includes("Chargement") || cgvBody.innerHTML === "")) {
+                fetch('cgv.html')
+                    .then(res => res.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const mainContent = doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body;
+                        cgvBody.innerHTML = mainContent.innerHTML;
+                        
+                        if (window.i18next && typeof i18next.t === 'function') {
+                            cgvBody.querySelectorAll('[data-i18n]').forEach(el => {
+                                const key = el.getAttribute('data-i18n');
+                                if (key) el.innerHTML = i18next.t(key);
+                            });
+                        }
+                    })
+                    .catch(() => { cgvBody.innerHTML = "Erreur lors du chargement des CGV."; });
+            }
+        }
+    });
+
+    closeBtns.forEach(btn => btn.addEventListener('click', () => modal?.classList.remove('is-visible')));
+    if (modal) modal.querySelector('.modal-overlay').addEventListener('click', () => modal.classList.remove('is-visible'));
 }
 
 function handleResponsiveLayout() {

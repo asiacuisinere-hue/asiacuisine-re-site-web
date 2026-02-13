@@ -12,7 +12,9 @@
     "menu": {
       "page_title": "每周菜单 - Asiacuisine.re",
       "back_to_home": "← 返回首页",
-      "title": "每周菜单 – 家常亚洲美食",
+      "title": "您的选择",
+      "universe_weekly": "每周菜单",
+      "universe_special": "特别优惠",
       "subtitle": "我们每周为您准备精选的的家常亚洲佳肴 🍱<br>根据当季新鲜食材精心搭配 🌿，让您吃得健康又满足。",
       "choose_formula_title": "1. 选择您的套餐",
       "discovery_title": "🔹 体验套餐",
@@ -34,6 +36,9 @@
       "to_order_title": "📱 如何订餐：",
       "to_order_desc": "只需发送“每周菜单”私信，即可获取可选菜品并预订您的套餐。",
       "to_order_cta": "私信订餐",
+      "bar_total_label": "预计总额",
+      "btn_prev": "返回",
+      "btn_next": "下一步",
       "weekly_content_title": "本周菜单内容：",
       "formula_discovery_label": "体验套餐:",
       "formula_standard_label": "标准套餐:",
@@ -67,6 +72,7 @@
       "cart_mode": "方式：",
       "cart_total_label": "总计：",
       "from_price": "起",
+      "validation_notice": "最迟在次日早上 7:00 前确认。付款链接将通过 WhatsApp 发送。",
       "alert_fill_info": "请填写您的信息。",
       "alert_choose_formula": "请选择一个套餐。",
       "sending": "正在发送...",
@@ -174,7 +180,9 @@
       "contact_name_label": "联系人姓名：",
       "contact_email_label": "联系人邮箱：",
       "contact_phone_label": "联系人电话：",
-      "cgv_checkbox_label": "我已阅读并接受 <a href='cgv.html' target='_blank' style='text-decoration: underline; color: inherit;'>销售条款 (CGV)</a>"
+      "cgv_checkbox_label": "我接受 <span id='open-cgv-link' style='text-decoration: underline; cursor: pointer;'>销售条款 (CGV)</span>",
+      "view_cgv": "查看销售条款 (CGV)",
+      "validation_notice": "最迟在次日早上 7:00 前确认。确认信将通过电子邮件发送。"
     },
     "footer": {
       "contact_title": "联系方式",

@@ -75,9 +75,13 @@ serve(async (req) => {
 
         if (!amount || amount <= 0) throw new Error("Montant invalide.");
 
+        // --- EXPIRES IN 3 HOURS (High Urgency) ---
+        const expiresAt = Math.floor(Date.now() / 1000) + (3 * 60 * 60);
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             customer_email: customerEmail || undefined,
+            expires_at: expiresAt,
             line_items: [{
                 price_data: {
                     currency: 'eur',

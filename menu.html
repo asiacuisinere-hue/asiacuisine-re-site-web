@@ -52,11 +52,11 @@
                     <div class="universe-selector">
                         <button type="button" class="universe-btn active" data-universe="weekly">
                             <span class="uni-icon">🍱</span>
-                            <span class="uni-label">Menus Semaine</span>
+                            <span class="uni-label" data-i18n="menu.universe_weekly">Menus Semaine</span>
                         </button>
                         <button type="button" class="universe-btn" data-universe="special" id="universe-btn-special" style="display: none;">
                             <span class="uni-icon">✨</span>
-                            <span class="uni-label">Offre Spéciale</span>
+                            <span class="uni-label" data-i18n="menu.universe_special">Offre Spéciale</span>
                         </button>
                     </div>
 
@@ -187,21 +187,61 @@
                         <div class="form-group"><label for="telephone" data-i18n="menu.label_phone">Téléphone</label><input type="tel" id="telephone" name="telephone" class="app-input" required></div>
                         <div class="form-group"><label for="email" data-i18n="menu.label_email">Email</label><input type="email" id="email" name="email" class="app-input" required></div>
                     </div>
+                    <div class="validation-notice-box" style="margin-top: 2rem; padding: 1rem; background: #fffbeb; border-radius: 12px; border: 1px dashed #f59e0b; text-align: center;">
+                        <p style="font-size: 0.85rem; font-weight: 600; color: #b45309;" data-i18n="menu.validation_notice">Validation au plus tard le lendemain avant 7h00. Lien de paiement envoyé par WhatsApp.</p>
+                    </div>
+
                     <div id="cgv-checkbox-container" class="checkbox-group-app">
                         <input type="checkbox" id="cgv_acceptance" name="cgv_acceptance" required>
-                        <label for="cgv_acceptance" data-i18n="booking.cgv_checkbox_label">J'accepte les Conditions Générales de Vente (CGV)</label>
+                        <label for="cgv_acceptance">
+                            <span data-i18n="booking.cgv_checkbox_label">J'accepte les Conditions Générales de Vente (CGV)</span>
+                            <button type="button" id="open-cgv-modal" class="text-link-btn" data-i18n="booking.view_cgv">Voir les CGV</button>
+                        </label>
                     </div>
                 </section>
+
+                <!-- BOTTOM SHEET -->
+                <div id="bottom-sheet" class="bottom-sheet">
+                    <div class="sheet-overlay"></div>
+                    <div class="sheet-content">
+                        <div class="sheet-handle"></div>
+                        <div class="sheet-header">
+                            <h3 id="sheet-title">Options</h3>
+                            <button type="button" class="sheet-close">&times;</button>
+                        </div>
+                        <div id="sheet-body" class="sheet-body">
+                            <!-- Contenu dynamique -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CGV MODAL -->
+                <div id="cgv-modal" class="app-modal">
+                    <div class="modal-overlay"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Conditions Générales de Vente</h2>
+                            <button type="button" class="close-modal">&times;</button>
+                        </div>
+                        <div class="modal-body" id="cgv-content-body">
+                            <!-- Contenu chargé dynamiquement -->
+                            <p>Chargement des CGV...</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-submit close-modal">Fermer</button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- STICKY BOTTOM BAR -->
                 <div class="sticky-bottom-bar">
                     <div class="bar-info">
-                        <span class="bar-label">Total estimé</span>
+                        <span class="bar-label" data-i18n="menu.bar_total_label">Total estimé</span>
                         <span class="bar-total" id="sticky-total">0.00€</span>
                     </div>
                     <div class="bar-actions">
-                        <button type="button" id="prev-step" class="btn-prev" style="display: none;">Retour</button>
-                        <button type="button" id="next-step" class="btn-next">Suivant</button>
+                        <button type="button" id="prev-step" class="btn-prev" style="display: none;" data-i18n="menu.btn_prev">Retour</button>
+                        <button type="button" id="next-step" class="btn-next" data-i18n="menu.btn_next">Suivant</button>
                         <button type="submit" id="submit-order" class="btn-submit" style="display: none;" data-i18n="menu.to_order_cta">Commander</button>
                     </div>
                 </div>
@@ -217,12 +257,12 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Contact</h3>
+                    <h3 data-i18n="footer.contact_title">Contact</h3>
                     <p><a data-phone="33767644714" class="contact-link-with-icon js-whatsapp-link" title="WhatsApp"><img src="assets/images/logos/Digital_Glyph_Green.svg" alt="WhatsApp Logo" class="contact-icon"><span>WhatsApp</span></a></p>
                     <p>✉️ <a href="mailto:contact@asiacuisine.re">contact@asiacuisine.re</a></p>
                 </div>
                 <div class="footer-section">
-                    <h3>Suivez-moi</h3>
+                    <h3 data-i18n="footer.social_title">Suivez-moi</h3>
                     <div class="footer-social-links">
                         <a href="https://www.facebook.com/profile.php?id=100090025515349" target="_blank" rel="noopener noreferrer"><img src="assets/images/logos/Facebook_Logo_Primary.png" alt="Facebook Logo" class="footer-social-icon"></a>
                         <a href="https://www.instagram.com/asiacuisine.re/" target="_blank" rel="noopener noreferrer"><img src="assets/images/logos/Instagram_Glyph_Gradient.svg" alt="Instagram Logo" class="footer-social-icon"></a>
@@ -230,7 +270,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Asiacuisine.re - <a href="legal.html" target="_blank">Mentions Légales</a> | <a href="cgv.html" target="_blank">CGV</a></p>
+                <p>&copy; 2025 Asiacuisine.re - <a href="legal.html" target="_blank" data-i18n="footer.legal_link">Mentions Légales</a> | <a href="cgv.html" target="_blank">CGV</a></p>
             </div>
         </div>
     </section>

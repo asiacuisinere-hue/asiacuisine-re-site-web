@@ -12,7 +12,9 @@
     "menu": {
       "page_title": "Menus de la Semaine - Asiacuisine.re",
       "back_to_home": "← Retour à l'accueil",
-      "title": "Menus de la semaine",
+      "title": "Votre sélection",
+      "universe_weekly": "Menus Semaine",
+      "universe_special": "Offre Spéciale",
       "subtitle": "Choisissez votre formule et remplissez vos informations pour commander.",
       "choose_formula_title": "1. Choisissez votre formule",
       "discovery_title": "🔹 Formule Découverte",
@@ -24,6 +26,9 @@
       "duo_title": "👥 Option Duo",
       "duo_desc": "<strong>2 Formules Standard identiques</strong> (soit 10 plats)<br>Livraison commune au même point de RDV",
       "to_order_cta": "Commander via WhatsApp",
+      "bar_total_label": "Total estimé",
+      "btn_prev": "Retour",
+      "btn_next": "Suivant",
       "weekly_content_title": "Contenu des formules cette semaine :",
       "formula_discovery_label": "Formule Découverte :",
       "formula_standard_label": "Formule Standard :",
@@ -57,6 +62,7 @@
       "cart_mode": "Mode :",
       "cart_total_label": "TOTAL :",
       "from_price": "dès",
+      "validation_notice": "Validation au plus tard le lendemain avant 7h00. Lien de paiement envoyé par WhatsApp.",
       "alert_fill_info": "Veuillez remplir vos informations.",
       "alert_choose_formula": "Veuillez choisir une formule.",
       "sending": "Envoi...",
@@ -164,7 +170,9 @@
       "contact_name_label": "Nom du contact :",
       "contact_email_label": "Email du contact :",
       "contact_phone_label": "Téléphone du contact :",
-      "cgv_checkbox_label": "J'ai lu et j'accepte les <a href='cgv.html' target='_blank' style='text-decoration: underline; color: inherit;'>Conditions Générales de Vente (CGV)</a>"
+      "cgv_checkbox_label": "J'accepte les <span id='open-cgv-link' style='text-decoration: underline; cursor: pointer;'>Conditions Générales de Vente (CGV)</span>",
+      "view_cgv": "Voir les CGV",
+      "validation_notice": "Validation au plus tard le lendemain avant 7h00. Confirmation envoyée par e-mail."
     },
     "footer": {
       "contact_title": "Contact",

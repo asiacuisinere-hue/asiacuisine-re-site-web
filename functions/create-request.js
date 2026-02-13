@@ -66,7 +66,12 @@ export async function onRequest(context) {
             let { data: existing } = await supabase.from('clients').select('*').eq('email', c.email).single();
             if (!existing) {
                 const { data: created } = await supabase.from('clients').insert({
-                    email: c.email, first_name: c.firstName, last_name: c.lastName, phone: c.phone, type: 'Particulier'
+                    email: c.email, 
+                    first_name: c.firstName, 
+                    last_name: c.lastName, 
+                    phone: c.phone, 
+                    type: 'Particulier',
+                    client_id: generateClientId()
                 }).select().single();
                 existing = created;
             }

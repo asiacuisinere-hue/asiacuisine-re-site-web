@@ -12,7 +12,9 @@
     "menu": {
       "page_title": "Weekly Menus - Asiacuisine.re",
       "back_to_home": "← Back to Home",
-      "title": "Weekly Menus",
+      "title": "Your Selection",
+      "universe_weekly": "Weekly Menus",
+      "universe_special": "Special Offer",
       "subtitle": "Choose your formula and fill in your information to order.",
       "choose_formula_title": "1. Choose your formula",
       "discovery_title": "🔹 Discovery Formula",
@@ -24,6 +26,9 @@
       "duo_title": "👥 Duo Option",
       "duo_desc": "<strong>2 identical Standard Formulas</strong> (10 dishes total)<br>Joint delivery to the same meeting point",
       "to_order_cta": "Order via WhatsApp",
+      "bar_total_label": "Estimated total",
+      "btn_prev": "Back",
+      "btn_next": "Next",
       "weekly_content_title": "This week's formula contents:",
       "formula_discovery_label": "Discovery Formula:",
       "formula_standard_label": "Standard Formula:",
@@ -57,6 +62,7 @@
       "cart_mode": "Mode:",
       "cart_total_label": "TOTAL:",
       "from_price": "from",
+      "validation_notice": "Validation by 7:00 AM the next day at the latest. Payment link sent via WhatsApp.",
       "alert_fill_info": "Please fill in your information.",
       "alert_choose_formula": "Please choose a formula.",
       "sending": "Sending...",
@@ -164,7 +170,9 @@
       "contact_name_label": "Contact Name:",
       "contact_email_label": "Contact Email:",
       "contact_phone_label": "Contact Phone:",
-      "cgv_checkbox_label": "I have read and I accept the <a href='cgv.html' target='_blank' style='text-decoration: underline; color: inherit;'>Terms and Conditions (CGV)</a>"
+      "cgv_checkbox_label": "I accept the <span id='open-cgv-link' style='text-decoration: underline; cursor: pointer;'>Terms and Conditions (CGV)</span>",
+      "view_cgv": "See T&Cs",
+      "validation_notice": "Validation by 7:00 AM the next day at the latest. Confirmation sent by email."
     },
     "footer": {
       "contact_title": "Contact",
