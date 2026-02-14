@@ -10,22 +10,20 @@ serve(async (req) => {
     if (req.method === "OPTIONS") {
         return new Response('ok', { headers: corsHeaders });
     }
-    if (req.method !== "POST") {
-        return new Response(JSON.stringify({ error: `Method ${req.method} Not Allowed` }), {
-            status: 405,
-            headers: { ...corsHeaders, 'Allow': 'POST' }
-        });
-    }
 
     try {
-        const { expense_date, description, amount, category, demand_id, business_unit } = await req.json();
+        const body = await req.json();
+        const { expense_date, description, amount, category, demand_id, business_unit, is_recurring, end_date } = body;
 
-        // Validate required fields
-        if (!expense_date || !description || !amount || !category) {
-            return new Response(JSON.stringify({ error: 'Missing required fields (expense_date, description, amount, category)' }), {
-                status: 400,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            });
+        console.log("📥 Dépense reçue:", JSON.stringify(body));
+
+        // Nettoyage strict des données
+        const cleanAmount = parseFloat(amount);
+        const cleanEndDate = (is_recurring && end_date && end_date !== "") ? end_date : null;
+        const cleanDemandId = (demand_id && demand_id !== "") ? demand_id : null;
+
+        if (!expense_date || !description || isNaN(cleanAmount) || !category) {
+            throw new Error('Données obligatoires manquantes ou invalides.');
         }
 
         const supabase = createClient(
@@ -38,16 +36,16 @@ serve(async (req) => {
             .insert([{ 
                 expense_date, 
                 description, 
-                amount, 
+                amount: cleanAmount, 
                 category, 
-                demand_id,
-                business_unit: business_unit || 'cuisine' // Par défaut 'cuisine' si non spécifié
+                demand_id: cleanDemandId,
+                business_unit: business_unit || 'cuisine',
+                is_recurring: is_recurring || false,
+                end_date: cleanEndDate
             }])
             .select();
 
-        if (error) {
-            throw new Error(error.message);
-        }
+        if (error) throw error;
 
         return new Response(JSON.stringify(data), {
             status: 201,
@@ -55,10 +53,9 @@ serve(async (req) => {
         });
 
     } catch (error) {
-        console.error('Error creating expense:', error);
+        console.error('❌ Erreur Critique create-expense:', error.message);
         return new Response(JSON.stringify({
-            error: 'Internal Server Error',
-            details: error.message
+            error: error.message
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 500,

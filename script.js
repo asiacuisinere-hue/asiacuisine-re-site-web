@@ -152,11 +152,28 @@ async function fetchAndInitializeDatepicker() {
     if (!dateInput) return;
     try {
         const response = await fetch('/disponibilites?service_type=RESERVATION_SERVICE');
-        if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
-        const unavailableDates = await response.json() || [];
+        if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);        
+        const data = await response.json();
+        
+        const unavailableDates = data.unavailableDates || [];
+        const s = data.settings || {};
+        
+        // On calcule quels index de jours désactiver (0=Dimanche, 1=Lundi...)
+        const daysOfWeekDisabled = [];
+        if (s.sunday === false) daysOfWeekDisabled.push(0);
+        if (s.monday === false) daysOfWeekDisabled.push(1);
+        if (s.tuesday === false) daysOfWeekDisabled.push(2);
+        if (s.wednesday === false) daysOfWeekDisabled.push(3);
+        if (s.thursday === false) daysOfWeekDisabled.push(4);
+        if (s.friday === false) daysOfWeekDisabled.push(5);
+        if (s.saturday === false) daysOfWeekDisabled.push(6);
+
         new Datepicker(dateInput, {
-            format: 'dd/mm/yyyy', language: 'fr', autohide: true,
+            format: 'dd/mm/yyyy',
+            language: 'fr',
+            autohide: true,
             datesDisabled: unavailableDates,
+            daysOfWeekDisabled: daysOfWeekDisabled,
             minDate: new Date(new Date().setDate(new Date().getDate() + 7)),
             showDaysInNextAndPreviousMonths: false
         });
@@ -166,7 +183,6 @@ async function fetchAndInitializeDatepicker() {
         dateInput.disabled = true;
     }
 }
-
 function initializeServiceMenu() {
     const flippablePages = document.querySelectorAll('.flippable-page');
     let currentFlippedIndex = 0;

@@ -11,64 +11,58 @@ export async function onRequest(context) {
     if (context.request.method === 'OPTIONS') {
         return addCorsHeaders(new Response(null, { status: 204 }));
     }
-    if (context.request.method !== 'GET') {
-        return addCorsHeaders(new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 }));
-    }
 
     try {
         const url = new URL(context.request.url);
-        const serviceType = url.searchParams.get('service_type');
+        const serviceType = url.searchParams.get('service_type') || 'COMMANDE_MENU';
 
-        if (!serviceType) {
-            return addCorsHeaders(new Response(JSON.stringify({ error: 'Missing service_type parameter' }), { status: 400 }));
-        }
-        
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_KEY);
-        const unavailableDates = new Set();
-                const today = new Date();
-                const todayString = today.toISOString().split('T')[0]; // Get 'YYYY-MM-DD' string for today
-        
-                // La seule source d'indisponibilité est maintenant la table 'indisponibilites'
-                const { data: indisponibilites, error: indisponibilitesError } = await supabase
-                    .from('indisponibilites')
-                    .select('*')
-                    .eq('service_type', serviceType);
-        
-                if (indisponibilitesError) throw indisponibilitesError;
-        
-                indisponibilites.forEach(item => {
-                    if (item.date && item.date >= todayString) {
-                        unavailableDates.add(item.date); // Format YYYY-MM-DD
-                    }
-                    else if (item.day_of_week !== null) {
-                        for (let i = 0; i < 365; i++) {
-                            const futureDate = new Date();
-                            futureDate.setDate(today.getDate() + i);
-                            if (futureDate.getDay() === item.day_of_week) {
-                                unavailableDates.add(futureDate.toISOString().split('T')[0]);
-                            }
-                        }
-                    }
-                });
-        // Convertir YYYY-MM-DD en DD/MM/YYYY pour la librairie du calendrier
-        const formattedDates = Array.from(unavailableDates).map(d => {
-            const [year, month, day] = d.split('-');
-            return `${day}/${month}/${year}`;
-        });
-        
-        const sortedUnavailableDates = formattedDates.sort((a, b) => {
-            const [dayA, monthA, yearA] = a.split('/');
-            const [dayB, monthB, yearB] = b.split('/');
-            return new Date(`${yearA}-${monthA}-${dayA}`) - new Date(`${yearB}-${monthB}-${dayB}`);
-        });
+        const today = new Date().toISOString().split('T')[0];
 
-        return addCorsHeaders(new Response(JSON.stringify(sortedUnavailableDates), {
+        // 1. Récupérer TOUTES les règles d'indisponibilité pour ce service spécifique
+        const { data: rules, error: rulesError } = await supabase
+            .from('indisponibilites')
+            .select('*')
+            .eq('service_type', serviceType);
+
+        if (rulesError) throw rulesError;
+
+        // 2. Extraire les jours de la semaine bloqués récursivement (day_of_week : 0=Dim, 1=Lun...)
+        const blockedDays = rules
+            .filter(r => r.day_of_week !== null)
+            .map(r => parseInt(r.day_of_week));
+
+        // 3. Extraire les dates spécifiques bloquées
+        const specificBlockedDates = rules
+            .filter(r => r.date !== null && r.date >= today)
+            .map(r => {
+                const [y, m, d] = r.date.split('-');
+                return `${d}/${m}/${y}`;
+            });
+
+        // 4. Construire l'objet settings pour le site
+        // Un jour est "true" (ouvert) seulement s'il N'EST PAS dans blockedDays
+        const settings = {
+            monday: !blockedDays.includes(1),
+            tuesday: !blockedDays.includes(2),
+            wednesday: !blockedDays.includes(3),
+            thursday: !blockedDays.includes(4),
+            friday: !blockedDays.includes(5),
+            saturday: !blockedDays.includes(6),
+            sunday: !blockedDays.includes(0)
+        };
+
+        console.log(`[DEBUG DISPO] Service: ${serviceType} | Blocked: ${blockedDays} | Settings:`, settings);
+
+        return addCorsHeaders(new Response(JSON.stringify({
+            unavailableDates: specificBlockedDates,
+            settings: settings
+        }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         }));
 
     } catch (error) {
-        console.error('Error in disponibilites function:', error);
-        return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 }));
+        return addCorsHeaders(new Response(JSON.stringify({ error: error.message }), { status: 500 }));
     }
 }
