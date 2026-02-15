@@ -4,27 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approbation de devis – Asiacuisine.re</title>
-    <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        :root { --primary: #d4af37; --success: #28a745; --bg: #fdfcf8; }
-        body { background-color: var(--bg); }
+        :root { --primary: #d4af37; --secondary: #1a1a1a; --success: #28a745; --bg: #fdfcf8; }
+        body { 
+            background-color: var(--bg); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; padding: 0; color: var(--secondary);
+        }
+        .navbar { background: white; padding: 15px; border-bottom: 1px solid #f0eee4; text-align: center; }
+        .navbar img { height: 40px; }
+
+        .container { max-width: 550px; margin: 40px auto; padding: 20px; }
+        
         .quote-card {
             padding: 40px;
             border-radius: 32px;
             background: white;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-            margin-top: 50px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
             text-align: center;
             border: 1px solid #f0eee4;
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
         }
-        .icon { font-size: 50px; margin-bottom: 20px; display: block; }
         
-        .signature-wrapper {
-            margin: 30px 0;
-            text-align: left;
-            display: none;
-        }
+        .icon { font-size: 50px; margin-bottom: 20px; display: block; }
+        h2 { font-weight: 900; margin-bottom: 10px; font-size: 1.8rem; }
+        p { color: #666; line-height: 1.6; }
+
+        .signature-wrapper { margin: 30px 0; text-align: left; display: none; }
         .signature-pad-container {
             border: 2px dashed #e0e0e0;
             border-radius: 16px;
@@ -33,78 +42,60 @@
             margin-top: 10px;
             touch-action: none;
         }
-        canvas { width: 100%; height: 200px; border-radius: 16px; }
+        canvas { width: 100%; height: 200px; border-radius: 16px; cursor: crosshair; }
         .clear-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: #eee;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
+            position: absolute; bottom: 10px; right: 10px;
+            background: #eee; border: none; padding: 5px 15px;
+            border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;
         }
 
         .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-weight: 800; font-size: 13px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; margin-left: 5px; }
-        .app-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #eee; background: #fafafa; font-size: 16px; box-sizing: border-box; font-weight: 600; }
+        .input-group label { display: block; font-weight: 800; font-size: 11px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; }
+        .app-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #eee; background: #fafafa; font-size: 16px; box-sizing: border-box; }
 
         .btn-accept {
-            background-color: var(--secondary);
-            color: white;
-            padding: 18px 50px;
-            border-radius: 16px;
-            font-weight: 900;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background-color: var(--secondary); color: white;
+            padding: 18px; border-radius: 16px; font-weight: 900;
+            font-size: 16px; border: none; cursor: pointer; width: 100%;
+            margin-top: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
-        .btn-accept:hover { transform: translateY(-2px); background: black; }
-        .btn-accept:disabled { background-color: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
-        
+        .btn-accept:hover { background: #000; }
+        .btn-accept:disabled { background: #ccc; cursor: not-allowed; }
+
         #debug-log { 
             position: fixed; bottom: 0; left: 0; right: 0; 
-            background: #1a1a1a; color: #00ff00; font-family: monospace; 
-            font-size: 10px; padding: 10px; max-height: 100px; overflow-y: auto; 
-            z-index: 9999; display: block; opacity: 0.8;
+            background: #000; color: #0f0; font-family: monospace; 
+            font-size: 10px; padding: 10px; z-index: 9999; display: block;
         }
 
-        .loading-dots:after { content: '.'; animation: dots 1.5s steps(5, end) infinite; }
-        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } 80%, 100% { content: ''; } }
+        .spinner { 
+            width: 40px; height: 40px; border: 4px solid #f3f3f3; 
+            border-top: 4px solid var(--primary); border-radius: 50%; 
+            animation: spin 1s linear infinite; margin: 20px auto; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="debug-log">🚀 Debugger prêt...</div>
+    <div id="debug-log">🚀 Prêt...</div>
 
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo"><img src="favicon.png" alt="Asiacuisine.re Logo"></a>
-        </div>
+        <a href="index.html"><img src="favicon.png" alt="Logo"></a>
     </nav>
 
-    <main class="container" style="padding-top: 80px; max-width: 550px; margin: auto;">
-        <div id="main-box" class="quote-card animate-in fade-in">
+    <main class="container">
+        <div id="main-box" class="quote-card">
             
             <div id="fetch-state">
-                <div class="spinner" style="margin: auto; width: 30px; height: 30px; border: 3px solid #eee; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                <p style="margin-top: 20px; font-weight: 700; color: #888;">Chargement de votre devis...</p>
+                <div class="spinner"></div>
+                <p>Chargement de votre devis...</p>
             </div>
 
             <div id="initial-state" style="display: none;">
                 <span class="icon">📝</span>
                 <h2 id="quote-title">Approbation du Devis</h2>
-                <p id="quote-subtitle" style="color: #666; line-height: 1.6; margin-bottom: 30px;">
-                    Veuillez valider les informations ci-dessous pour confirmer votre accord.
-                </p>
+                <p id="quote-subtitle">Veuillez valider les informations pour confirmer votre accord.</p>
 
                 <div id="signature-section" class="signature-wrapper">
                     <div class="input-group">
@@ -112,42 +103,37 @@
                         <input type="text" id="signer_name" class="app-input" placeholder="Prénom et Nom">
                     </div>
                     
-                    <label style="display: block; font-weight: 800; font-size: 13px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; margin-left: 5px;">Votre signature</label>
-                    <div class="signature-pad-container">
-                        <canvas id="signature-pad"></canvas>
-                        <button type="button" class="clear-btn" id="clear-signature">Effacer</button>
+                    <div class="input-group">
+                        <label>Votre signature</label>
+                        <div class="signature-pad-container">
+                            <canvas id="signature-pad"></canvas>
+                            <button type="button" class="clear-btn" id="clear-signature">Effacer</button>
+                        </div>
                     </div>
-                    <p style="font-size: 11px; color: #aaa; margin-top: 10px; font-style: italic;">
-                        En signant ce document, vous reconnaissez avoir pris connaissance et accepté les conditions générales de vente.
-                    </p>
+                    <p style="font-size: 11px; font-style: italic;">En signant, vous acceptez les conditions générales de vente.</p>
                 </div>
 
-                <button id="btn-confirm" class="btn-accept">Confirmer et Accepter</button>
+                <button id="btn-confirm" class="btn-accept">CONFIRMER ET ACCEPTER</button>
             </div>
 
             <div id="loading-state" style="display: none;">
-                <div class="spinner" style="margin: auto; width: 40px; height: 40px; border: 4px solid #eee; border-top-color: var(--success); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                <h2 style="margin-top: 20px;">Validation en cours<span class="loading-dots"></span></h2>
-                <p style="color: #888;">Nous enregistrons votre accord et préparons la facture...</p>
+                <div class="spinner" style="border-top-color: var(--success);"></div>
+                <h2>Validation...</h2>
+                <p>Nous préparons votre facture d'acompte.</p>
             </div>
 
             <div id="success-state" style="display: none;">
                 <span class="icon">✅</span>
                 <h2 style="color: var(--success);">Accord Enregistré !</h2>
-                <p style="color: #555; line-height: 1.6;">
-                    Merci ! Votre devis a été validé avec succès.<br><br>
-                    Le Chef a été prévenu et prépare votre facture. Vous allez recevoir d'ici quelques instants un e-mail contenant le lien de règlement sécurisé.
-                </p>
-                <div style="margin-top: 30px;">
-                    <a href="index.html" class="cta-button" style="background: var(--secondary)">Retourner à l'accueil</a>
-                </div>
+                <p>Merci ! Votre devis a été validé. Vous allez recevoir la facture par e-mail d'ici quelques instants.</p>
+                <a href="index.html" class="btn-accept" style="display:block; text-decoration:none; background: var(--primary)">RETOUR ACCUEIL</a>
             </div>
 
             <div id="error-state" style="display: none;">
                 <span class="icon">⚠️</span>
-                <h2 style="color: #dc3545;">Oups !</h2>
-                <p id="error-msg" style="color: #666; margin-bottom: 30px;"></p>
-                <a href="index.html" style="color: var(--primary); font-weight: 900; text-decoration: none;">Retourner à l'accueil</a>
+                <h2 style="color: #dc3545;">Erreur</h2>
+                <p id="error-msg"></p>
+                <a href="index.html" style="color: var(--primary); font-weight: 900; text-decoration:none;">Retour Accueil</a>
             </div>
         </div>
     </main>
@@ -163,88 +149,62 @@
         let quoteData = null;
 
         function log(msg) {
-            console.log(msg);
-            const el = document.getElementById('debug-log');
-            if(el) el.innerHTML += "<br>> " + msg;
+            document.getElementById('debug-log').innerHTML += " | " + msg;
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            log("DOM Chargé.");
+            log("DOM");
             const urlParams = new URLSearchParams(window.location.search);
             const quoteId = urlParams.get('id');
             const btn = document.getElementById('btn-confirm');
 
             if (!quoteId) {
-                log("ERREUR: ID Manquant dans l'URL.");
                 showState('error-state');
-                document.getElementById('error-msg').textContent = "Lien de devis invalide.";
+                document.getElementById('error-msg').textContent = "ID Manquant.";
                 return;
             }
 
             try {
-                log("Initialisation Supabase...");
                 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                
-                log("Appel Supabase pour Devis: " + quoteId);
-                const { data: quote, error: quoteError } = await supabaseClient
-                    .from('quotes')
-                    .select('*')
-                    .eq('id', quoteId)
-                    .single();
+                log("Fetch...");
+                const { data: quote, error: quoteError } = await supabaseClient.from('quotes').select('*').eq('id', quoteId).single();
 
-                if (quoteError) {
-                    log("ERREUR SUPABASE (Devis): " + JSON.stringify(quoteError));
-                    throw new Error("Impossible de charger le devis. (" + quoteError.message + ")");
-                }
+                if (quoteError) throw new Error(quoteError.message);
                 
-                log("Devis chargé avec succès.");
                 quoteData = quote;
-                
-                if (quoteData.status === 'accepted') {
-                    showState('success-state');
-                    return;
-                }
+                if (quoteData.status === 'accepted') { showState('success-state'); return; }
 
-                // 2. Chercher le nom du client
-                log("Récupération du nom client...");
                 let customerName = "Client";
                 if (quoteData.client_id) {
-                    const { data: c, error: cErr } = await supabaseClient.from('clients').select('first_name, last_name').eq('id', quoteData.client_id).single();
+                    const { data: c } = await supabaseClient.from('clients').select('first_name, last_name').eq('id', quoteData.client_id).single();
                     if (c) customerName = `${c.first_name} ${c.last_name}`;
-                    if (cErr) log("Note: Erreur nom client particulier: " + cErr.message);
                 } else if (quoteData.entreprise_id) {
-                    const { data: e, error: eErr } = await supabaseClient.from('entreprises').select('nom_entreprise').eq('id', quoteData.entreprise_id).single();
+                    const { data: e } = await supabaseClient.from('entreprises').select('nom_entreprise').eq('id', quoteData.entreprise_id).single();
                     if (e) customerName = e.nom_entreprise;
-                    if (eErr) log("Note: Erreur nom entreprise: " + eErr.message);
                 }
                 
                 document.getElementById('quote-title').textContent = `Devis pour ${customerName}`;
                 
-                // 3. Gérer la signature
                 if (quoteData.requires_signature) {
-                    log("Signature requise détectée.");
+                    log("Sign Req");
                     requiresSignature = true;
                     document.getElementById('signature-section').style.display = 'block';
                     const canvas = document.getElementById('signature-pad');
-                    signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)' });
+                    signaturePad = new SignaturePad(canvas);
                     
-                    function resizeCanvas() {
-                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                        canvas.width = canvas.offsetWidth * ratio;
-                        canvas.height = canvas.offsetHeight * ratio;
-                        canvas.getContext("2d").scale(ratio, ratio);
-                        signaturePad.clear();
-                    }
-                    window.addEventListener("resize", resizeCanvas);
-                    resizeCanvas();
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.offsetWidth * ratio;
+                    canvas.height = canvas.offsetHeight * ratio;
+                    canvas.getContext("2d").scale(ratio, ratio);
+                    
                     document.getElementById('clear-signature').addEventListener('click', () => signaturePad.clear());
                 }
 
-                log("Affichage de l'état initial.");
                 showState('initial-state');
+                log("Ready");
 
             } catch (err) {
-                log("FATAL ERROR: " + err.message);
+                log("Err: " + err.message);
                 showState('error-state');
                 document.getElementById('error-msg').textContent = err.message;
             }
@@ -255,8 +215,8 @@
 
                 if (requiresSignature) {
                     signerName = document.getElementById('signer_name').value.trim();
-                    if (!signerName) { alert("Veuillez saisir votre nom complet."); return; }
-                    if (signaturePad.isEmpty()) { alert("Veuillez signer le document."); return; }
+                    if (!signerName) { alert("Veuillez saisir votre nom."); return; }
+                    if (signaturePad.isEmpty()) { alert("Veuillez signer."); return; }
                     signatureImage = signaturePad.toDataURL();
                 }
 
@@ -264,33 +224,17 @@
                 
                 try {
                     let ip = "0.0.0.0";
-                    try {
-                        const ipRes = await fetch('https://api.ipify.org?format=json');
-                        const ipData = await ipRes.json();
-                        ip = ipData.ip;
-                    } catch(e) {}
+                    try { const ipRes = await fetch('https://api.ipify.org?format=json'); const ipData = await ipRes.json(); ip = ipData.ip; } catch(e) {}
 
-                    log("Envoi de l'acceptation au serveur...");
                     const response = await fetch(`${SUPABASE_URL}/functions/v1/accept-quote`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            quoteId: quoteId,
-                            signature_image: signatureImage,
-                            signer_name: signerName,
-                            ip: ip
-                        })
+                        body: JSON.stringify({ quoteId, signature_image: signatureImage, signer_name: signerName, ip })
                     });
 
-                    const result = await response.json();
-                    if (response.ok) {
-                        log("Acceptation réussie !");
-                        showState('success-state');
-                    } else {
-                        throw new Error(result.error || "Une erreur est survenue.");
-                    }
+                    if (response.ok) showState('success-state');
+                    else throw new Error("Erreur serveur");
                 } catch (err) {
-                    log("ERREUR ENVOI: " + err.message);
                     showState('error-state');
                     document.getElementById('error-msg').textContent = err.message;
                 }
@@ -298,13 +242,11 @@
         });
 
         function showState(id) {
-            log("Changement d'état vers: " + id);
             ['fetch-state', 'initial-state', 'loading-state', 'success-state', 'error-state'].forEach(s => {
                 const el = document.getElementById(s);
                 if(el) el.style.display = (s === id ? 'block' : 'none');
             });
         }
     </script>
-    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
 </body>
 </html>
