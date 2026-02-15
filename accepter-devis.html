@@ -70,11 +70,20 @@
         .btn-accept:hover { transform: translateY(-2px); background: black; }
         .btn-accept:disabled { background-color: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
         
+        #debug-log { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: #1a1a1a; color: #00ff00; font-family: monospace; 
+            font-size: 10px; padding: 10px; max-height: 100px; overflow-y: auto; 
+            z-index: 9999; display: block; opacity: 0.8;
+        }
+
         .loading-dots:after { content: '.'; animation: dots 1.5s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } 80%, 100% { content: ''; } }
     </style>
 </head>
 <body>
+
+    <div id="debug-log">🚀 Debugger prêt...</div>
 
     <nav class="navbar">
         <div class="nav-container">
@@ -153,46 +162,72 @@
         let requiresSignature = false;
         let quoteData = null;
 
+        function log(msg) {
+            console.log(msg);
+            const el = document.getElementById('debug-log');
+            if(el) el.innerHTML += "<br>> " + msg;
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            log("DOM Chargé.");
             const urlParams = new URLSearchParams(window.location.search);
             const quoteId = urlParams.get('id');
             const btn = document.getElementById('btn-confirm');
 
             if (!quoteId) {
+                log("ERREUR: ID Manquant dans l'URL.");
                 showState('error-state');
                 document.getElementById('error-msg').textContent = "Lien de devis invalide.";
                 return;
             }
 
             try {
-                // 1. Initialiser Supabase et charger les infos du devis
+                log("Initialisation Supabase...");
                 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                const { data, error } = await supabaseClient
+                
+                log("Appel Supabase pour Devis: " + quoteId);
+                const { data: quote, error: quoteError } = await supabaseClient
                     .from('quotes')
-                    .select('*, clients(first_name, last_name), entreprises(nom_entreprise)')
+                    .select('*')
                     .eq('id', quoteId)
                     .single();
 
-                if (error || !data) throw new Error("Impossible de trouver ce devis. Il a peut-être été supprimé ou déjà accepté.");
+                if (quoteError) {
+                    log("ERREUR SUPABASE (Devis): " + JSON.stringify(quoteError));
+                    throw new Error("Impossible de charger le devis. (" + quoteError.message + ")");
+                }
                 
-                quoteData = data;
+                log("Devis chargé avec succès.");
+                quoteData = quote;
                 
                 if (quoteData.status === 'accepted') {
                     showState('success-state');
                     return;
                 }
 
-                const customerName = quoteData.clients ? `${quoteData.clients.first_name} ${quoteData.clients.last_name}` : quoteData.entreprises.nom_entreprise;
+                // 2. Chercher le nom du client
+                log("Récupération du nom client...");
+                let customerName = "Client";
+                if (quoteData.client_id) {
+                    const { data: c, error: cErr } = await supabaseClient.from('clients').select('first_name, last_name').eq('id', quoteData.client_id).single();
+                    if (c) customerName = `${c.first_name} ${c.last_name}`;
+                    if (cErr) log("Note: Erreur nom client particulier: " + cErr.message);
+                } else if (quoteData.entreprise_id) {
+                    const { data: e, error: eErr } = await supabaseClient.from('entreprises').select('nom_entreprise').eq('id', quoteData.entreprise_id).single();
+                    if (e) customerName = e.nom_entreprise;
+                    if (eErr) log("Note: Erreur nom entreprise: " + eErr.message);
+                }
+                
                 document.getElementById('quote-title').textContent = `Devis pour ${customerName}`;
                 
-                // 2. Gérer la signature si requise
+                // 3. Gérer la signature
                 if (quoteData.requires_signature) {
+                    log("Signature requise détectée.");
                     requiresSignature = true;
                     document.getElementById('signature-section').style.display = 'block';
                     const canvas = document.getElementById('signature-pad');
                     signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)' });
                     
-                    // Ajuster la taille du canvas
                     function resizeCanvas() {
                         const ratio = Math.max(window.devicePixelRatio || 1, 1);
                         canvas.width = canvas.offsetWidth * ratio;
@@ -202,13 +237,14 @@
                     }
                     window.addEventListener("resize", resizeCanvas);
                     resizeCanvas();
-
                     document.getElementById('clear-signature').addEventListener('click', () => signaturePad.clear());
                 }
 
+                log("Affichage de l'état initial.");
                 showState('initial-state');
 
             } catch (err) {
+                log("FATAL ERROR: " + err.message);
                 showState('error-state');
                 document.getElementById('error-msg').textContent = err.message;
             }
@@ -217,18 +253,16 @@
                 let signerName = "";
                 let signatureImage = null;
 
-                // Validation si signature requise
                 if (requiresSignature) {
                     signerName = document.getElementById('signer_name').value.trim();
                     if (!signerName) { alert("Veuillez saisir votre nom complet."); return; }
                     if (signaturePad.isEmpty()) { alert("Veuillez signer le document."); return; }
-                    signatureImage = signaturePad.toDataURL(); // Base64
+                    signatureImage = signaturePad.toDataURL();
                 }
 
                 showState('loading-state');
                 
                 try {
-                    // Récupérer l'IP pour la preuve (optionnel mais recommandé)
                     let ip = "0.0.0.0";
                     try {
                         const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -236,6 +270,7 @@
                         ip = ipData.ip;
                     } catch(e) {}
 
+                    log("Envoi de l'acceptation au serveur...");
                     const response = await fetch(`${SUPABASE_URL}/functions/v1/accept-quote`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -249,11 +284,13 @@
 
                     const result = await response.json();
                     if (response.ok) {
+                        log("Acceptation réussie !");
                         showState('success-state');
                     } else {
-                        throw new Error(result.error || "Une erreur est survenue lors de la validation.");
+                        throw new Error(result.error || "Une erreur est survenue.");
                     }
                 } catch (err) {
+                    log("ERREUR ENVOI: " + err.message);
                     showState('error-state');
                     document.getElementById('error-msg').textContent = err.message;
                 }
@@ -261,6 +298,7 @@
         });
 
         function showState(id) {
+            log("Changement d'état vers: " + id);
             ['fetch-state', 'initial-state', 'loading-state', 'success-state', 'error-state'].forEach(s => {
                 const el = document.getElementById(s);
                 if(el) el.style.display = (s === id ? 'block' : 'none');
