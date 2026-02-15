@@ -38,7 +38,7 @@
             position: relative;
             margin-top: 10px;
             height: 220px;
-            touch-action: none; /* Crucial pour le mobile */
+            touch-action: none;
         }
         #signature-pad { 
             width: 100%; 
@@ -73,6 +73,14 @@
             animation: spin 1s linear infinite; margin: 20px auto; 
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* MODALE CGV */
+        #cgv-modal { display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; padding: 20px; backdrop-blur: 5px; align-items: center; justify-content: center; }
+        .modal-body { background: white; max-width: 800px; width: 100%; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .modal-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        #cgv-content { flex: 1; overflow-y: auto; padding: 30px; font-size: 14px; line-height: 1.6; text-align: left; color: #333; background: white; }
+        #cgv-content h1, #cgv-content h2 { color: var(--primary); margin-top: 1.5rem; }
+        #cgv-content p, #cgv-content li { margin-bottom: 1rem; }
     </style>
 </head>
 <body>
@@ -113,19 +121,6 @@
                 <button id="btn-confirm" class="btn-accept">VALIDER L'APPROBATION</button>
             </div>
 
-            <!-- MODALE CGV -->
-            <div id="cgv-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; padding: 20px; backdrop-blur: 5px;">
-                <div style="background: white; max-width: 800px; margin: auto; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                    <div style="padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="margin: 0; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;">Conditions Générales de Vente</h3>
-                        <button id="close-cgv" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #aaa;">&times;</button>
-                    </div>
-                    <div id="cgv-content" style="flex: 1; overflow-y: auto; padding: 30px; font-size: 13px; line-height: 1.6; text-align: left; color: #444;">
-                        Chargement des conditions...
-                    </div>
-                </div>
-            </div>
-
             <div id="loading-state" style="display: none;">
                 <div class="spinner" style="border-top-color: var(--success);"></div>
                 <h2>Validation en cours...</h2>
@@ -147,8 +142,22 @@
         </div>
     </main>
 
+    <!-- MODALE CGV -->
+    <div id="cgv-modal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h3 style="margin: 0; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;">Conditions Générales de Vente</h3>
+                <button id="close-cgv" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #aaa;">&times;</button>
+            </div>
+            <div id="cgv-content">Chargement des conditions...</div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@5.0.2/dist/signature_pad.umd.min.js"></script>
+    <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+
     <script>
         const SUPABASE_URL = "https://zgniojabjywrnwovlmaf.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnbmlvamFianl3cm53b3ZsbWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0ODg2MzgsImV4cCI6MjA3NzA2NDYzOH0.W2oBIE4AkBEfi2k3apLK3Gr2bn22vKqQG2sTixQVPu0";
@@ -156,6 +165,13 @@
         let signaturePad = null;
         let requiresSignature = false;
         let quoteData = null;
+
+        // Initialisation Traduction
+        i18next.use(window.i18nextHttpBackend).init({
+            lng: 'fr',
+            fallbackLng: 'fr',
+            backend: { loadPath: '/locales/{{lng}}.json' }
+        });
 
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -191,7 +207,6 @@
                     requiresSignature = true;
                     document.getElementById('signature-section').style.display = 'block';
                     
-                    // On attend un court instant que le DOM soit stable
                     setTimeout(() => {
                         const canvas = document.getElementById('signature-pad');
                         signaturePad = new SignaturePad(canvas, {
@@ -215,7 +230,7 @@
                     document.getElementById('clear-signature').addEventListener('click', () => signaturePad.clear());
                 }
 
-                // Gérer l'ouverture des CGV
+                // GESTION CGV
                 const cgvModal = document.getElementById('cgv-modal');
                 const cgvContent = document.getElementById('cgv-content');
                 
@@ -228,19 +243,16 @@
                             .then(html => {
                                 const parser = new DOMParser();
                                 const doc = parser.parseFromString(html, 'text/html');
-                                // Essayer plusieurs conteneurs possibles
-                                const bodyContent = doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body;
+                                const bodyContent = doc.querySelector('.legal-container') || doc.body;
                                 cgvContent.innerHTML = bodyContent.innerHTML;
                                 
-                                // Si i18next est chargé sur la page, traduire les éléments
-                                if (window.i18next) {
-                                    cgvContent.querySelectorAll('[data-i18n]').forEach(el => {
-                                        const key = el.getAttribute('data-i18n');
-                                        el.innerHTML = i18next.t(key);
-                                    });
-                                }
+                                // Traduire le contenu chargé
+                                cgvContent.querySelectorAll('[data-i18n]').forEach(el => {
+                                    const key = el.getAttribute('data-i18n');
+                                    el.innerHTML = i18next.t(key);
+                                });
                             })
-                            .catch(() => cgvContent.innerHTML = "Erreur lors du chargement des CGV.");
+                            .catch(() => cgvContent.innerHTML = "Erreur de chargement.");
                     }
                 });
 
