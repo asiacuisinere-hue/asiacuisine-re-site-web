@@ -228,8 +228,17 @@
                             .then(html => {
                                 const parser = new DOMParser();
                                 const doc = parser.parseFromString(html, 'text/html');
-                                const bodyContent = doc.querySelector('.legal-container') || doc.body;
+                                // Essayer plusieurs conteneurs possibles
+                                const bodyContent = doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body;
                                 cgvContent.innerHTML = bodyContent.innerHTML;
+                                
+                                // Si i18next est chargé sur la page, traduire les éléments
+                                if (window.i18next) {
+                                    cgvContent.querySelectorAll('[data-i18n]').forEach(el => {
+                                        const key = el.getAttribute('data-i18n');
+                                        el.innerHTML = i18next.t(key);
+                                    });
+                                }
                             })
                             .catch(() => cgvContent.innerHTML = "Erreur lors du chargement des CGV.");
                     }
