@@ -79,7 +79,7 @@
         .modal-body { background: white; max-width: 800px; width: 100%; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         .modal-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         #cgv-content { flex: 1; overflow-y: auto; padding: 30px; font-size: 14px; line-height: 1.6; text-align: left; color: #333; background: white; }
-        #cgv-content h1, #cgv-content h2 { color: var(--primary); margin-top: 1.5rem; }
+        #cgv-content h1, #cgv-content h2 { color: var(--primary); margin-top: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; }
         #cgv-content p, #cgv-content li { margin-bottom: 1rem; }
     </style>
 </head>
@@ -156,7 +156,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@5.0.2/dist/signature_pad.umd.min.js"></script>
     <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-    <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
 
     <script>
         const SUPABASE_URL = "https://zgniojabjywrnwovlmaf.supabase.co";
@@ -166,14 +165,24 @@
         let requiresSignature = false;
         let quoteData = null;
 
-        // Initialisation Traduction
-        i18next.use(window.i18nextHttpBackend).init({
-            lng: 'fr',
-            fallbackLng: 'fr',
-            backend: { loadPath: '/locales/{{lng}}.json' }
-        });
+        // Fonction pour initialiser la traduction MANUELLEMENT comme sur script.js
+        async function initI18n() {
+            try {
+                const response = await fetch('./locales/fr.json');
+                const frTranslation = await response.json();
+                await i18next.init({
+                    lng: 'fr',
+                    resources: { fr: frTranslation }
+                });
+                console.log("🌐 i18next initialisé manuellement.");
+            } catch (err) {
+                console.error("❌ Échec init i18n:", err);
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            await initI18n();
+            
             const urlParams = new URLSearchParams(window.location.search);
             const quoteId = urlParams.get('id');
             const btn = document.getElementById('btn-confirm');
@@ -236,59 +245,27 @@
                 
                 document.getElementById('open-cgv').addEventListener('click', async (e) => {
                     e.preventDefault();
-                    console.log("📂 Ouverture Modale CGV...");
                     cgvModal.style.display = 'flex';
-                    
-                    if (cgvContent.innerHTML.includes("Chargement") || cgvContent.innerHTML === "") {
+                    if (cgvContent.innerHTML.includes("Chargement")) {
                         try {
-                            console.log("📡 Fetching cgv.html...");
                             const res = await fetch('cgv.html');
                             const html = await res.text();
-                            console.log("📄 HTML reçu, longueur:", html.length);
-                            
                             const parser = new DOMParser();
                             const doc = parser.parseFromString(html, 'text/html');
-                            const bodyContent = doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body;
+                            const bodyContent = doc.querySelector('.legal-container') || doc.body;
+                            cgvContent.innerHTML = bodyContent.innerHTML;
                             
-                            if (bodyContent) {
-                                console.log("✅ Contenu trouvé dans cgv.html");
-                                cgvContent.innerHTML = bodyContent.innerHTML;
-                                
-                                console.log("🌐 État i18next:", i18next.isInitialized ? "Prêt" : "Pas prêt");
-                                if (i18next.isInitialized) {
-                                    translateContent(cgvContent);
-                                } else {
-                                    i18next.on('initialized', () => {
-                                        console.log("🌐 i18next vient de s'initialiser");
-                                        translateContent(cgvContent);
-                                    });
-                                }
-                            } else {
-                                console.error("❌ Impossible de trouver le contenu dans le fichier chargé.");
-                                cgvContent.innerHTML = "Contenu CGV introuvable dans le fichier.";
-                            }
+                            // Traduire
+                            cgvContent.querySelectorAll('[data-i18n]').forEach(el => {
+                                const key = el.getAttribute('data-i18n');
+                                const translated = i18next.t(key);
+                                if (translated && translated !== key) el.innerHTML = translated;
+                            });
                         } catch (err) {
-                            console.error("❌ Erreur Fetch CGV:", err);
-                            cgvContent.innerHTML = "Erreur de chargement des conditions: " + err.message;
+                            cgvContent.innerHTML = "Erreur de chargement.";
                         }
                     }
                 });
-
-                function translateContent(container) {
-                    console.log("🔤 Début de la traduction...");
-                    const tags = container.querySelectorAll('[data-i18n]');
-                    console.log(`🔍 ${tags.length} balises à traduire trouvées.`);
-                    tags.forEach(el => {
-                        const key = el.getAttribute('data-i18n');
-                        const translated = i18next.t(key);
-                        if (translated && translated !== key) {
-                            el.innerHTML = translated;
-                        } else {
-                            console.warn(`⚠️ Traduction manquante pour: ${key}`);
-                        }
-                    });
-                    console.log("✨ Traduction terminée.");
-                }
 
                 document.getElementById('close-cgv').addEventListener('click', () => cgvModal.style.display = 'none');
                 cgvModal.addEventListener('click', (e) => { if(e.target === cgvModal) cgvModal.style.display = 'none'; });
