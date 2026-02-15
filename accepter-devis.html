@@ -234,27 +234,41 @@
                 const cgvModal = document.getElementById('cgv-modal');
                 const cgvContent = document.getElementById('cgv-content');
                 
-                document.getElementById('open-cgv').addEventListener('click', (e) => {
+                document.getElementById('open-cgv').addEventListener('click', async (e) => {
                     e.preventDefault();
                     cgvModal.style.display = 'flex';
+                    
                     if (cgvContent.innerHTML.includes("Chargement")) {
-                        fetch('cgv.html')
-                            .then(res => res.text())
-                            .then(html => {
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(html, 'text/html');
-                                const bodyContent = doc.querySelector('.legal-container') || doc.body;
-                                cgvContent.innerHTML = bodyContent.innerHTML;
-                                
-                                // Traduire le contenu chargé
-                                cgvContent.querySelectorAll('[data-i18n]').forEach(el => {
-                                    const key = el.getAttribute('data-i18n');
-                                    el.innerHTML = i18next.t(key);
-                                });
-                            })
-                            .catch(() => cgvContent.innerHTML = "Erreur de chargement.");
+                        try {
+                            const res = await fetch('cgv.html');
+                            const html = await res.text();
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const bodyContent = doc.querySelector('.legal-container') || doc.body;
+                            cgvContent.innerHTML = bodyContent.innerHTML;
+                            
+                            // S'assurer que i18next est prêt avant de traduire
+                            if (i18next.isInitialized) {
+                                translateContent(cgvContent);
+                            } else {
+                                i18next.on('initialized', () => translateContent(cgvContent));
+                            }
+                        } catch (err) {
+                            cgvContent.innerHTML = "Erreur de chargement des conditions.";
+                        }
                     }
                 });
+
+                function translateContent(container) {
+                    container.querySelectorAll('[data-i18n]').forEach(el => {
+                        const key = el.getAttribute('data-i18n');
+                        const translated = i18next.t(key);
+                        // On ne remplace que si la traduction est différente de la clé
+                        if (translated && translated !== key) {
+                            el.innerHTML = translated;
+                        }
+                    });
+                }
 
                 document.getElementById('close-cgv').addEventListener('click', () => cgvModal.style.display = 'none');
                 cgvModal.addEventListener('click', (e) => { if(e.target === cgvModal) cgvModal.style.display = 'none'; });
