@@ -3,35 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceptation de devis – Asiacuisine.re</title>
+    <title>Approbation de devis – Asiacuisine.re</title>
     <link rel="stylesheet" href="style.css?v=1.2">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
+        :root { --primary: #d4af37; --success: #28a745; --bg: #fdfcf8; }
+        body { background-color: var(--bg); }
         .quote-card {
-            padding: 40px 20px;
-            border-radius: 24px;
+            padding: 40px;
+            border-radius: 32px;
             background: white;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
             margin-top: 50px;
             text-align: center;
+            border: 1px solid #f0eee4;
         }
-        .icon { font-size: 60px; margin-bottom: 20px; display: block; }
-        .btn-accept {
-            background-color: #28a745;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 12px;
+        .icon { font-size: 50px; margin-bottom: 20px; display: block; }
+        
+        .signature-wrapper {
+            margin: 30px 0;
+            text-align: left;
+            display: none;
+        }
+        .signature-pad-container {
+            border: 2px dashed #e0e0e0;
+            border-radius: 16px;
+            background: #fafafa;
+            position: relative;
+            margin-top: 10px;
+            touch-action: none;
+        }
+        canvas { width: 100%; height: 200px; border-radius: 16px; }
+        .clear-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #eee;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: bold;
+            cursor: pointer;
+        }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-weight: 800; font-size: 13px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; margin-left: 5px; }
+        .app-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #eee; background: #fafafa; font-size: 16px; box-sizing: border-box; font-weight: 600; }
+
+        .btn-accept {
+            background-color: var(--secondary);
+            color: white;
+            padding: 18px 50px;
+            border-radius: 16px;
+            font-weight: 900;
             text-decoration: none;
             display: inline-block;
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 16px;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        .btn-accept:hover { background-color: #218838; transform: translateY(-2px); }
-        .btn-accept:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+        .btn-accept:hover { transform: translateY(-2px); background: black; }
+        .btn-accept:disabled { background-color: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        
         .loading-dots:after { content: '.'; animation: dots 1.5s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } 80%, 100% { content: ''; } }
     </style>
@@ -44,72 +82,176 @@
         </div>
     </nav>
 
-    <main class="container" style="padding-top: 80px; max-width: 600px; margin: auto;">
-        <div id="main-box" class="quote-card">
-            <div id="initial-state">
-                <span class="icon">📜</span>
-                <h2>Acceptation de votre devis</h2>
-                <p style="color: #666; line-height: 1.6; margin-bottom: 30px;">
-                    En cliquant sur le bouton ci-dessous, vous confirmez votre accord avec les termes du devis qui vous a été envoyé.<br>
-                    <strong>Le Chef recevra votre confirmation et préparera votre facture d'acompte.</strong>
+    <main class="container" style="padding-top: 80px; max-width: 550px; margin: auto;">
+        <div id="main-box" class="quote-card animate-in fade-in">
+            
+            <div id="fetch-state">
+                <div class="spinner" style="margin: auto; width: 30px; height: 30px; border: 3px solid #eee; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <p style="margin-top: 20px; font-weight: 700; color: #888;">Chargement de votre devis...</p>
+            </div>
+
+            <div id="initial-state" style="display: none;">
+                <span class="icon">📝</span>
+                <h2 id="quote-title">Approbation du Devis</h2>
+                <p id="quote-subtitle" style="color: #666; line-height: 1.6; margin-bottom: 30px;">
+                    Veuillez valider les informations ci-dessous pour confirmer votre accord.
                 </p>
-                <button id="btn-confirm" class="btn-accept">Valider et Accepter le Devis</button>
+
+                <div id="signature-section" class="signature-wrapper">
+                    <div class="input-group">
+                        <label>Nom complet du signataire</label>
+                        <input type="text" id="signer_name" class="app-input" placeholder="Prénom et Nom">
+                    </div>
+                    
+                    <label style="display: block; font-weight: 800; font-size: 13px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; margin-left: 5px;">Votre signature</label>
+                    <div class="signature-pad-container">
+                        <canvas id="signature-pad"></canvas>
+                        <button type="button" class="clear-btn" id="clear-signature">Effacer</button>
+                    </div>
+                    <p style="font-size: 11px; color: #aaa; margin-top: 10px; font-style: italic;">
+                        En signant ce document, vous reconnaissez avoir pris connaissance et accepté les conditions générales de vente.
+                    </p>
+                </div>
+
+                <button id="btn-confirm" class="btn-accept">Confirmer et Accepter</button>
             </div>
 
             <div id="loading-state" style="display: none;">
-                <span class="icon">⚙️</span>
-                <h2>Traitement en cours<span class="loading-dots"></span></h2>
-                <p style="color: #888;">Nous préparons votre facture...</p>
+                <div class="spinner" style="margin: auto; width: 40px; height: 40px; border: 4px solid #eee; border-top-color: var(--success); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <h2 style="margin-top: 20px;">Validation en cours<span class="loading-dots"></span></h2>
+                <p style="color: #888;">Nous enregistrons votre accord et préparons la facture...</p>
             </div>
 
             <div id="success-state" style="display: none;">
                 <span class="icon">✅</span>
-                <h2 style="color: #28a745;">Devis Accepté !</h2>
+                <h2 style="color: var(--success);">Accord Enregistré !</h2>
                 <p style="color: #555; line-height: 1.6;">
-                    Merci ! Votre accord a bien été enregistré.<br>
-                    Le Chef a été prévenu. Vous allez recevoir d'ici quelques instants un e-mail contenant votre facture et le lien sécurisé pour le règlement de l'acompte.
+                    Merci ! Votre devis a été validé avec succès.<br><br>
+                    Le Chef a été prévenu et prépare votre facture. Vous allez recevoir d'ici quelques instants un e-mail contenant le lien de règlement sécurisé.
                 </p>
                 <div style="margin-top: 30px;">
-                    <a href="index.html" class="cta-button">Retourner à l'accueil</a>
+                    <a href="index.html" class="cta-button" style="background: var(--secondary)">Retourner à l'accueil</a>
                 </div>
             </div>
 
             <div id="error-state" style="display: none;">
-                <span class="icon">❌</span>
-                <h2 style="color: #dc3545;">Erreur</h2>
-                <p id="error-msg" style="color: #666;"></p>
-                <a href="index.html" style="color: #d4af37; text-decoration: underline;">Retourner à l'accueil</a>
+                <span class="icon">⚠️</span>
+                <h2 style="color: #dc3545;">Oups !</h2>
+                <p id="error-msg" style="color: #666; margin-bottom: 30px;"></p>
+                <a href="index.html" style="color: var(--primary); font-weight: 900; text-decoration: none;">Retourner à l'accueil</a>
             </div>
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@5.0.2/dist/signature_pad.umd.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        const SUPABASE_URL = "https://zgniojabjywrnwovlmaf.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnbmlvamFianl3cm53b3ZsbWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0ODg2MzgsImV4cCI6MjA3NzA2NDYzOH0.W2oBIE4AkBEfi2k3apLK3Gr2bn22vKqQG2sTixQVPu0";
+        
+        let signaturePad = null;
+        let requiresSignature = false;
+        let quoteData = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const quoteId = urlParams.get('id');
             const btn = document.getElementById('btn-confirm');
 
             if (!quoteId) {
                 showState('error-state');
-                document.getElementById('error-msg').textContent = "Lien invalide (ID manquant).";
+                document.getElementById('error-msg').textContent = "Lien de devis invalide.";
                 return;
             }
 
+            try {
+                // 1. Initialiser Supabase et charger les infos du devis
+                const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { data, error } = await supabaseClient
+                    .from('quotes')
+                    .select('*, clients(first_name, last_name), entreprises(nom_entreprise)')
+                    .eq('id', quoteId)
+                    .single();
+
+                if (error || !data) throw new Error("Impossible de trouver ce devis. Il a peut-être été supprimé ou déjà accepté.");
+                
+                quoteData = data;
+                
+                if (quoteData.status === 'accepted') {
+                    showState('success-state');
+                    return;
+                }
+
+                const customerName = quoteData.clients ? `${quoteData.clients.first_name} ${quoteData.clients.last_name}` : quoteData.entreprises.nom_entreprise;
+                document.getElementById('quote-title').textContent = `Devis pour ${customerName}`;
+                
+                // 2. Gérer la signature si requise
+                if (quoteData.requires_signature) {
+                    requiresSignature = true;
+                    document.getElementById('signature-section').style.display = 'block';
+                    const canvas = document.getElementById('signature-pad');
+                    signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)' });
+                    
+                    // Ajuster la taille du canvas
+                    function resizeCanvas() {
+                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        canvas.width = canvas.offsetWidth * ratio;
+                        canvas.height = canvas.offsetHeight * ratio;
+                        canvas.getContext("2d").scale(ratio, ratio);
+                        signaturePad.clear();
+                    }
+                    window.addEventListener("resize", resizeCanvas);
+                    resizeCanvas();
+
+                    document.getElementById('clear-signature').addEventListener('click', () => signaturePad.clear());
+                }
+
+                showState('initial-state');
+
+            } catch (err) {
+                showState('error-state');
+                document.getElementById('error-msg').textContent = err.message;
+            }
+
             btn.addEventListener('click', async () => {
+                let signerName = "";
+                let signatureImage = null;
+
+                // Validation si signature requise
+                if (requiresSignature) {
+                    signerName = document.getElementById('signer_name').value.trim();
+                    if (!signerName) { alert("Veuillez saisir votre nom complet."); return; }
+                    if (signaturePad.isEmpty()) { alert("Veuillez signer le document."); return; }
+                    signatureImage = signaturePad.toDataURL(); // Base64
+                }
+
                 showState('loading-state');
+                
                 try {
-                    const response = await fetch(`https://zgniojabjywrnwovlmaf.supabase.co/functions/v1/accept-quote`, {
+                    // Récupérer l'IP pour la preuve (optionnel mais recommandé)
+                    let ip = "0.0.0.0";
+                    try {
+                        const ipRes = await fetch('https://api.ipify.org?format=json');
+                        const ipData = await ipRes.json();
+                        ip = ipData.ip;
+                    } catch(e) {}
+
+                    const response = await fetch(`${SUPABASE_URL}/functions/v1/accept-quote`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ quoteId: quoteId })
+                        body: JSON.stringify({ 
+                            quoteId: quoteId,
+                            signature_image: signatureImage,
+                            signer_name: signerName,
+                            ip: ip
+                        })
                     });
 
                     const result = await response.json();
-
                     if (response.ok) {
                         showState('success-state');
                     } else {
-                        throw new Error(result.error || "Une erreur est survenue.");
+                        throw new Error(result.error || "Une erreur est survenue lors de la validation.");
                     }
                 } catch (err) {
                     showState('error-state');
@@ -119,10 +261,12 @@
         });
 
         function showState(id) {
-            ['initial-state', 'loading-state', 'success-state', 'error-state'].forEach(s => {
-                document.getElementById(s).style.display = (s === id ? 'block' : 'none');
+            ['fetch-state', 'initial-state', 'loading-state', 'success-state', 'error-state'].forEach(s => {
+                const el = document.getElementById(s);
+                if(el) el.style.display = (s === id ? 'block' : 'none');
             });
         }
     </script>
+    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
 </body>
 </html>

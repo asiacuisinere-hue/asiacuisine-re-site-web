@@ -92,12 +92,13 @@ export async function generateQuotePDF(quote: any, customer: any, items: any[], 
         x: textStartX, y, size: 9, font: fontBold, color: black 
     });
 
-    // Badge "DEVIS" en haut à droite
+    // Badge "DEVIS" ou "DEVIS ACCEPTE"
+    const isAccepted = quote.status === 'accepted';
     page.drawRectangle({ 
-        x: 440, y: height - 58, width: 105, height: 35, color: gold 
+        x: 400, y: height - 58, width: 145, height: 35, color: isAccepted ? rgb(0.15, 0.68, 0.37) : gold 
     });
-    page.drawText('DEVIS', { 
-        x: 462, y: height - 48, size: 18, font: fontBold, color: white 
+    page.drawText(isAccepted ? 'DEVIS ACCEPTE' : 'DEVIS', { 
+        x: 410, y: height - 48, size: 14, font: fontBold, color: white 
     });
 
     // Numéro et date du devis (alignés à droite)
@@ -211,7 +212,6 @@ export async function generateQuotePDF(quote: any, customer: any, items: any[], 
             y -= 25;
             rowIndex++;
             
-            // Vérifier s\'il reste de la place
             if (y < 200) break;
         }
     }
@@ -232,29 +232,49 @@ export async function generateQuotePDF(quote: any, customer: any, items: any[], 
         x: 470, y: y - 15, size: 14, font: fontBold, color: gold 
     });
 
+    // === BLOC SIGNATURE ÉLECTRONIQUE (Si signée) ===
+    if (quote.signed_at && quote.signature_image) {
+        y -= 100;
+        page.drawRectangle({ 
+            x: 50, y: y - 100, width: 250, height: 120, 
+            borderColor: rgb(0.15, 0.68, 0.37), 
+            borderWidth: 1,
+            color: rgb(0.95, 0.98, 0.96)
+        });
+        
+        page.drawText('APPROBATION ÉLECTRONIQUE', { 
+            x: 60, y: y + 5, size: 8, font: fontBold, color: rgb(0.15, 0.68, 0.37) 
+        });
+
+        try {
+            const signatureImageBytes = Uint8Array.from(atob(quote.signature_image.split(',')[1]), c => c.charCodeAt(0));
+            const signatureImage = await pdfDoc.embedPng(signatureImageBytes);
+            const sigDims = signatureImage.scale(0.25);
+            page.drawImage(signatureImage, {
+                x: 60,
+                y: y - 60,
+                width: 120,
+                height: 50
+            });
+        } catch (e) {
+            console.error("Erreur embedding signature:", e.message);
+        }
+
+        page.drawText(`Signé par : ${quote.signer_name || customerName}`, { 
+            x: 60, y: y - 75, size: 8, font 
+        });
+        page.drawText(`Le : ${new Date(quote.signed_at).toLocaleString('fr-FR')}`, { 
+            x: 60, y: y - 85, size: 8, font 
+        });
+        page.drawText(`IP : ${quote.signature_ip || 'Audit log disponible'}`, { 
+            x: 60, y: y - 95, size: 7, font, color: gray 
+        });
+    }
+
     // Message TVA
-    y -= 60;
+    y = 120;
     page.drawText(companySettings.tva_message || 'TVA non applicable, art. 293 B du CGI', { 
         x: 50, y, size: 8, font, color: gray 
-    });
-
-    // === CONDITIONS ET NOTES ===
-    y -= 30;
-    page.drawText('Conditions de paiement:', { 
-        x: 50, y, size: 9, font: fontBold, color: black 
-    });
-    y -= 13;
-    page.drawText(companySettings.payment_conditions || 'Paiement à la commande', { 
-        x: 50, y, size: 9, font, color: gray 
-    });
-    
-    y -= 20;
-    page.drawText('Moyens de paiement acceptés:', { 
-        x: 50, y, size: 9, font: fontBold, color: black 
-    });
-    y -= 13;
-    page.drawText('Carte Bancaire via lien sécurisé Stripe (envoyé par e-mail)', { 
-        x: 50, y, size: 9, font, color: gray 
     });
 
     // === PIED DE PAGE ===
@@ -262,20 +282,16 @@ export async function generateQuotePDF(quote: any, customer: any, items: any[], 
         start: { x: 50, y: 45 }, end: { x: 545, y: 45 }, thickness: 1, color: gold 
     });
     
-    const companyInfoString = `${companySettings.name || ''} | ${companySettings.owner || ''} | SIRET: ${companySettings.siret || ''} | ${companySettings.website || ''}`;
+    const companyInfoString = `${companySettings.name || ''} | SIRET: ${companySettings.siret || ''} | ${companySettings.website || ''}`;
     const companyInfoWidth = font.widthOfTextAtSize(companyInfoString, 8);
     page.drawText(companyInfoString, {
         x: (page.getWidth() - companyInfoWidth) / 2,
-        y: 30,
-        size: 8,
-        font,
-        color: gray,
+        y: 30, size: 8, font, color: gray,
     });
     
-    page.drawText('Merci de votre confiance !', { 
-        x: 240, y: 18, size: 8, font: fontBold, color: gold 
+    page.drawText('Document certifié conforme à l\'original.', { 
+        x: 230, y: 18, size: 7, font, color: gray 
     });
 
-    // Sauvegarder et retourner le PDF
     return await pdfDoc.save();
 }

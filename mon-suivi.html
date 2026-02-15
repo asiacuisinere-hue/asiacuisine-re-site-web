@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mon Suivi Bien-être - Asiacuisine.re</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root { --primary: #d4af37; --secondary: #1a1a1a; --bg: #fdfcf8; }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; color: var(--secondary); margin: 0; padding: 0; }
+        
+        .suivi-header { background: white; padding: 2rem 1.5rem; border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; margin-bottom: 2rem; }
+        .suivi-header h1 { font-weight: 900; font-size: 1.5rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .suivi-header p { color: var(--primary); font-weight: 700; margin-top: 0.5rem; font-size: 0.9rem; }
+
+        .container { max-width: 500px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+        
+        .card { background: white; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 1.5rem; border: 1px solid #f0eee4; }
+        .card-title { font-weight: 900; font-size: 0.8rem; text-transform: uppercase; color: #aaa; letter-spacing: 1px; margin-bottom: 1.2rem; display: flex; items-center: center; gap: 8px; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.8rem; }
+        
+        .input-text { width: 100%; padding: 1rem; border-radius: 1rem; border: 1px solid #eee; background: #fafafa; font-family: inherit; font-size: 1rem; box-sizing: border-box; }
+        .input-text:focus { outline: none; border-color: var(--primary); background: white; }
+
+        /* Style des Sliders */
+        .range-container { position: relative; padding: 1rem 0; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+        .range-labels { display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.7rem; font-weight: 700; color: #bbb; }
+
+        .btn-submit { width: 100%; background: var(--secondary); color: white; padding: 1.2rem; border-radius: 1.2rem; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; transition: all 0.3s; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .btn-submit:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Historique */
+        .history-item { padding: 1rem 0; border-bottom: 1px solid #f5f5f5; }
+        .history-item:last-child { border-bottom: none; }
+        .history-date { font-weight: 800; font-size: 0.8rem; color: var(--primary); margin-bottom: 0.3rem; }
+        .history-content { font-size: 0.9rem; line-height: 1.4; color: #555; }
+
+        #loading-overlay { position: fixed; inset: 0; background: white; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .success-animation { text-align: center; padding: 2rem; display: none; }
+        .success-animation i { color: #28a745; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="font-weight: 800; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px;">Chargement du profil...</p>
+    </div>
+
+    <header class="suivi-header">
+        <h1>Mon Journal de Bord</h1>
+        <p id="client-name">Chargement...</p>
+    </header>
+
+    <div class="container">
+        <div id="form-container">
+            <!-- CARTE REPAS -->
+            <div class="card">
+                <div class="card-title"><i data-lucide="utensils"></i> Votre Repas du jour</div>
+                <div class="form-group">
+                    <label>Qu'avez-vous consommé ?</label>
+                    <textarea id="repas_contenu" class="input-text" rows="3" placeholder="Ex: Salade de poulet, un yaourt, 2 verres d'eau..."></textarea>
+                </div>
+            </div>
+
+            <!-- CARTE SENSATIONS -->
+            <div class="card">
+                <div class="card-title"><i data-lucide="activity"></i> Vos Sensations</div>
+                
+                <div class="form-group">
+                    <label>Niveau de Satiété (après repas)</label>
+                    <div class="range-container">
+                        <input type="range" id="niveau_satiete" min="1" max="5" step="1" value="3">
+                        <div class="range-labels">
+                            <span>J'ai encore faim</span>
+                            <span>Repu(e)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Énergie du moment</label>
+                    <div class="range-container">
+                        <input type="range" id="energie_ressentie" min="1" max="5" step="1" value="3">
+                        <div class="range-labels">
+                            <span>Fatigué(e)</span>
+                            <span>En pleine forme</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARTE PHYSIQUE -->
+            <div class="card">
+                <div class="card-title"><i data-lucide="scale"></i> Évolution (Optionnel)</div>
+                <div class="form-group">
+                    <label>Votre poids actuel (kg)</label>
+                    <input type="number" id="poids_actuel" step="0.1" class="input-text" placeholder="Ex: 72.5">
+                </div>
+                <div class="form-group">
+                    <label>Notes ou Questions pour le Chef</label>
+                    <textarea id="notes_client" class="input-text" rows="2" placeholder="Un souhait pour la prochaine livraison ?"></textarea>
+                </div>
+            </div>
+
+            <button id="submit-btn" class="btn-submit">
+                <i data-lucide="send"></i> TRANSMETTRE AU CHEF
+            </button>
+        </div>
+
+        <div id="success-screen" class="card success-animation">
+            <i data-lucide="check-circle" size="64"></i>
+            <h2 style="font-weight: 900; margin-bottom: 0.5rem;">C'est transmis !</h2>
+            <p style="color: #666; font-size: 0.9rem; line-height: 1.5;">Merci pour votre retour. Le Chef va analyser vos données pour ajuster vos prochaines préparations.</p>
+            <button onclick="location.reload()" class="btn-submit" style="background: var(--primary); margin-top: 2rem;">NOUVELLE SAISIE</button>
+        </div>
+
+        <!-- HISTORIQUE -->
+        <div class="card" style="margin-top: 3rem; background: rgba(255,255,255,0.5);">
+            <div class="card-title"><i data-lucide="history"></i> Vos 5 derniers jours</div>
+            <div id="history-list">
+                <!-- Rempli par JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="suivi-client.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

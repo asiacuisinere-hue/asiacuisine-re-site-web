@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { generateQuotePDF } from "../_shared/pdf-quote.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,7 +11,7 @@ serve(async (req) => {
     if (req.method === "OPTIONS") return new Response('ok', { headers: corsHeaders });
 
     try {
-        const { quoteId } = await req.json();
+        const { quoteId, signature_image, signer_name, ip } = await req.json();
         if (!quoteId) throw new Error("ID du devis manquant.");
 
         const supabase = createClient(
@@ -18,19 +19,49 @@ serve(async (req) => {
             Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
         );
 
-        // 1. Mettre à jour le statut du devis
-        const { data: quote, error: updateError } = await supabase
+        // 1. Mettre à jour les données de signature
+        const updateData: any = { 
+            status: 'accepted', 
+            updated_at: new Date().toISOString() 
+        };
+
+        if (signature_image) {
+            updateData.signature_image = signature_image;
+            updateData.signer_name = signer_name;
+            updateData.signature_ip = ip;
+            updateData.signed_at = new Date().toISOString();
+        }
+
+        const { data: updatedQuote, error: updateError } = await supabase
             .from('quotes')
-            .update({ status: 'accepted', updated_at: new Date().toISOString() })
+            .update(updateData)
             .eq('id', quoteId)
-            .select('*')
+            .select('*, clients(*), entreprises(*)')
             .single();
 
         if (updateError) throw updateError;
 
-        // 2. Déclencher automatiquement la création de la facture
-        // On appelle l'Edge Function existante internement
-        const invoiceResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/create-invoice-from-quote`, {
+        // 2. Récupérer les articles pour la régénération du PDF
+        const { data: items } = await supabase
+            .from('quote_items')
+            .select('*')
+            .eq('quote_id', quoteId);
+
+        // 3. Régénérer le PDF avec la signature
+        const customer = updatedQuote.clients || updatedQuote.entreprises;
+        const pdfBytes = await generateQuotePDF(updatedQuote, customer, items || [], updatedQuote.total_amount);
+
+        // 4. Écraser l'ancien PDF dans le Storage
+        const filePath = updatedQuote.storage_path;
+        if (filePath) {
+            await supabase.storage.from('documents').upload(filePath, pdfBytes, {
+                contentType: 'application/pdf',
+                upsert: true,
+            });
+        }
+
+        // 5. Déclencher automatiquement la création de la facture
+        await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/create-invoice-from-quote`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -38,10 +69,6 @@ serve(async (req) => {
             },
             body: JSON.stringify({ quoteId: quoteId })
         });
-
-        if (!invoiceResponse.ok) {
-            console.error("Erreur lors de la création auto de la facture après acceptation.");
-        }
 
         return new Response(JSON.stringify({ success: true }), {
             status: 200,

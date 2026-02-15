@@ -22,26 +22,22 @@ function randomString(length: number): string {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    // 1. Parse request body
-    const { customer, items, total, type, demandeId } = await req.json();
+    const { customer, items, total, type, demandeId, requires_signature } = await req.json();
 
     if (!customer || !customer.id || !items || items.length === 0 || total === undefined || !type) {
       throw new Error('Champs requis manquants: client, articles, total, ou type.');
     }
 
-    // 2. Initialize Supabase Admin Client
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // 3. Generate Quote Document Number (DR_...)
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -52,7 +48,7 @@ serve(async (req) => {
     todayStart.setHours(0, 0, 0, 0);
     
     const { count, error: countError } = await supabaseAdmin
-        .from("quotes") // Use quotes table for counting
+        .from("quotes")
         .select("*", { count: "exact", head: true })
         .gte("created_at", todayStart.toISOString());
 
@@ -64,27 +60,24 @@ serve(async (req) => {
     
     const quoteDocumentNumber = `DR_${year}_${month}_${week}_${dayOfWeek}_${paddedOrderNumber}_${randomCode}`;
 
-
-    // 4. Insert Quote with 'draft' status and document number
-    console.log('[generate-quote] Inserting quote with status: draft');
+    // === INSERTION AVEC LE CHAMP REQUIRES_SIGNATURE ===
     const { data: quoteData, error: quoteError } = await supabaseAdmin
       .from('quotes')
       .insert({
         demand_id: demandeId || null,
         client_id: customer.type === 'client' ? customer.id : null,
         entreprise_id: customer.type === 'entreprise' ? customer.id : null,
-        document_number: quoteDocumentNumber, // <-- SET THE DOCUMENT NUMBER
+        document_number: quoteDocumentNumber,
         total_amount: total,
         status: 'draft',
         type: type,
+        requires_signature: requires_signature || false // <-- CORRECTION ICI
       })
       .select()
       .single();
 
     if (quoteError) throw new Error(`Erreur DB (Quote): ${quoteError.message}`);
-    console.log('[generate-quote] Quote created with ID:', quoteData.id);
 
-    // 5. Insert Quote Items
     const quoteItems = items.map(item => ({
       quote_id: quoteData.id,
       service_id: item.service_id,
@@ -96,13 +89,9 @@ serve(async (req) => {
     
     const { error: itemsError } = await supabaseAdmin.from('quote_items').insert(quoteItems);
     if (itemsError) throw new Error(`Erreur DB (Items): ${itemsError.message}`);
-    console.log('[generate-quote] Quote items inserted.');
 
-    // 6. Generate PDF
     const pdfBytes = await generateQuotePDF(quoteData, customer, items, total);
-    console.log('[generate-quote] PDF generated.');
 
-    // 7. Upload PDF to Storage
     const filePath = `devis/${quoteDocumentNumber}.pdf`;
     const { error: uploadError } = await supabaseAdmin.storage
       .from('documents')
@@ -112,16 +101,13 @@ serve(async (req) => {
       });
 
     if (uploadError) throw new Error(`Erreur Storage: ${uploadError.message}`);
-    console.log('[generate-quote] PDF uploaded to:', filePath);
 
-    // 8. Update quote with storage_path
     const { error: updateError } = await supabaseAdmin
       .from('quotes')
       .update({ storage_path: filePath })
       .eq('id', quoteData.id);
     if (updateError) throw new Error(`Erreur DB (Update Path): ${updateError.message}`);
 
-    // 9. Return success response
     return new Response(
       JSON.stringify({
         success: true,
@@ -138,10 +124,7 @@ serve(async (req) => {
     console.error('Error in generate-quote:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 })
