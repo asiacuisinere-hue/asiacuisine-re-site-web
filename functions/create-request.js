@@ -129,7 +129,7 @@ export async function onRequest(context) {
                 client_id: clientId,
                 entreprise_id: entrepriseId,
                 type: formData.type,
-                status: 'Nouvelle',
+                status: formData.type === 'RESERVATION_SERVICE' ? 'Nouvelle' : 'Intention WhatsApp',
                 request_date: formData.requestDate,
                 details_json: details,
                 total_amount: total,
