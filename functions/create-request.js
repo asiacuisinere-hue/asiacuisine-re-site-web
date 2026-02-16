@@ -25,12 +25,20 @@ export async function onRequest(context) {
         const data = await context.request.json();
         const { recaptchaToken, ...formData } = data;
 
-        // 1. reCAPTCHA (Désactivé en local si nécessaire, mais on garde la logique)
+        // 1. reCAPTCHA Verification
         const RECAPTCHA_SECRET_KEY = context.env.RECAPTCHA_SECRET_KEY;
+        if (!RECAPTCHA_SECRET_KEY) {
+            console.error("ERREUR: RECAPTCHA_SECRET_KEY manquante dans context.env");
+            return new Response(JSON.stringify({ error: 'Server configuration error' }), { status: 500 });
+        }
+
         const verify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+            body: new URLSearchParams({
+                secret: RECAPTCHA_SECRET_KEY,
+                response: recaptchaToken || ''
+            }).toString()
         });
         const recaptcha = await verify.json();
         // Si on est en local, on peut être plus souple sur le recaptcha pour le test
