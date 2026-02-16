@@ -32,8 +32,6 @@ export async function onRequest(context) {
             return new Response(JSON.stringify({ error: 'Server configuration error' }), { status: 500 });
         }
 
-        console.log("DEBUG_RECAPTCHA: Token reçu (début):", recaptchaToken?.substring(0, 20));
-
         const verify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -44,16 +42,13 @@ export async function onRequest(context) {
             })
         });
         const recaptcha = await verify.json();
-        
-        console.log("DEBUG_RECAPTCHA_RESULT:", JSON.stringify(recaptcha));
 
         const isLocal = context.request.url.includes('127.0.0.1') || context.request.url.includes('localhost');
         if (!recaptcha.success && !isLocal) {
-            return new Response(JSON.stringify({ 
-                error: 'reCAPTCHA failed', 
-                details: recaptcha,
-                suggestion: "Vérifiez que RECAPTCHA_SECRET_KEY dans Cloudflare correspond à la clé de site utilisée."
-            }), { 
+            return new Response(JSON.stringify({
+                error: 'reCAPTCHA failed',
+                details: recaptcha
+            }), {
                 status: 403,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -70,7 +65,7 @@ export async function onRequest(context) {
         if (formData.customerType === 'Particulier' || !formData.customerType) {
             let { data: existing } = await supabase.from('clients').select('*').eq('email', c.email).maybeSingle();
             if (!existing) {
-                const { data: created, error: createErr } = await supabase.from('clients').insert({
+                const { data: created, error: createErr } = await supabase.from('clients').insert({       
                     email: c.email, first_name: c.firstName, last_name: c.lastName, phone: c.phone, type: 'Particulier', client_id: generateClientId()
                 }).select().single();
                 if (createErr) throw new Error("Erreur création client: " + createErr.message);
@@ -81,7 +76,7 @@ export async function onRequest(context) {
         } else {
             let { data: existingEnt } = await supabase.from('entreprises').select('*').eq('contact_email', c.email).maybeSingle();
             if (!existingEnt) {
-                const { data: createdEnt, error: entErr } = await supabase.from('entreprises').insert({
+                const { data: createdEnt, error: entErr } = await supabase.from('entreprises').insert({   
                     nom_entreprise: c.companyName || c.lastName, contact_email: c.email, contact_phone: c.phone, contact_name: c.firstName || c.contactName
                 }).select().single();
                 if (entErr) throw new Error("Erreur création entreprise: " + entErr.message);
@@ -109,7 +104,22 @@ export async function onRequest(context) {
         // 4. Détails JSON
         let details = formData.details || {};
         if (formData.type === 'COMMANDE_MENU') {
-            details = { formulaName: formData.formulaName, formulaOption: formData.formulaOption, deliveryCity: formData.deliveryCity };
+            details = { 
+                formulaName: formData.formulaName, 
+                formulaOption: formData.formulaOption, 
+                deliveryCity: formData.deliveryCity 
+            };
+        } else if (formData.type === 'RESERVATION_SERVICE') {
+            details = {
+                serviceType: formData.serviceType || formData.service,
+                heure: formData.heure,
+                numberOfPeople: formData.numberOfPeople || formData.personnes,
+                ville: formData.ville,
+                budget: formData.budget,
+                allergies: formData.allergies,
+                customerMessage: formData.customerMessage || formData.message,
+                address: formData.address
+            };
         }
 
         // 5. INSERTION DEMANDE
@@ -117,9 +127,9 @@ export async function onRequest(context) {
             .from('demandes')
             .insert({
                 client_id: clientId,
-                entreprise_id: entrepriseId, // AJOUTÉ : Support entreprise
+                entreprise_id: entrepriseId,
                 type: formData.type,
-                status: 'Intention WhatsApp',
+                status: 'Nouvelle',
                 request_date: formData.requestDate,
                 details_json: details,
                 total_amount: total,
@@ -130,17 +140,18 @@ export async function onRequest(context) {
         if (demErr) throw new Error("Erreur insertion demande: " + demErr.message);
 
         // 6. Alerte Admin
-        const waMsg = `🔔 *INTENTION DE COMMANDE*\n👤 *Client:* ${customerName}\n💰 *Montant:* ${total ? total+'€' : 'À fixer'}\n📍 *Ville:* ${formData.deliveryCity || '—'}`;
+        const displayCity = formData.ville || formData.deliveryCity || details.ville || '—';
+        const waMsg = `🔔 *NOUVELLE DEMANDE*\n👤 *Client:* ${customerName}\n📋 *Type:* ${formData.type}\n📍 *Ville:* ${displayCity}`;
         await sendWhatsAppAdminAlert(context, waMsg);
 
-        return new Response(JSON.stringify({ message: 'Success', id: newDemande.id }), { 
+        return new Response(JSON.stringify({ message: 'Success', id: newDemande.id }), {
             status: 201,
             headers: { 'Content-Type': 'application/json' }
         });
 
     } catch (error) {
         console.error("CREATE_REQUEST_ERROR:", error.message);
-        return new Response(JSON.stringify({ error: error.message }), { 
+        return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });
