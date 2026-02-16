@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentStep = 1;
     let currentUniverse = 'weekly';
     let unavailableDates = [];
-    let workingDays = []; 
+    let workingDays = [];
     let selectedDate = null;
     let isOverrideEnabled = false;
     let orderCutoffDays = 2;
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('special-offer-container');
         if (!container || !offer || !offer.dishes) return;
         const dishOptions = offer.dishes.map((dish, index) => {
-            const minPrice = Math.min(parseFloat(dish.price1) || 0, parseFloat(dish.price2) || 0);
+            const minPrice = Math.min(parseFloat(dish.price1) || 0, parseFloat(dish.price2) || 0);        
             return `<option value="${index}">${getLangText(dish.name)} (dès ${minPrice.toFixed(2)}€)</option>`;
         }).join('');
         container.innerHTML = `<div class="menu-info-box" style="border-left-color: #ef4444;"><h2 style="color:#ef4444; text-align:left;">🔥 ${getLangText(offer.title) || t('menu.special_offer_title')}</h2>${offer.period ? `<p style="font-weight:900; color:#ef4444; font-size:0.85rem; margin-bottom:0.5rem;">📅 ${offer.period}</p>` : ''}<p style="margin-bottom:1.5rem; font-size:0.9rem; color:#666; text-align:left;">${getLangText(offer.description) || ''}</p><div id="countdown-timer"></div><div class="form-grid" style="align-items: flex-end; gap: 10px;"><div class="form-group"><label>${t('menu.special_offer_dish')}</label><select id="special-offer-dish" class="app-input" style="padding:0.8rem">${dishOptions}</select></div><div class="form-group"><label>${t('menu.special_offer_portion')}</label><select id="special-offer-portion" class="app-input" style="padding:0.8rem"></select></div><div class="form-group"><label>${t('menu.special_offer_quantity')}</label><input type="number" id="special-offer-quantity" class="app-input" style="padding:0.8rem" value="1" min="1"></div><button type="button" id="add-to-cart-btn" class="btn-next" style="width:100%; height:45px; padding:0; margin-top:10px;">Ajouter</button></div></div>`;
@@ -243,48 +243,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         const currentDay = now.getDay();
         const currentHour = now.getHours();
-        
-        // --- LOGIQUE DE PLAGE AUTORISÉE ---
+
         let allowedStart = new Date(today);
-        
-        // Basculement Semaine Suivante (Vendredi 14h+)
-        // On force le calcul du lundi de la semaine à afficher
+
         if (currentDay === 6 || (currentDay === 5 && currentHour >= 14) || currentDay === 0) {
-            // C'est le weekend : on affiche la semaine PROCHAINE
             const daysToNextMonday = (8 - currentDay) % 7 || 7;
             allowedStart.setDate(today.getDate() + daysToNextMonday);
         } else {
-            // C'est la semaine : on affiche la semaine EN COURS
             const offsetToMonday = (1 - currentDay);
             allowedStart.setDate(today.getDate() + offsetToMonday);
         }
         allowedStart.setHours(0,0,0,0);
 
         const allowedEnd = new Date(allowedStart);
-        allowedEnd.setDate(allowedStart.getDate() + 5); // Jusqu'au samedi
+        allowedEnd.setDate(allowedStart.getDate() + 5); 
 
         const header = document.createElement('div'); header.className = 'calendar-header';
         header.innerHTML = `<button type="button" onclick="window.changeMonth(${-1 + monthOffset})">&lt;</button><h3>${monthNames[month]} ${year}</h3><button type="button" onclick="window.changeMonth(${1 + monthOffset})">&gt;</button>`;
         const grid = document.createElement('div'); grid.className = 'calendar-grid';
         [t('calendar.days.sun'), t('calendar.days.mon'), t('calendar.days.tue'), t('calendar.days.wed'), t('calendar.days.thu'), t('calendar.days.fri'), t('calendar.days.sat')].forEach(d => grid.innerHTML += `<div class="calendar-day-header">${d}</div>`);
-        
+
         for (let i = 0; i < new Date(year, month, 1).getDay(); i++) grid.appendChild(document.createElement('div'));
         for (let i = 1; i <= new Date(year, month + 1, 0).getDate(); i++) {
             const d = new Date(year, month, i); d.setHours(0,0,0,0);
             const ds = `${String(i).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
             const el = document.createElement('div'); el.className = 'calendar-day'; el.textContent = i;  
-            
+
             const isWorkingDay = workingDays.includes(d.getDay());
-            const cutoff = new Date(d); 
-            cutoff.setDate(d.getDate() - parseInt(orderCutoffDays || 2)); 
+            const cutoff = new Date(d);
+            cutoff.setDate(d.getDate() - parseInt(orderCutoffDays || 2));
             cutoff.setHours(parseInt(orderCutoffHour || 11), 0, 0, 0);
-            
+
             const isTooEarly = d < allowedStart;
             const isTooLate = d > allowedEnd;
             const isCutoffPassed = new Date() > cutoff;
             const isBlocked = unavailableDates.includes(ds);
 
-            let disabled = (!isWorkingDay || isTooEarly || isTooLate || isCutoffPassed || isBlocked);
+            let disabled = (!isWorkingDay || isTooEarly || isTooLate || isCutoffPassed || isBlocked);     
 
             if (disabled) el.classList.add('disabled');
             else {
@@ -301,8 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchMenuContent() {
         try {
             const dispoRes = await fetch('/disponibilites?service_type=COMMANDE_MENU');
-            if (dispoRes.ok) { 
-                const dispoData = await dispoRes.json(); 
+            if (dispoRes.ok) {
+                const dispoData = await dispoRes.json();
                 unavailableDates = dispoData.unavailableDates || [];
                 const s = dispoData.settings || {};
                 workingDays = [];
@@ -319,10 +314,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const dCalc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
             dCalc.setUTCDate(dCalc.getUTCDate() + 4 - (dCalc.getUTCDay() || 7));
             const yearStart = new Date(Date.UTC(dCalc.getUTCFullYear(), 0, 1));
-            let weekNumber = Math.ceil((((dCalc.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-            if (now.getDay() === 6 || (now.getDay() === 5 && now.getHours() >= 14) || now.getDay() === 0) { 
-                weekNumber++; 
-                if (weekNumber > 52) { weekNumber = 1; year++; } 
+            let weekNumber = Math.ceil((((dCalc.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);   
+            if (now.getDay() === 6 || (now.getDay() === 5 && now.getHours() >= 14) || now.getDay() === 0) {
+                weekNumber++;
+                if (weekNumber > 52) { weekNumber = 1; year++; }
             }
 
             const response = await fetch(`/get-menus?week=${weekNumber}&year=${year}`);
@@ -356,11 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confortVal !== "" && confortVal !== standardContent) fillContent('content-confort', 'menu.formula_comfort_label', data.menu_confort);
             else { const el = document.getElementById('content-confort'); if(el) el.style.display = 'none'; }
             if (duoVal !== "" && duoVal !== standardContent) fillContent('content-duo', 'menu.formula_duo_label', data.menu_duo);
-            else { const el = document.getElementById('content-duo'); if(el) el.style.display = 'none'; }
+            else { const el = document.getElementById('content-duo'); if(el) el.style.display = 'none'; } 
 
             document.querySelectorAll('.formula-card').forEach(card => card.style.display = 'block');     
-            
-            // RESTAURATION DES PRIX DANS LES CARTES
+
             const d1 = document.getElementById('price-decouverte'); if(d1) d1.textContent = `${data.menu_decouverte_price}€`;
             const d2 = document.getElementById('price-standard'); if(d2) d2.textContent = `${data.menu_standard_price}€`;
             const d3 = document.getElementById('price-confort'); if(d3) d3.textContent = `${data.menu_confort_price}€`;
@@ -392,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     };
-    if (sheetClose) sheetClose.addEventListener('click', () => sheet.classList.remove('is-visible'));
+    if (sheetClose) sheetClose.addEventListener('click', () => sheet.classList.remove('is-visible'));     
     if (sheet) sheet.querySelector('.sheet-overlay').addEventListener('click', () => sheet.classList.remove('is-visible'));
 
     const updateSelectedCard = () => {
@@ -433,12 +427,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             let token = "local-test-token";
             try { token = await grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}); } catch (reErr) { if (!isLocal) throw reErr; }
-            
-            // AJOUT DU TOKEN AU PAYLOAD
+
             orderPayload.recaptchaToken = token;
 
             const res = await fetch('/create-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderPayload) });
-            
+
             if (!res.ok) {
                 const errorData = await res.json();
                 console.error("DÉTAIL ERREUR SERVEUR:", errorData);
@@ -447,7 +440,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let waMessage = `Bonjour, intention de commande pour le ${data.jour || (specialOfferDetails ? specialOfferDetails.eventDate : '')} :\n- Client : ${data.nom}\n- Formule : ${data.formule || (specialOfferDetails ? specialOfferDetails.title : '')}\n- Mode : ${zoneName}`;
-            if (currentUniverse === 'special' && cart.length > 0) { const itemsList = cart.map(item => `- ${item.quantity}x ${item.name} (${item.portion})`).join('\n'); waMessage = `Bonjour, intention de commande ÉVÉNEMENT pour le ${specialOfferDetails.eventDate} :\n- Client : ${data.nom}\n${itemsList}\n- Mode : ${zoneName}`; }
+            if (currentUniverse === 'special' && cart.length > 0) { 
+                const itemsList = cart.map(item => `- ${item.quantity}x ${getLangText(item.name)} (${item.portion})`).join('\n'); 
+                waMessage = `Bonjour, intention de commande ÉVÉNEMENT pour le ${specialOfferDetails.eventDate} :\n- Client : ${data.nom}\n${itemsList}\n- Mode : ${zoneName}`; 
+            }
             openWhatsAppLink('33767644714', waMessage);
             form.reset(); currentStep = 1; updateStepUI(); cart = []; renderCart();
         } catch (error) { alert(t('menu.error_occurred')); } finally { if(submitBtnReal) { submitBtnReal.textContent = t('menu.to_order_cta'); submitBtnReal.disabled = false; } }
@@ -462,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal) modal.classList.toggle('is-visible', show);
         if (show && cgvBody && (cgvBody.innerHTML.includes("Chargement") || cgvBody.innerHTML === "")) {  
             fetch('cgv.html').then(res => res.text()).then(html => {
-                const parser = new DOMParser(); const doc = parser.parseFromString(html, 'text/html');
+                const parser = new DOMParser(); const doc = parser.parseFromString(html, 'text/html');    
                 const mainContent = doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body;
                 cgvBody.innerHTML = mainContent.innerHTML;
                 if (window.i18next && typeof i18next.t === 'function') { cgvBody.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (key) el.innerHTML = i18next.t(key); }); }
