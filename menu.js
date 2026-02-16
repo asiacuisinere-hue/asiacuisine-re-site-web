@@ -433,6 +433,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             let token = "local-test-token";
             try { token = await grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}); } catch (reErr) { if (!isLocal) throw reErr; }
+            
+            // AJOUT DU TOKEN AU PAYLOAD
+            orderPayload.recaptchaToken = token;
+
             const res = await fetch('/create-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderPayload) });
             
             if (!res.ok) {
