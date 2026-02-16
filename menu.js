@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cart.length === 0) { container.innerHTML = ''; updateStickyTotal(); return; }
         const isDelivery = form.querySelector('input[name="deliveryMode"]:checked')?.value === 'livraison';
         const itemsHtml = cart.map((item, i) => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee; font-size:0.9rem"><span><strong>${item.quantity}x</strong> ${getLangText(item.name)} <br><small>${item.portion}</small></span><span>${(item.quantity * item.price).toFixed(2)}€ <button type="button" onclick="window.removeFromCart(${i})" style="color:red; background:none; border:none; font-size:1.2rem; margin-left:10px;">&times;</button></span></div>`).join('');
-        container.innerHTML = `<div style="background: #fffdf5; border: 2px solid #d4af37; border-radius: 20px; padding: 1.5rem; margin-top: 1.5rem;"><h3 style="margin-top:0; text-align: left !important; font-size:1rem;">🛒 Votre Panier</h3><div style="margin-bottom: 1rem;">${itemsHtml}</div><div style="border-top: 1px solid #eee; padding-top: 1rem;"><p style="font-weight: 900; font-size: 0.75rem; margin-bottom: 0.8rem; text-transform: uppercase; color: #d4af37;">Option de réception</p><div class="delivery-options" style="margin-bottom: 1rem; gap:8px;"><label class="delivery-type-label"><input type="radio" name="deliveryMode" value="retrait" ${!isDelivery ? 'checked' : ''} onchange="window.updateSpecialDelivery()"><div class="delivery-box" style="padding:8px">📍 <span style="font-size:0.8rem; font-weight:900">Retrait</span></div></label><label class="delivery-type-label"><input type="radio" name="deliveryMode" value="livraison" ${isDelivery ? 'checked' : ''} onchange="window.updateSpecialDelivery()"><div class="delivery-box" style="padding:8px">🚚 <span style="font-size:0.8rem; font-weight:900">Livraison</span></div></label></div><div id="delivery-zone-container-special" style="display: ${isDelivery ? 'block' : 'none'};"><select id="delivery-zone-special" name="deliveryZone" class="app-input" onchange="window.updateSpecialDelivery()" style="padding:0.6rem; font-size:0.85rem"><option value="4" data-zone="Saint-André / Bras-Panon (Centre-ville)">Saint-André / Bras-Panon (Centre-ville) (4.00€)</option><option value="6" data-zone="Sainte-Marie (Centre-ville / Beauséjour)">Sainte-Marie (Centre-ville / Beauséjour) (6.00€)</option><option value="8" data-zone="Saint-Denis (Chaudron / Sainte-Clotilde)">Saint-Denis (Chaudron / Sainte-Clotilde) (8.00€)</option></select></div></div></div>`;
+        container.innerHTML = `<div style="background: #fffdf5; border: 2px solid #d4af37; border-radius: 20px; padding: 1.5rem; margin-top: 1.5rem;"><h3 style="margin-top:0; text-align: left !important; font-size:1rem;">🛒 Votre Panier</h3><div style="margin-bottom: 1rem;">${itemsHtml}</div><div style="border-top: 1px solid #eee; padding-top: 1rem;"><p style="font-weight: 900; font-size: 0.75rem; margin-bottom: 0.8rem; text-transform: uppercase; color: #d4af37;">Option de réception</p><div class="delivery-options" style="margin-bottom: 1rem; gap:8px;"><label class="delivery-type-label"><input type="radio" name="deliveryMode" value="retrait" ${!isDelivery ? 'checked' : ''} onchange="window.updateSpecialDelivery()"><div class="delivery-box" style="padding:8px">📍 <span style="font-size:0.8rem; font-weight:900">Retrait</span></div></label><label class="delivery-type-label"><input type="radio" name="deliveryMode" value="livraison" ${isDelivery ? 'checked' : ''} onchange="window.updateSpecialDelivery()"><div class="delivery-box" style="padding:8px">🚚 <span style="font-size:0.8rem; font-weight:900">Livraison</span></div></label></div><div id="delivery-zone-container-special" style="display: ${isDelivery ? 'block' : 'none'};"><select id="delivery-zone-special" name="deliveryZone" class="app-input" onchange="window.updateSpecialDelivery()" style="padding:0.6rem; font-size:0.85rem"><option value="4" data-zone="Saint-André / Bras-Panon">Saint-André / Bras-Panon (4.00€)</option><option value="6" data-zone="Sainte-Marie">Sainte-Marie (6.00€)</option><option value="8" data-zone="Saint-Denis">Saint-Denis (8.00€)</option></select></div></div></div>`;
         updateStickyTotal();
     }
     window.updateSpecialDelivery = () => renderCart();
@@ -244,17 +244,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentDay = now.getDay();
         const currentHour = now.getHours();
         
+        // --- LOGIQUE DE PLAGE AUTORISÉE ---
         let allowedStart = new Date(today);
-        if (currentDay === 6 || (currentDay === 5 && currentHour >= 14)) {
+        
+        // Basculement Semaine Suivante (Vendredi 14h+)
+        // On force le calcul du lundi de la semaine à afficher
+        if (currentDay === 6 || (currentDay === 5 && currentHour >= 14) || currentDay === 0) {
+            // C'est le weekend : on affiche la semaine PROCHAINE
             const daysToNextMonday = (8 - currentDay) % 7 || 7;
             allowedStart.setDate(today.getDate() + daysToNextMonday);
         } else {
-            const offsetToMonday = (today.getDay() === 0 ? -6 : 1 - today.getDay());
+            // C'est la semaine : on affiche la semaine EN COURS
+            const offsetToMonday = (1 - currentDay);
             allowedStart.setDate(today.getDate() + offsetToMonday);
         }
+        allowedStart.setHours(0,0,0,0);
 
         const allowedEnd = new Date(allowedStart);
-        allowedEnd.setDate(allowedStart.getDate() + 5); 
+        allowedEnd.setDate(allowedStart.getDate() + 5); // Jusqu'au samedi
 
         const header = document.createElement('div'); header.className = 'calendar-header';
         header.innerHTML = `<button type="button" onclick="window.changeMonth(${-1 + monthOffset})">&lt;</button><h3>${monthNames[month]} ${year}</h3><button type="button" onclick="window.changeMonth(${1 + monthOffset})">&gt;</button>`;
@@ -268,9 +275,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = document.createElement('div'); el.className = 'calendar-day'; el.textContent = i;  
             
             const isWorkingDay = workingDays.includes(d.getDay());
-            const cutoff = new Date(d); cutoff.setDate(d.getDate() - orderCutoffDays); cutoff.setHours(orderCutoffHour,0,0,0);
+            const cutoff = new Date(d); 
+            cutoff.setDate(d.getDate() - parseInt(orderCutoffDays || 2)); 
+            cutoff.setHours(parseInt(orderCutoffHour || 11), 0, 0, 0);
             
-            let disabled = (!isWorkingDay || d < allowedStart || d > allowedEnd || new Date() > cutoff || unavailableDates.includes(ds));
+            const isTooEarly = d < allowedStart;
+            const isTooLate = d > allowedEnd;
+            const isCutoffPassed = new Date() > cutoff;
+            const isBlocked = unavailableDates.includes(ds);
+
+            let disabled = (!isWorkingDay || isTooEarly || isTooLate || isCutoffPassed || isBlocked);
 
             if (disabled) el.classList.add('disabled');
             else {
@@ -306,7 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
             dCalc.setUTCDate(dCalc.getUTCDate() + 4 - (dCalc.getUTCDay() || 7));
             const yearStart = new Date(Date.UTC(dCalc.getUTCFullYear(), 0, 1));
             let weekNumber = Math.ceil((((dCalc.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-            if (now.getDay() === 6 || (now.getDay() === 5 && now.getHours() >= 14)) { weekNumber++; if (weekNumber > 52) { weekNumber = 1; year++; } }
+            if (now.getDay() === 6 || (now.getDay() === 5 && now.getHours() >= 14) || now.getDay() === 0) { 
+                weekNumber++; 
+                if (weekNumber > 52) { weekNumber = 1; year++; } 
+            }
 
             const response = await fetch(`/get-menus?week=${weekNumber}&year=${year}`);
             const data = await response.json();
@@ -334,31 +351,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const standardContent = getLangText(data.menu_standard);
             fillContent('content-decouverte', 'menu.formula_discovery_label', data.menu_decouverte);      
             fillContent('content-standard', 'menu.formula_standard_label', data.menu_standard);
-            
-            // LOGIQUE DE MASQUAGE DU RÉSUMÉ :
-            // On affiche Confort et Duo SEULEMENT s'ils sont différents de Standard
             const confortVal = getLangText(data.menu_confort);
             const duoVal = getLangText(data.menu_duo);
+            if (confortVal !== "" && confortVal !== standardContent) fillContent('content-confort', 'menu.formula_comfort_label', data.menu_confort);
+            else { const el = document.getElementById('content-confort'); if(el) el.style.display = 'none'; }
+            if (duoVal !== "" && duoVal !== standardContent) fillContent('content-duo', 'menu.formula_duo_label', data.menu_duo);
+            else { const el = document.getElementById('content-duo'); if(el) el.style.display = 'none'; }
 
-            if (confortVal !== "" && confortVal !== standardContent) {
-                fillContent('content-confort', 'menu.formula_comfort_label', data.menu_confort);
-            } else {
-                const el = document.getElementById('content-confort'); if(el) el.style.display = 'none';
-            }
-
-            if (duoVal !== "" && duoVal !== standardContent) {
-                fillContent('content-duo', 'menu.formula_duo_label', data.menu_duo);
-            } else {
-                const el = document.getElementById('content-duo'); if(el) el.style.display = 'none';
-            }
-
-            // Toujours afficher les 4 cartes de sélection
             document.querySelectorAll('.formula-card').forEach(card => card.style.display = 'block');     
             
+            // RESTAURATION DES PRIX DANS LES CARTES
             const d1 = document.getElementById('price-decouverte'); if(d1) d1.textContent = `${data.menu_decouverte_price}€`;
             const d2 = document.getElementById('price-standard'); if(d2) d2.textContent = `${data.menu_standard_price}€`;
             const d3 = document.getElementById('price-confort'); if(d3) d3.textContent = `${data.menu_confort_price}€`;
             const d4 = document.getElementById('price-duo'); if(d4) d4.textContent = `${data.menu_duo_price}€`;
+
             if(data.special_offer_enabled === 'true' || data.special_offer_enabled === true) {
                 specialOfferDetails = typeof data.special_offer_details === 'string' ? JSON.parse(data.special_offer_details) : data.special_offer_details;
                 if (document.getElementById('universe-btn-special')) document.getElementById('universe-btn-special').style.display = 'flex';
@@ -426,9 +433,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             let token = "local-test-token";
             try { token = await grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}); } catch (reErr) { if (!isLocal) throw reErr; }
-            orderPayload.recaptchaToken = token;
             const res = await fetch('/create-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderPayload) });
-            if (!res.ok && !isLocal) throw new Error('Erreur');
+            
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error("DÉTAIL ERREUR SERVEUR:", errorData);
+                throw new Error(errorData.error || 'Erreur serveur lors de la sauvegarde');
+            }
+
             let waMessage = `Bonjour, intention de commande pour le ${data.jour || (specialOfferDetails ? specialOfferDetails.eventDate : '')} :\n- Client : ${data.nom}\n- Formule : ${data.formule || (specialOfferDetails ? specialOfferDetails.title : '')}\n- Mode : ${zoneName}`;
             if (currentUniverse === 'special' && cart.length > 0) { const itemsList = cart.map(item => `- ${item.quantity}x ${item.name} (${item.portion})`).join('\n'); waMessage = `Bonjour, intention de commande ÉVÉNEMENT pour le ${specialOfferDetails.eventDate} :\n- Client : ${data.nom}\n${itemsList}\n- Mode : ${zoneName}`; }
             openWhatsAppLink('33767644714', waMessage);

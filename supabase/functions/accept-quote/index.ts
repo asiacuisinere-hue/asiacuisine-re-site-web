@@ -19,22 +19,17 @@ serve(async (req) => {
             Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
         );
 
-        // 1. Mettre à jour les données de signature
-        const updateData: any = { 
-            status: 'accepted', 
-            updated_at: new Date().toISOString() 
-        };
-
-        if (signature_image) {
-            updateData.signature_image = signature_image;
-            updateData.signer_name = signer_name;
-            updateData.signature_ip = ip;
-            updateData.signed_at = new Date().toISOString();
-        }
-
+        // 1. Enregistrer la signature et passer le devis en "accepted"
         const { data: updatedQuote, error: updateError } = await supabase
             .from('quotes')
-            .update(updateData)
+            .update({ 
+                status: 'accepted', 
+                signature_image, 
+                signer_name, 
+                signature_ip: ip, 
+                signed_at: new Date().toISOString(),
+                updated_at: new Date().toISOString() 
+            })
             .eq('id', quoteId)
             .select('*, clients(*), entreprises(*)')
             .single();
@@ -47,11 +42,11 @@ serve(async (req) => {
             .select('*')
             .eq('quote_id', quoteId);
 
-        // 3. Régénérer le PDF avec la signature
+        // 3. Régénérer le PDF avec la signature visuelle
         const customer = updatedQuote.clients || updatedQuote.entreprises;
         const pdfBytes = await generateQuotePDF(updatedQuote, customer, items || [], updatedQuote.total_amount);
 
-        // 4. Écraser l'ancien PDF dans le Storage
+        // 4. Écraser l'ancien PDF dans le Storage (pour que le client voie sa signature s'il ré-ouvre le lien)
         const filePath = updatedQuote.storage_path;
         if (filePath) {
             await supabase.storage.from('documents').upload(filePath, pdfBytes, {
@@ -60,7 +55,8 @@ serve(async (req) => {
             });
         }
 
-        // 5. Déclencher automatiquement la création de la facture
+        // 5. Créer la Facture d'Acompte (Silencieusement)
+        // Cela génère la facture dans votre liste "À envoyer" du Dashboard
         await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/create-invoice-from-quote`, {
             method: 'POST',
             headers: {
@@ -69,6 +65,9 @@ serve(async (req) => {
             },
             body: JSON.stringify({ quoteId: quoteId })
         });
+
+        // --- AUCUN ENVOI D'EMAIL ICI ---
+        // Vous gardez le contrôle manuel depuis le Dashboard.
 
         return new Response(JSON.stringify({ success: true }), {
             status: 200,
