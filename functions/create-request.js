@@ -28,26 +28,31 @@ export async function onRequest(context) {
         // 1. reCAPTCHA Verification
         const RECAPTCHA_SECRET_KEY = context.env.RECAPTCHA_SECRET_KEY;
         if (!RECAPTCHA_SECRET_KEY) {
-            console.error("ERREUR: RECAPTCHA_SECRET_KEY manquante dans context.env");
+            console.error("ERREUR: RECAPTCHA_SECRET_KEY manquante");
             return new Response(JSON.stringify({ error: 'Server configuration error' }), { status: 500 });
         }
+
+        console.log("DEBUG_RECAPTCHA: Token reçu (début):", recaptchaToken?.substring(0, 20));
 
         const verify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
                 secret: RECAPTCHA_SECRET_KEY,
-                response: recaptchaToken || ''
-            }).toString()
+                response: recaptchaToken || '',
+                remoteip: context.request.headers.get('CF-Connecting-IP') || ''
+            })
         });
         const recaptcha = await verify.json();
-        // Si on est en local, on peut être plus souple sur le recaptcha pour le test
+        
+        console.log("DEBUG_RECAPTCHA_RESULT:", JSON.stringify(recaptcha));
+
         const isLocal = context.request.url.includes('127.0.0.1') || context.request.url.includes('localhost');
         if (!recaptcha.success && !isLocal) {
-            console.error("RECAPTCHA_VERIFY_ERROR:", JSON.stringify(recaptcha));
             return new Response(JSON.stringify({ 
                 error: 'reCAPTCHA failed', 
-                details: recaptcha // Renvoie l'erreur complète de Google
+                details: recaptcha,
+                suggestion: "Vérifiez que RECAPTCHA_SECRET_KEY dans Cloudflare correspond à la clé de site utilisée."
             }), { 
                 status: 403,
                 headers: { 'Content-Type': 'application/json' }
