@@ -36,7 +36,14 @@ export async function onRequest(context) {
         // Si on est en local, on peut être plus souple sur le recaptcha pour le test
         const isLocal = context.request.url.includes('127.0.0.1') || context.request.url.includes('localhost');
         if (!recaptcha.success && !isLocal) {
-            return new Response(JSON.stringify({ error: 'reCAPTCHA failed', details: recaptcha }), { status: 403 });
+            console.error("RECAPTCHA_VERIFY_ERROR:", JSON.stringify(recaptcha));
+            return new Response(JSON.stringify({ 
+                error: 'reCAPTCHA failed', 
+                details: recaptcha // Renvoie l'erreur complète de Google
+            }), { 
+                status: 403,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);   
