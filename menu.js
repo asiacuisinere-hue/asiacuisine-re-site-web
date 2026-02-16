@@ -439,7 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error("Erreur : " + errorMsg);
             }
 
-            let waMessage = `Bonjour, intention de commande pour le ${data.jour || (specialOfferDetails ? specialOfferDetails.eventDate : '')} :\n- Client : ${data.nom}\n- Formule : ${data.formule || (specialOfferDetails ? specialOfferDetails.title : '')}\n- Mode : ${zoneName}`;
+            let formulaText = data.formule || (specialOfferDetails ? specialOfferDetails.title : '');
+            const opt = document.querySelector('.formula-card.selected input[name^="option"]:checked');
+            if (opt && currentUniverse === 'weekly') {
+                formulaText += ` (${opt.value})`;
+            }
+
+            let waMessage = `Bonjour, intention de commande pour le ${data.jour || (specialOfferDetails ? specialOfferDetails.eventDate : '')} :\n- Client : ${data.nom}\n- Formule : ${formulaText}\n- Mode : ${zoneName}`;
             if (currentUniverse === 'special' && cart.length > 0) { 
                 const itemsList = cart.map(item => `- ${item.quantity}x ${getLangText(item.name)} (${item.portion})`).join('\n'); 
                 waMessage = `Bonjour, intention de commande ÉVÉNEMENT pour le ${specialOfferDetails.eventDate} :\n- Client : ${data.nom}\n${itemsList}\n- Mode : ${zoneName}`; 
