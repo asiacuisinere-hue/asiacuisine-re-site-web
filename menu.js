@@ -438,7 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) {
                 const errorData = await res.json();
                 console.error("DÉTAIL ERREUR SERVEUR:", errorData);
-                throw new Error(errorData.error || 'Erreur serveur lors de la sauvegarde');
+                const errorMsg = errorData.details?.['error-codes']?.join(', ') || errorData.error || 'Erreur serveur';
+                throw new Error("Erreur : " + errorMsg);
             }
 
             let waMessage = `Bonjour, intention de commande pour le ${data.jour || (specialOfferDetails ? specialOfferDetails.eventDate : '')} :\n- Client : ${data.nom}\n- Formule : ${data.formule || (specialOfferDetails ? specialOfferDetails.title : '')}\n- Mode : ${zoneName}`;
