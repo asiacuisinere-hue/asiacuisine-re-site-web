@@ -296,7 +296,10 @@
 
                     const res = await fetch(`${SUPABASE_URL}/functions/v1/accept-quote`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        },
                         body: JSON.stringify({ quoteId, signature_image: signatureImage, signer_name: signerName, ip })
                     });
 

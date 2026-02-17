@@ -110,27 +110,45 @@ async function generateInvoicePDF(invoice, companySettings) {
         }
     }
 
-    y -= 15;
-    const totalAmount = parseFloat(invoice.total_amount) || 0;
-    const depositAmount = parseFloat(invoice.deposit_amount) || 0;
-    const boxHeight = (depositAmount > 0) ? 80 : 50;
-
-    page.drawRectangle({ x: 350, y: y - boxHeight + 20, width: 195, height: boxHeight, color: rgb(0.98, 0.98, 0.98), borderColor: gold, borderWidth: 1 });
-
-    let totalsY = y;
-    page.drawText("TOTAL TTC:", { x: 365, y: totalsY, size: 12, font: fontBold });
-    page.drawText(`${totalAmount.toFixed(2)} €`, { x: 470, y: totalsY, size: 14, font: fontBold, color: gold });
-
-    if (depositAmount > 0) {
-        const remaining = totalAmount - depositAmount;
-        totalsY -= 25;
-        page.drawText("Acompte Versé:", { x: 365, y: totalsY, size: 10, font: fontBold });
-        page.drawText(`- ${depositAmount.toFixed(2)} €`, { x: 470, y: totalsY, size: 10, font });       
-        totalsY -= 25;
-        page.drawText(remaining > 0 ? "RESTE À PAYER:" : "SOLDE PAYÉ:", { x: 365, y: totalsY, size: 11, font: fontBold });
-        page.drawText(`${remaining.toFixed(2)} €`, { x: 470, y: totalsY, size: 12, font: fontBold, color: gold });
-    }
-
+        y -= 15;
+        const totalAmount = parseFloat(invoice.total_amount) || 0;
+        const depositAmount = parseFloat(invoice.deposit_amount) || 0;
+        const isPaid = invoice.status === 'paid';
+        const boxHeight = (depositAmount > 0 || isPaid) ? 80 : 50;
+    
+        page.drawRectangle({ x: 350, y: y - boxHeight + 20, width: 195, height: boxHeight, color: rgb(0.98, 0.98, 0.98), borderColor: gold, borderWidth: 1 });
+    
+        let totalsY = y;
+        page.drawText("TOTAL TTC:", { x: 365, y: totalsY, size: 12, font: fontBold });
+        page.drawText(`${totalAmount.toFixed(2)} €`, { x: 470, y: totalsY, size: 14, font: fontBold, color: gold });
+    
+        if (depositAmount > 0 || isPaid) {
+            totalsY -= 25;
+            if (depositAmount > 0) {
+                page.drawText("Acompte Versé:", { x: 365, y: totalsY, size: 10, font: fontBold });
+                page.drawText(`- ${depositAmount.toFixed(2)} €`, { x: 470, y: totalsY, size: 10, font });
+                totalsY -= 25;
+            }
+            
+                    const remaining = isPaid ? 0 : (totalAmount - depositAmount);
+                    const labelSize = 10;
+                    
+                    page.drawText(isPaid ? "TOTAL RÉGLÉ (SOLDE) :" : "RESTE À PAYER :", { x: 365, y: totalsY, size: isPaid ? 9 : 11, font: fontBold });
+                    
+                    // Aligner le montant à droite dans la boîte pour plus de clarté
+                    const amountText = `${(isPaid ? totalAmount : remaining).toFixed(2)} €`;
+                    page.drawText(amountText, { 
+                        x: 535 - fontBold.widthOfTextAtSize(amountText, 12), 
+                        y: totalsY, 
+                        size: 12, 
+                        font: fontBold, 
+                        color: gold 
+                    });
+            
+                    if (isPaid) {
+                        totalsY -= 20;
+                        page.drawText("Reste à payer : 0.00 €", { x: 365, y: totalsY, size: 9, font: fontBold, color: rgb(0, 0.5, 0) });
+                    }        }
     // === MENTIONS PAIEMENT ===
     y -= (depositAmount > 0 ? 80 : 60);
     page.drawText('Moyens de paiement acceptés:', { x: 50, y, size: 9, font: fontBold, color: black });
@@ -158,15 +176,18 @@ async function sendEmailWithResend(apiKey, toEmail, customerName, invoice, pdfBy
         `;
     }
 
-    const htmlContent = `
-        <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-            <p>Bonjour ${customerName},</p>
-            <p>Veuillez trouver ci-joint votre facture N° <strong>${documentNumber}</strong>.</p>        
-            ${paymentMessage}
-            <p>Cordialement,<br>L'équipe ${companySettings.name}</p>
-        </div>
-    `;
-
+        const htmlContent = `
+            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                <p>Bonjour ${customerName},</p>
+                <p>Veuillez trouver ci-joint votre facture N° <strong>${documentNumber}</strong>.</p>
+                ${invoice.status === 'paid' 
+                    ? '<div style="margin: 20px 0; padding: 15px; background-color: #e6ffed; border: 1px solid #b7eb8f; border-radius: 8px; color: #135200; font-weight: bold; text-align: center;">✅ Nous confirmons la réception de votre paiement. Votre facture est désormais totalement réglée. Merci !</div>' 
+                    : ''
+                }
+                ${paymentMessage}
+                <p>Cordialement,<br>L'équipe ${companySettings.name}</p>
+            </div>
+        `;
     const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
