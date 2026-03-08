@@ -498,6 +498,48 @@ function initializeWhatsAppLinks() {
     });
 }
 
+// LOGIQUE PUSH CLIENT
+async function subscribeClientToPush() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') return;
+
+    const registration = await navigator.serviceWorker.ready;
+    const VAPID_PUBLIC_KEY = "BLjAkonu9QmbdntAaPmgfo0H_9qCHZ-MDnzLZnDtwZz077Nlhte6gptHMrg5hU7dZzw9XnKa6gd7zpKeDEz19VA"; 
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+
+    await fetch('https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/push_subscriptions', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnbmlvamFianl3cm53b3ZsbWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0ODg2MzgsImV4cCI6MjA3NzA2NDYzOH0.W2oBIE4AkBEfi2k3apLK3Gr2bn22vKqQG2sTixQVPu0', // Ã€ REMPLACER PAR VOTRE CLÃ‰ ANONYME
+        'Authorization': 'Bearer VOTRE_CLE_ANON_REELLE' // Ã€ REMPLACER
+      },
+      body: JSON.stringify({
+        subscription: subscription.toJSON(),
+        user_agent: navigator.userAgent,
+        role: 'customer'
+      })
+    });
+
+    alert('Vous recevrez dÃ©sormais les alertes nouveaux menus !');
+  } catch (err) { console.error('Push subscription failed', err); }
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
+  return outputArray;
+}
+
 // Enregistrement du Service Worker pour la PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -506,4 +548,3 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.log('Erreur PWA Service Worker', err));
   });
 }
-`n`n// LOGIQUE PUSH CLIENT`nasync function subscribeClientToPush() {`n  if (!('serviceWorker' in navigator)) return;`n  try {`n    const permission = await Notification.requestPermission();`n    if (permission !== 'granted') return;`n`n    const registration = await navigator.serviceWorker.ready;`n    const VAPID_PUBLIC_KEY = \"VOTRE_CLE_PUBLIQUE_ICI\"; // À REMPLACER`n`n    const subscription = await registration.pushManager.subscribe({`n      userVisibleOnly: true,`n      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)`n    });`n`n    // Enregistrement dans Supabase (via API REST pour éviter d importer le client lourd)`n    await fetch('https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/push_subscriptions', {`n      method: 'POST',`n      headers: { `n        'Content-Type': 'application/json', `n        'apikey': \"VOTRE_CLE_ANON_ICI\", // À REMPLACER`n        'Authorization': \"Bearer VOTRE_CLE_ANON_ICI\" // À REMPLACER`n      },`n      body: JSON.stringify({`n        subscription: subscription.toJSON(),`n        user_agent: navigator.userAgent,`n        role: 'customer'`n      })`n    });`n`n    alert('Vous recevrez désormais les alertes nouveaux menus !');`n  } catch (err) { console.error('Push subscription failed', err); }`n}`n`nfunction urlBase64ToUint8Array(base64String) {`n  const padding = '='.repeat((4 - base64String.length % 4) % 4);`n  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');`n  const rawData = window.atob(base64);`n  const outputArray = new Uint8Array(rawData.length);`n  for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }`n  return outputArray;`n}
