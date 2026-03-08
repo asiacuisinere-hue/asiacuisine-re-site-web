@@ -52,6 +52,7 @@ dashboard/
 # Files docs
 
 /*.txt
-/*.md
+#/*.md
 /*.xlsx
 /*.py
+#/SUGGESTIONS_AMELIORATIONS_CLIENT.md

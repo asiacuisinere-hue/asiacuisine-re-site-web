@@ -1,159 +1,108 @@
 import { createClient } from '@supabase/supabase-js';
-import { Resend } from 'resend';
+import fetch from 'node-fetch';
 
-function generateClientId() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
-    for (let i = 0; i < 6; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); }     
-    return result;
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+async function sendWhatsAppAlert(message) {
+    const phone = process.env.ADMIN_WHATSAPP_NUMBER;
+    const apiKey = process.env.ADMIN_WHATSAPP_API_KEY;
+    if (!phone || !apiKey) return;
+    try {
+        const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${apiKey}`;
+        await fetch(url);
+    } catch (err) { console.error("WhatsApp Alert Error:", err); }
 }
 
-async function sendWhatsAppAdminAlert(context, message) {
-  const phone = context.env.ADMIN_WHATSAPP_NUMBER;
-  const apiKey = context.env.ADMIN_WHATSAPP_API_KEY;
-  if (!phone || !apiKey) return;
-  try {
-    const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${apiKey}`;
-    await fetch(url);
-  } catch (err) { console.error("WA_ALERT_ERR:", err); }
+async function sendPushNotification(title, body, url = "https://gestion.asiacuisine.re/") {
+    try {
+        await fetch(`${process.env.SUPABASE_URL}/functions/v1/send-push-notification`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}` },
+            body: JSON.stringify({ title, body, url })
+        });
+    } catch (e) { console.error("Push Alert Error:", e); }
 }
 
-export async function onRequest(context) {
-    if (context.request.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });    
+export const handler = async (event) => {
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    };
+
+    if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
 
     try {
-        const data = await context.request.json();
-        const { recaptchaToken, ...formData } = data;
+        const { type, customerType, customer, requestDate, details_json, recaptchaToken, lang } = JSON.parse(event.body);
 
-        // 1. reCAPTCHA Verification
-        const RECAPTCHA_SECRET_KEY = context.env.RECAPTCHA_SECRET_KEY;
-        if (!RECAPTCHA_SECRET_KEY) {
-            console.error("ERREUR: RECAPTCHA_SECRET_KEY manquante");
-            return new Response(JSON.stringify({ error: 'Server configuration error' }), { status: 500 });
-        }
-
-        const verify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                secret: RECAPTCHA_SECRET_KEY,
-                response: recaptchaToken || '',
-                remoteip: context.request.headers.get('CF-Connecting-IP') || ''
-            })
-        });
-        const recaptcha = await verify.json();
-
-        const isLocal = context.request.url.includes('127.0.0.1') || context.request.url.includes('localhost');
-        if (!recaptcha.success && !isLocal) {
-            return new Response(JSON.stringify({
-                error: 'reCAPTCHA failed',
-                details: recaptcha
-            }), {
-                status: 403,
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-
-        const supabase = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_SERVICE_ROLE_KEY);   
-
-        // 2. Gestion du Client / Entreprise
-        let clientId = null;
-        let entrepriseId = null;
-        let customerName = "";
-        const c = formData.customer;
-
-        if (formData.customerType === 'Particulier' || !formData.customerType) {
-            let { data: existing } = await supabase.from('clients').select('*').eq('email', c.email).maybeSingle();
-            if (!existing) {
-                const { data: created, error: createErr } = await supabase.from('clients').insert({       
-                    email: c.email, first_name: c.firstName, last_name: c.lastName, phone: c.phone, type: 'Particulier', client_id: generateClientId()
-                }).select().single();
-                if (createErr) throw new Error("Erreur création client: " + createErr.message);
-                existing = created;
+        // 1. Verify reCAPTCHA
+        if (recaptchaToken) {
+            const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`;
+            const recaptchaRes = await fetch(verifyUrl, { method: 'POST' });
+            const recaptchaJson = await recaptchaRes.json();
+            if (!recaptchaJson.success || recaptchaJson.score < 0.5) {
+                console.error("reCAPTCHA failed:", recaptchaJson);
+                return { statusCode: 403, headers, body: JSON.stringify({ error: 'Security verification failed' }) };
             }
-            clientId = existing.id;
-            customerName = `${c.firstName || ''} ${c.lastName || ''}`.trim();
+        }
+
+        // 2. Handle Client/Entreprise
+        let client_id = null;
+        let entreprise_id = null;
+        let clientName = "Client";
+
+        if (customerType === 'Particulier') {
+            const { data: client, error: cErr } = await supabase.from('clients').upsert({
+                last_name: customer.lastName,
+                first_name: customer.firstName || '',
+                email: customer.email,
+                phone: customer.phone,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'email' }).select().single();
+            if (cErr) throw cErr;
+            client_id = client.id;
+            clientName = `${client.first_name} ${client.last_name}`;
         } else {
-            let { data: existingEnt } = await supabase.from('entreprises').select('*').eq('contact_email', c.email).maybeSingle();
-            if (!existingEnt) {
-                const { data: createdEnt, error: entErr } = await supabase.from('entreprises').insert({   
-                    nom_entreprise: c.companyName || c.lastName, contact_email: c.email, contact_phone: c.phone, contact_name: c.firstName || c.contactName
-                }).select().single();
-                if (entErr) throw new Error("Erreur création entreprise: " + entErr.message);
-                existingEnt = createdEnt;
-            }
-            entrepriseId = existingEnt.id;
-            customerName = existingEnt.nom_entreprise;
+            const { data: ent, error: eErr } = await supabase.from('entreprises').upsert({
+                nom_entreprise: customer.companyName,
+                siret: customer.siret,
+                contact_name: customer.contactName,
+                contact_email: customer.contactEmail,
+                contact_phone: customer.contactPhone,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'contact_email' }).select().single();
+            if (eErr) throw eErr;
+            entreprise_id = ent.id;
+            clientName = ent.nom_entreprise;
         }
 
-        // 3. Calcul du Prix (Logique Menu)
-        let total = formData.total ? parseFloat(formData.total) : null;
-        if (formData.type === 'COMMANDE_MENU') {
-            const { data: settings } = await supabase.from('settings').select('key, value');
-            const prices = {};
-            settings?.forEach(s => prices[s.key] = parseFloat(s.value));
-            const formula = formData.formulaName || "";
-            let basePrice = 0;
-            if (formula.includes('Découverte')) basePrice = prices['menu_decouverte_price'];
-            else if (formula.includes('Standard')) basePrice = prices['menu_standard_price'];
-            else if (formula.includes('Confort')) basePrice = prices['menu_confort_price'];
-            else if (formula.includes('Duo')) basePrice = prices['menu_duo_price'];
-            if (basePrice > 0) total = basePrice;
-        }
+        // 3. Create Demand
+        const status = (type === 'COMMANDE_MENU' || type === 'COMMANDE_SPECIALE') ? 'Intention WhatsApp' : 'Nouvelle';
+        const business_unit = (type === 'RESERVATION_SERVICE' || type === 'COMMANDE_MENU' || type === 'COMMANDE_SPECIALE') ? 'cuisine' : 'courtage';
 
-        // 4. Détails JSON
-        let details = formData.details || {};
-        if (formData.type === 'COMMANDE_MENU') {
-            details = { 
-                formulaName: formData.formulaName, 
-                formulaOption: formData.formulaOption, 
-                deliveryCity: formData.deliveryCity 
-            };
-        } else if (formData.type === 'RESERVATION_SERVICE') {
-            details = {
-                serviceType: formData.serviceType || formData.service,
-                heure: formData.heure,
-                numberOfPeople: formData.numberOfPeople || formData.personnes,
-                ville: formData.ville,
-                budget: formData.budget,
-                allergies: formData.allergies,
-                customerMessage: formData.customerMessage || formData.message,
-                address: formData.address
-            };
-        }
+        const { data: demandData, error: dErr } = await supabase.from('demandes').insert({
+            type,
+            client_id,
+            entreprise_id,
+            request_date: requestDate,
+            details_json,
+            status,
+            business_unit,
+            lang: lang || 'fr'
+        }).select().single();
 
-        // 5. INSERTION DEMANDE
-        const { data: newDemande, error: demErr } = await supabase
-            .from('demandes')
-            .insert({
-                client_id: clientId,
-                entreprise_id: entrepriseId,
-                type: formData.type,
-                status: formData.type === 'RESERVATION_SERVICE' ? 'Nouvelle' : 'Intention WhatsApp',
-                request_date: formData.requestDate,
-                details_json: details,
-                total_amount: total,
-                business_unit: 'cuisine'
-            })
-            .select().single();
+        if (dErr) throw dErr;
 
-        if (demErr) throw new Error("Erreur insertion demande: " + demErr.message);
+        // 4. Alerts
+        const alertMsg = `🔔 *NOUVELLE DEMANDE (${type.replace('_',' ')})*\n\n👤 *Client:* ${clientName}\n📅 *Date:* ${requestDate || 'Non spécifiée'}\n📍 *Ville:* ${details_json.ville || details_json.deliveryCity || 'Non spécifiée'}`;
+        
+        await sendWhatsAppAlert(`${alertMsg}\n\n👉 *Gérer:* https://gestion.asiacuisine.re`);
+        await sendPushNotification("🔔 Nouvelle Demande !", `Dossier de ${clientName} reçu (${type.replace('_',' ')})`);
 
-        // 6. Alerte Admin
-        const displayCity = formData.ville || formData.deliveryCity || details.ville || '—';
-        const waMsg = `🔔 *NOUVELLE DEMANDE*\n👤 *Client:* ${customerName}\n📋 *Type:* ${formData.type}\n📍 *Ville:* ${displayCity}`;
-        await sendWhatsAppAdminAlert(context, waMsg);
-
-        return new Response(JSON.stringify({ message: 'Success', id: newDemande.id }), {
-            status: 201,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        return { statusCode: 200, headers, body: JSON.stringify({ message: 'Request created successfully', id: demandData.id }) };
 
     } catch (error) {
-        console.error("CREATE_REQUEST_ERROR:", error.message);
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        console.error("Error creating request:", error);
+        return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
     }
-}
+};

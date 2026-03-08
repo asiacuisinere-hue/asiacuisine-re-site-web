@@ -95,13 +95,12 @@ function initializeCgvModal() {
     const cgvBody = document.getElementById('cgv-content-body');
     const closeBtns = document.querySelectorAll('.close-modal');
 
-    // On utilise la délégation d'événement car le lien est injecté par i18next
     document.body.addEventListener('click', (e) => {
         if (e.target && e.target.id === 'open-cgv-link') {
             e.preventDefault();
             if (modal) modal.classList.add('is-visible');
-            
-            if (cgvBody && (cgvBody.innerHTML.includes("Chargement") || cgvBody.innerHTML === "")) {
+
+            if (cgvBody && (cgvBody.innerHTML.includes("Chargement") || cgvBody.innerHTML === "")) {      
                 fetch('cgv.html')
                     .then(res => res.text())
                     .then(html => {
@@ -109,7 +108,7 @@ function initializeCgvModal() {
                         const doc = parser.parseFromString(html, 'text/html');
                         const mainContent = doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body;
                         cgvBody.innerHTML = mainContent.innerHTML;
-                        
+
                         if (window.i18next && typeof i18next.t === 'function') {
                             cgvBody.querySelectorAll('[data-i18n]').forEach(el => {
                                 const key = el.getAttribute('data-i18n');
@@ -122,7 +121,7 @@ function initializeCgvModal() {
         }
     });
 
-    closeBtns.forEach(btn => btn.addEventListener('click', () => modal?.classList.remove('is-visible')));
+    closeBtns.forEach(btn => btn.addEventListener('click', () => modal?.classList.remove('is-visible'))); 
     if (modal) modal.querySelector('.modal-overlay').addEventListener('click', () => modal.classList.remove('is-visible'));
 }
 
@@ -152,13 +151,12 @@ async function fetchAndInitializeDatepicker() {
     if (!dateInput) return;
     try {
         const response = await fetch('/disponibilites?service_type=RESERVATION_SERVICE');
-        if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);        
+        if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
         const data = await response.json();
-        
+
         const unavailableDates = data.unavailableDates || [];
         const s = data.settings || {};
-        
-        // On calcule quels index de jours désactiver (0=Dimanche, 1=Lundi...)
+
         const daysOfWeekDisabled = [];
         if (s.sunday === false) daysOfWeekDisabled.push(0);
         if (s.monday === false) daysOfWeekDisabled.push(1);
@@ -183,12 +181,13 @@ async function fetchAndInitializeDatepicker() {
         dateInput.disabled = true;
     }
 }
+
 function initializeServiceMenu() {
     const flippablePages = document.querySelectorAll('.flippable-page');
     let currentFlippedIndex = 0;
     const updateMenuState = () => flippablePages.forEach((page, index) => {
         page.classList.toggle('is-flipped', index < currentFlippedIndex);
-        page.style.zIndex = index < currentFlippedIndex ? 10 + index : flippablePages.length - index;
+        page.style.zIndex = index < currentFlippedIndex ? 10 + index : flippablePages.length - index;     
     });
     const goToNextPage = () => { if (currentFlippedIndex < flippablePages.length) { currentFlippedIndex++; updateMenuState(); } };
     const goToPrevPage = () => { if (currentFlippedIndex > 0) { currentFlippedIndex--; updateMenuState(); } };
@@ -219,14 +218,11 @@ function initializeMobileBottomNav() {
     bottomNavItems.forEach(item => {
         item.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
-            
-            // Si c'est une ancre sur la même page
             if (href.startsWith('#')) {
                 e.preventDefault();
                 const target = document.querySelector(href);
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth' });
-                    // Mettre à jour l'état actif
                     bottomNavItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
                 }
@@ -234,7 +230,6 @@ function initializeMobileBottomNav() {
         });
     });
 
-    // Mettre à jour l'état actif au scroll
     window.addEventListener('scroll', () => {
         let current = "";
         const sections = document.querySelectorAll("section");
@@ -250,7 +245,6 @@ function initializeMobileBottomNav() {
             if (item.getAttribute("href") === `#${current}`) {
                 item.classList.add("active");
             }
-            // Cas particulier pour la page menu
             if (window.location.pathname.includes('menu.html') && item.getAttribute('href') === 'menu.html') {
                 item.classList.add('active');
             }
@@ -295,8 +289,8 @@ function initializeForm() {
         const isIndividual = individualRadio.checked;
         individualFieldsDiv.style.display = isIndividual ? 'block' : 'none';
         companyFieldsDiv.style.display = isIndividual ? 'none' : 'block';
-        individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = isIndividual);
-        companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = !isIndividual);
+        individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = isIndividual);    
+        companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = !isIndividual);      
     };
 
     toggleCustomerFields();
@@ -307,7 +301,7 @@ function initializeForm() {
         e.preventDefault();
         const submitBtn = this.querySelector('.submit-btn');
         if (typeof grecaptcha === 'undefined') return showNotification('Erreur de configuration de la sécurité.', 'error');
-        
+
         grecaptcha.ready(() => {
             grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async (recaptchaToken) => {
                 const formData = new FormData(this);
@@ -341,7 +335,7 @@ function initializeForm() {
                         body: JSON.stringify(payload),
                     });
                     const result = await response.json();
-                    if (!response.ok) throw new Error(result.error || 'Une erreur est survenue.');
+                    if (!response.ok) throw new Error(result.error || 'Une erreur est survenue.');        
                     showNotification('Votre demande a été envoyée avec succès !');
                     bookingForm.reset();
                     fetchAndInitializeDatepicker();
@@ -360,7 +354,7 @@ function initializeLightbox() {
     document.body.addEventListener('click', (e) => {
         const galleryItem = e.target.closest('.gallery-item');
         if (!galleryItem) return;
-        
+
         e.preventDefault();
         const imgSrc = galleryItem.querySelector('img').src;
         const imgAlt = galleryItem.querySelector('img').alt;
@@ -376,9 +370,9 @@ function initializeLightbox() {
 function initializeCookieConsent() {
     const banner = document.getElementById('cookie-consent-banner');
     if (!banner || localStorage.getItem('asiacuisine.re-cookie-consent') === 'true') return;
-    
+
     setTimeout(() => banner.classList.add('is-visible'), 500);
-    
+
     banner.addEventListener('click', (e) => {
         if (e.target.matches('#cookie-consent-accept, #cookie-consent-decline')) {
             localStorage.setItem('asiacuisine.re-cookie-consent', 'true');
@@ -395,7 +389,7 @@ async function initializeWelcomePopup() {
         const response = await fetch('/get-setting?key=welcomePopupMessage');
         if (response.ok) {
             const data = await response.json();
-            if (data.value) document.getElementById('welcome-popup-message').textContent = data.value;
+            if (data.value) document.getElementById('welcome-popup-message').textContent = data.value;    
         }
     } catch (error) {
         console.error('Could not fetch welcome popup message:', error);
@@ -435,7 +429,7 @@ function initializeSubscriptionForm() {
         if (messageDiv) messageDiv.textContent = '';
     };
 
-    document.querySelectorAll('.choose-button').forEach(btn => btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.choose-button').forEach(btn => btn.addEventListener('click', (e) => {     
         e.preventDefault();
         openForm(e.target.dataset.formula);
     }));
@@ -486,7 +480,7 @@ function initializeWhatsAppLinks() {
             e.preventDefault();
 
             const phone = this.dataset.phone;
-            const message = "Bonjour, je souhaite commander..."; // Default message
+            const message = "Bonjour, je souhaite commander..."; 
             const encodedMessage = encodeURIComponent(message);
 
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -494,16 +488,22 @@ function initializeWhatsAppLinks() {
 
             if (isIOS || isSafari) {
                 const appLink = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
-                const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
-
+                const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;    
                 window.location.href = appLink;
-
-                setTimeout(() => {
-                    window.location.href = webLink;
-                }, 1000);
+                setTimeout(() => { window.location.href = webLink; }, 1000);
             } else {
                 window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
             }
         });
     });
 }
+
+// Enregistrement du Service Worker pour la PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('PWA Service Worker enregistré'))
+      .catch(err => console.log('Erreur PWA Service Worker', err));
+  });
+}
+`n`n// LOGIQUE PUSH CLIENT`nasync function subscribeClientToPush() {`n  if (!('serviceWorker' in navigator)) return;`n  try {`n    const permission = await Notification.requestPermission();`n    if (permission !== 'granted') return;`n`n    const registration = await navigator.serviceWorker.ready;`n    const VAPID_PUBLIC_KEY = \"VOTRE_CLE_PUBLIQUE_ICI\"; // � REMPLACER`n`n    const subscription = await registration.pushManager.subscribe({`n      userVisibleOnly: true,`n      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)`n    });`n`n    // Enregistrement dans Supabase (via API REST pour �viter d importer le client lourd)`n    await fetch('https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/push_subscriptions', {`n      method: 'POST',`n      headers: { `n        'Content-Type': 'application/json', `n        'apikey': \"VOTRE_CLE_ANON_ICI\", // � REMPLACER`n        'Authorization': \"Bearer VOTRE_CLE_ANON_ICI\" // � REMPLACER`n      },`n      body: JSON.stringify({`n        subscription: subscription.toJSON(),`n        user_agent: navigator.userAgent,`n        role: 'customer'`n      })`n    });`n`n    alert('Vous recevrez d�sormais les alertes nouveaux menus !');`n  } catch (err) { console.error('Push subscription failed', err); }`n}`n`nfunction urlBase64ToUint8Array(base64String) {`n  const padding = '='.repeat((4 - base64String.length % 4) % 4);`n  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');`n  const rawData = window.atob(base64);`n  const outputArray = new Uint8Array(rawData.length);`n  for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }`n  return outputArray;`n}

@@ -19,6 +19,16 @@ async function sendWhatsAppAlert(message: string) {
   } catch (err) { console.error("[WhatsApp Error]", err); }
 }
 
+async function sendPushNotification(title: string, body: string, url: string = "https://gestion.asiacuisine.re/") {
+  try {
+    await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-push-notification`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}` },
+      body: JSON.stringify({ title, body, url })
+    });
+  } catch (e) { console.error("[Push Error]", e); }
+}
+
 serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
   if (!signature) return new Response("Missing signature", { status: 400 });
@@ -39,43 +49,34 @@ serve(async (req) => {
 
       // --- CAS A : COMMANDE DIRECTE (Menus) ---
       if (demand_id) {
-        // 1. Récupérer les infos complètes proprement
-        const { data: demande, error: fetchErr } = await supabase
+        const { data: demande } = await supabase
             .from('demandes')
             .select('id, type, clients(first_name, last_name)')
             .eq('id', demand_id)
             .single();
 
-        if (fetchErr) console.error("[Webhook] Fetch Error:", fetchErr);
-
-        // 2. Déterminer le nouveau statut métier
         let newStatus = 'Payée';
         if (demande?.type === 'COMMANDE_MENU' || demande?.type === 'COMMANDE_SPECIALE') {
             newStatus = 'En attente de préparation';
         }
 
-        // 3. Mise à jour synchronisée (Statut + Paiement)
-        const { error: updErr } = await supabase
-            .from('demandes')
-            .update({
-                status: newStatus,
-                payment_status: 'paid',
-                updated_at: new Date().toISOString()
-            })
-            .eq('id', demand_id);
+        await supabase.from('demandes').update({
+            status: newStatus,
+            payment_status: 'paid',
+            updated_at: new Date().toISOString()
+        }).eq('id', demand_id);
 
-        if (updErr) console.error("[Webhook] Update Error:", updErr);
-
-        // 4. Alertes
         const clientName = demande?.clients ? `${demande.clients.first_name} ${demande.clients.last_name}` : "Client";
+        
         await sendWhatsAppAlert(`🍱 *PAIEMENT REÇU (MENU)*\n\n👤 *Client:* ${clientName}\n💰 *Montant:* ${amount.toFixed(2)}€\n👨‍🍳 *Action:* Commande passée en cuisine.`);
+        await sendPushNotification("💰 Paiement Reçu !", `${clientName} a réglé ${amount.toFixed(2)}€. Commande en cuisine !`);
 
-        // 5. Trigger QR Code
+        // Trigger QR Code + Reçu
         const { data: company } = await supabase.from('company_settings').select('*').limit(1).single();  
         await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-qrcode`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}` },
-          body: JSON.stringify({ demandeId: demand_id, companySettings: company })
+          body: JSON.stringify({ demandeId: demand_id, companySettings: company, amountPaid: amount })
         });
       }
 
@@ -93,13 +94,15 @@ serve(async (req) => {
           await supabase.from('invoices').update({ status: 'deposit_paid', deposit_amount: amount, deposit_date: new Date().toISOString() }).eq('id', invoice_id);
           if (inv?.demand_id) await supabase.from('demandes').update({ payment_status: 'deposit_paid' }).eq('id', inv.demand_id);
           await sendWhatsAppAlert(`💳 *ACOMPTE REÇU*\n\n👤 *Client:* ${clientName}\n💰 *Montant:* ${amount.toFixed(2)}€\n📅 *Calendrier:* Date bloquée.`);
+          await sendPushNotification("💳 Acompte Reçu !", `${clientName} a versé un acompte de ${amount.toFixed(2)}€.`);
         } else {
           await supabase.from('invoices').update({ status: 'paid' }).eq('id', invoice_id);
           if (inv?.demand_id) await supabase.from('demandes').update({ payment_status: 'paid' }).eq('id', inv.demand_id);
           await sendWhatsAppAlert(`✅ *SOLDE RÉGLÉ*\n\n👤 *Client:* ${clientName}\n💰 *Montant:* ${amount.toFixed(2)}€`);
+          await sendPushNotification("✅ Solde Réglé !", `Facture payée par ${clientName}.`);
         }
 
-        // Email Facture
+        // Email Facture Finale
         await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-invoice-by-email`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}` },
@@ -110,6 +113,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ received: true }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (error) {
+    console.error("[Webhook Error]", error.message);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 });

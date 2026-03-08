@@ -23,13 +23,10 @@ function getWeeklyColor(): string {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight request
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const { demandeId, companySettings } = await req.json();
+    const { demandeId, companySettings, amountPaid } = await req.json();
     if (!demandeId) throw new Error("ID de demande manquant.");
     if (!companySettings) throw new Error("Paramètres de l'entreprise manquants.");
 
@@ -40,69 +37,89 @@ serve(async (req) => {
     // 1. Fetch Demande and Client details
     const { data: demande, error: demandeError } = await supabase
         .from('demandes')
-        .select('id, request_date, status, clients(*), entreprises (contact_email, nom_entreprise)')
+        .select('id, request_date, type, total_amount, details_json, status, clients(*), entreprises (contact_email, nom_entreprise)')      
         .eq('id', demandeId)
         .single();
     if (demandeError) throw new Error(`Demande non trouvée: ${demandeError.message}`);
 
     const clientEmail = demande.clients?.email || demande.entreprises?.contact_email;
-    const clientName = demande.clients?.first_name || demande.entreprises?.nom_entreprise || 'client';
+    const clientName = demande.clients?.first_name || demande.entreprises?.nom_entreprise || 'client';    
     if (!clientEmail) throw new Error('Email client non trouvé pour cette demande.');
 
-    // 2. Send QR Code Email
+    // 2. Prepare QR Code
     const displayDate = new Date(demande.request_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' });
     const urlDate = new Date(demande.request_date).toISOString().split('T')[0];
     const weeklyColor = getWeeklyColor();
     const qrData = encodeURIComponent(`https://www.asiacuisine.re/suivi?id=${demande.id}&date=${urlDate}`);
     const qrCodeApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&color=${weeklyColor}`;
 
-    // --- Fetch QR code image to embed it directly ---
     const qrCodeResponse = await fetch(qrCodeApiUrl);
     if (!qrCodeResponse.ok) throw new Error('Failed to fetch QR code image.');
     const qrCodeImageBuffer = await qrCodeResponse.arrayBuffer();
     const qrCodeBase64 = encodeBase64(qrCodeImageBuffer);
 
+    // 3. Prepare Receipt Section
+    const amount = amountPaid || demande.total_amount || 0;
+    const formula = demande.details_json?.formulaName || 'Commande spéciale';
+    const option = demande.details_json?.formulaOption ? `(${demande.details_json.formulaOption})` : '';
+
+    const receiptHtml = amount > 0 ? `
+        <div style="margin: 20px 0; padding: 15px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #eee; text-align: left;">
+            <p style="margin: 0 0 10px 0; font-size: 12px; color: #888; text-transform: uppercase; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px;">Reçu de paiement</p>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="font-size: 14px; color: #555;">Produit :</span>
+                <span style="font-size: 14px; font-weight: bold; color: #333;">${formula} ${option}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="font-size: 14px; color: #555;">Montant réglé :</span>
+                <span style="font-size: 16px; font-weight: 900; color: #27ae60;">${parseFloat(amount).toFixed(2)} €</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="font-size: 14px; color: #555;">Mode :</span>
+                <span style="font-size: 14px; color: #333;">Carte Bancaire (Stripe)</span>
+            </div>
+        </div>
+    ` : '';
+
+    // 4. Send Unified Email
     await resend.emails.send({
-        from: `${companySettings.name || 'Asiacuisine.re'} <qrcode@asiacuisine.re>`,
+        from: `Asiacuisine.re <confirmation@asiacuisine.re>`,
         to: clientEmail,
-        subject: `Votre QR code pour votre commande du ${displayDate}`,
+        subject: `Confirmation et Reçu - Commande du ${displayDate}`,
         html: `
             <div style="font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
-                <div style="max-width: 400px; margin: auto; background-color: #ffffff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                    <div style="background-color: #${weeklyColor}; color: white; padding: 15px;">
-                        <h1 style="margin: 0; font-size: 20px;">Commande du ${displayDate}</h1>
+                <div style="max-width: 450px; margin: auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                    <div style="background-color: #${weeklyColor}; color: white; padding: 20px;">
+                        <h1 style="margin: 0; font-size: 22px;">Merci pour votre commande !</h1>
+                        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px;">Commande du ${displayDate}</p>
                     </div>
-                    <div style="padding: 30px 20px;">
-                        <p>Bonjour ${clientName},</p>
-                        <p>Veuillez présenter le QR code ci-dessous <strong>le jour de votre livraison</strong> pour valider la réception de votre commande.</p>
-                        <img src="cid:qrcode" alt="QR Code de suivi" style="width: 200px; height: 200px; margin: 20px auto; display: block;"/>
-                        <p style="font-size: 1.4em; font-weight: bold; margin-top: 10px; letter-spacing: 2px;">
-                            ${demande.clients?.client_id || 'N/A'}
-                        </p>
+                    <div style="padding: 30px 25px;">
+                        <p style="color: #555; line-height: 1.5;">Bonjour <strong>${clientName}</strong>, votre paiement a bien été validé. Voici votre reçu et votre code de retrait.</p>
+                        
+                        ${receiptHtml}
+
+                        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+                            <p style="font-size: 14px; color: #333; margin-bottom: 15px;"><strong>Présentez ce code le jour de la réception :</strong></p>
+                            <img src="cid:qrcode" alt="QR Code" style="width: 180px; height: 180px; margin: 0 auto; display: block;"/>
+                            <p style="font-size: 1.2em; font-weight: bold; margin-top: 10px; letter-spacing: 3px; color: #${weeklyColor};">
+                                ${demande.clients?.client_id || 'N/A'}
+                            </p>
+                        </div>
                     </div>
-                    <div style="background-color: #f9f9f9; padding: 15px; font-size: 12px; color: #666;">
-                        L'équipe Asiacuisine.re
+                    <div style="background-color: #f9f9f9; padding: 20px; font-size: 12px; color: #999; border-top: 1px solid #eee;"> 
+                        <strong>Asiacuisine.re</strong><br>
+                        Chef privé & Menus asiatiques à La Réunion
                     </div>
                 </div>
             </div>
         `,
-        attachments: [
-            {
-                filename: 'qrcode.png',
-                content: qrCodeBase64,
-                content_id: 'qrcode', // Correspond au cid:qrcode dans le HTML
-            }
-        ]
+        attachments: [{ filename: 'qrcode.png', content: qrCodeBase64, content_id: 'qrcode' }]
     });
 
-    // 3. Update Demande Status
-    const { error: updateError } = await supabase
-        .from('demandes')
-        .update({ status: 'En attente de préparation' })
-        .eq('id', demandeId);
-    if (updateError) throw new Error(`Failed to update status: ${updateError.message}`);
+    // 5. Update Demande Status
+    await supabase.from('demandes').update({ status: 'En attente de préparation' }).eq('id', demandeId);
 
-    return new Response(JSON.stringify({ success: true, message: 'QR Code sent and status updated' }), {
+    return new Response(JSON.stringify({ success: true }), {  
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
