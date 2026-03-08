@@ -2,20 +2,20 @@
   "name": "Asiacuisine.re - Chef Privé",
   "short_name": "Asiacuisine",
   "description": "Cuisine asiatique authentique à La Réunion. Chef privé, cours et menus hebdomadaires.",
-  "start_url": "./index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#d97706",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "./assets/images/logos/logo-192.png",
+      "src": "/assets/images/logos/logo-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./assets/images/logos/logo-512.png",
+      "src": "/assets/images/logos/logo-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
