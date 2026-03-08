@@ -543,7 +543,7 @@ function urlBase64ToUint8Array(base64String) {
 // Enregistrement du Service Worker pour la PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('./service-worker.js')
       .then(reg => console.log('PWA Service Worker enregistré'))
       .catch(err => console.log('Erreur PWA Service Worker', err));
   });
