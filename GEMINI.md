@@ -3,11 +3,11 @@
 
 ## Project Overview
 
-This is the official website for Asiacuisine.re, a culinary service offering private chef services, cooking classes, and meal orders in La Réunion. The project is a static-first website enhanced with serverless functions for dynamic features like reservations and contact forms. It appears to be hosted on Netlify or a similar platform that supports serverless functions.
+This is the official website for Asiacuisine.re, a culinary service offering private chef services, cooking classes, and meal orders in La Réunion. The project is a static-first website enhanced with Cloudflare Pages Functions and Workers for dynamic features like reservations and contact forms.
 
 The frontend is built with HTML, CSS, and vanilla JavaScript. It uses i18next for internationalization (FR, EN, ZH) and Swiper.js for carousels.
 
-The backend consists of several serverless functions responsible for:
+The backend consists of several functions responsible for:
 -   **Reservations (`/functions/reserver.js`):** Handles booking requests, saves them to a Supabase `bookings` table, and sends email notifications using Resend.
 -   **Service/Menu Requests (`/functions/create-request.js`):** Manages more complex requests (like menu orders), storing data in Supabase `clients` and `demandes` tables, and also sending Resend emails.
 -   **Availability (`/functions/disponibilites.js`):** Provides a list of unavailable dates for the booking calendar by querying the Supabase database.
@@ -19,12 +19,12 @@ There is also a separate admin section (likely at `gestion.asiacuisine.re`) that
 ### Key Technologies
 
 *   **Frontend:** HTML, CSS, Vanilla JavaScript
-*   **Backend:** Node.js (as serverless functions)
+*   **Backend:** Node.js (Cloudflare Workers / Pages Functions)
 *   **Database:** Supabase (PostgreSQL) is used for storing bookings, client data, and service requests.
 *   **Email:** Resend for transactional emails (notifications).
 *   **PDF Generation:** `pdf-lib` for creating documents.
 *   **Internationalization:** `i18next`
-*   **Hosting:** Likely Netlify or Vercel, given the file structure (`/functions` and `/api` directories).
+*   **Hosting:** Cloudflare Pages.
 
 ## Building and Running
 
@@ -36,20 +36,19 @@ This project does not have a complex build process.
     ```
     Or using a tool like `live-server` for automatic reloading.
 
-*   **Backend:** The serverless functions are intended to be run by the hosting platform (e.g., Netlify, Vercel). To run them locally, you would need to use the platform's specific CLI tools. For example, with Netlify CLI:
+*   **Backend:** The functions are intended to be run on Cloudflare. To run them locally, you would need to use Wrangler:
     ```bash
-    netlify dev
+    wrangler pages dev .
     ```
 
 ### Environment Variables
 
-The backend functions require environment variables to be set up. These are likely stored in a `.env.local` file for local development and configured in the hosting provider's UI for production. Based on the code, the required variables are:
+The backend functions require environment variables to be set up. These are configured in the Cloudflare Dashboard. Based on the code, the required variables are:
 
 *   `SUPABASE_URL`: The URL of the Supabase project.
 *   `SUPABASE_KEY`: The public API key for Supabase.
 *   `SUPABASE_SERVICE_ROLE_KEY`: The service role key for Supabase (for admin-level operations).
 *   `RESEND_API_KEY`: The API key for Resend.
-*   `POSTGRES_URL`: The connection string for the Vercel Postgres database.
 *   `ADMIN_PASSWORD`: a password for the admin api.
 
 
