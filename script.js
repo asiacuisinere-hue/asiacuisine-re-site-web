@@ -1,6 +1,20 @@
 // --- SCRIPT INITIALIZATION ---
 
 async function main() {
+    // Vérification du mode maintenance (sauf si on est déjà sur la page de maintenance)
+    if (!window.location.pathname.includes('maintenance.html')) {
+        try {
+            const mResponse = await fetch('/get-setting?key=maintenance_mode');
+            if (mResponse.ok) {
+                const mData = await mResponse.json();
+                if (mData.value === 'true') {
+                    window.location.href = 'maintenance.html';
+                    return;
+                }
+            }
+        } catch (e) { console.error('Maintenance check failed', e); }
+    }
+
     await initializeI18n();
     initializePageContent();
 }

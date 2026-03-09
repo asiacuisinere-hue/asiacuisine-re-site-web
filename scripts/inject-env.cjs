@@ -19,6 +19,8 @@ const itemsToCopy = [
     'choix-menu.html',
     'choix-menu.js',
     'style.css',
+    '404.html',
+    'maintenance.html',
     'sitemap.xml',
     'robots.txt',
     '_redirects',

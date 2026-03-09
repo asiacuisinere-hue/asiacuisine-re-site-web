@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page non trouvée - Asiacuisine.re</title>
+    <style>
+        :root {
+            --glitch-color-1: #ff00c1;
+            --glitch-color-2: #00fff9;
+        }
+
+        body {
+            background-color: #050505;
+            color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            overflow-x: hidden; /* Prevent horizontal scroll only */
+            overflow-y: auto;   /* Allow vertical scroll */
+            position: relative;
+        }
+
+        .container-404 {
+            padding: 2rem 1rem; /* Reduced padding for mobile */
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            animation: jitter 4s infinite;
+            box-sizing: border-box;
+            margin: auto; /* Center vertically if space allows */
+        }
+
+        @keyframes noise {
+            0% { transform: translate(0,0) }
+            10% { transform: translate(-5%,-5%) }
+            20% { transform: translate(-10%,5%) }
+            30% { transform: translate(5%,-10%) }
+            40% { transform: translate(-5%,15%) }
+            50% { transform: translate(-10%,5%) }
+            60% { transform: translate(15%,0) }
+            70% { transform: translate(0,10%) }
+            80% { transform: translate(-15%,0) }
+            90% { transform: translate(10%,5%) }
+            100% { transform: translate(5%,0) }
+        }
+
+        /* Scanlines */
+        .vhs-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 11;
+        }
+
+        /* Tracking Bar */
+        .vhs-tracking {
+            position: fixed;
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            filter: blur(5px);
+            opacity: 0.3;
+            z-index: 12;
+            animation: tracking 8s linear infinite;
+        }
+
+        @keyframes tracking {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        .container-404 {
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            position: relative;
+            z-index: 2;
+            animation: jitter 4s infinite;
+        }
+
+        @keyframes jitter {
+            0% { transform: translate(0,0); }
+            1% { transform: translate(2px, 1px); }
+            2% { transform: translate(-1px, -1px); }
+            3% { transform: translate(0,0); }
+            100% { transform: translate(0,0); }
+        }
+
+        /* --- LOGO GLITCH --- */
+        .glitch-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 3rem;
+        }
+
+        .logo-glitch {
+            width: 180px;
+            height: auto;
+            filter: grayscale(0.5) contrast(1.2);
+        }
+
+        .glitch-copy {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('favicon.png') no-repeat center;
+            background-size: contain;
+            pointer-events: none;
+        }
+
+        .glitch-copy-1 {
+            left: 2px;
+            text-shadow: -2px 0 var(--glitch-color-1);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+            opacity: 0.7;
+        }
+
+        .glitch-copy-2 {
+            left: -2px;
+            text-shadow: 2px 0 var(--glitch-color-2);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+            opacity: 0.7;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(40% 0 61% 0); transform: translate(-10px); }
+            20% { clip-path: inset(92% 0 1% 0); transform: translate(10px); }
+            40% { clip-path: inset(43% 0 1% 0); transform: translate(-10px); }
+            60% { clip-path: inset(25% 0 58% 0); transform: translate(10px); }
+            80% { clip-path: inset(54% 0 7% 0); transform: translate(-10px); }
+            100% { clip-path: inset(58% 0 43% 0); transform: translate(10px); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(24% 0 29% 0); transform: translate(10px); }
+            20% { clip-path: inset(54% 0 21% 0); transform: translate(-10px); }
+            40% { clip-path: inset(16% 0 78% 0); transform: translate(10px); }
+            60% { clip-path: inset(62% 0 12% 0); transform: translate(-10px); }
+            80% { clip-path: inset(34% 0 14% 0); transform: translate(10px); }
+            100% { clip-path: inset(82% 0 3% 0); transform: translate(-10px); }
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4rem;
+            color: #ccc;
+            text-shadow: 1px 1px #000;
+        }
+
+        /* --- DIRECTIONS --- */
+        .directions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .directions { grid-template-columns: 1fr; }
+        }
+
+        .direction-card {
+            background: rgba(40, 40, 40, 0.6);
+            border: 1px solid #444;
+            padding: 2rem;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .direction-card:hover {
+            border-color: var(--glitch-color-2);
+            background: rgba(60, 60, 60, 0.8);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 255, 249, 0.2);
+        }
+
+        .direction-card img {
+            height: 60px;
+            margin-bottom: 1rem;
+            filter: drop-shadow(2px 2px #000);
+        }
+
+        .direction-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .direction-card .text {
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* VHS Static Card Overlay on Hover */
+        .direction-card::after {
+            content: "LOADING...";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; color: #0f0;
+            opacity: 0; transition: opacity 0.1s;
+        }
+        .direction-card:hover::after {
+            opacity: 0.1;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="vhs-overlay"></div>
+    <div class="vhs-tracking"></div>
+    
+    <div class="container-404">
+        <div class="glitch-container">
+            <img src="favicon.png" alt="Logo Asiacuisine" class="logo-glitch">
+            <div class="glitch-copy glitch-copy-1"></div>
+            <div class="glitch-copy glitch-copy-2"></div>
+        </div>
+
+        <h1>Ceci n'est pas une défaillance de votre connexion<br>mais juste une mauvaise direction.</h1>
+
+        <div class="directions">
+            <a href="https://www.asiacuisine.re" class="direction-card">
+                <span class="icon">🍳</span>
+                <span class="text">Direction les cuisines</span>
+            </a>
+            
+            <a href="https://www.luxilo.fr" class="direction-card">
+                <img src="assets/images/logos/boussole_nom.svg" alt="Logo Luxilo">
+                <span class="text">Direction les voyages et affaires</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Flickering effect for VHS feel
+        setInterval(() => {
+            document.body.style.opacity = Math.random() > 0.98 ? '0.8' : '1';
+        }, 50);
+    </script>
+</body>
+</html>

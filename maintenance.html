@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mijotage en cours... - Asiacuisine.re</title>
+    <style>
+        :root {
+            --chef-amber: #d97706;
+            --chef-warm: #fbbf24;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('assets/images/Aubergines-style-thai.jpg') no-repeat center center;
+            background-size: cover;
+            filter: blur(10px) brightness(0.2);
+            z-index: -1;
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 600px;
+            z-index: 20;
+            position: relative;
+        }
+
+        /* --- SMOKE EFFECT (BOTTOM TO TOP) --- */
+        .smoke-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .smoke-particle {
+            position: absolute;
+            bottom: -50px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0;
+            animation: smokeRise var(--duration) infinite ease-out;
+            animation-delay: var(--delay);
+            left: var(--left);
+            width: var(--size);
+            height: var(--size);
+        }
+
+        @keyframes smokeRise {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.1;
+                transform: translateY(-40vh) scale(2) rotate(90deg);
+            }
+            80% {
+                opacity: 0;
+                transform: translateY(-60vh) scale(3) rotate(180deg);
+            }
+            100% {
+                transform: translateY(-80vh) scale(4) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- POT & SIMMERING --- */
+        .pot-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 2rem;
+        }
+
+        .wok-icon {
+            font-size: 90px;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 0 30px rgba(217, 119, 6, 0.5));
+            animation: cook 3s ease-in-out infinite;
+        }
+
+        @keyframes cook {
+            0%, 100% { transform: scale(1) rotate(-2deg); }
+            50% { transform: scale(1.05) rotate(2deg); }
+        }
+
+        .glow-under {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 20px;
+            background: var(--chef-amber);
+            filter: blur(25px);
+            opacity: 0.8;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.4; transform: translateX(-50%) scaleX(0.8); }
+            to { opacity: 0.9; transform: translateX(-50%) scaleX(1.3); }
+        }
+
+        /* --- TEXT STYLING --- */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            background: linear-gradient(to bottom, #fff 40%, var(--chef-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #bbb;
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .alert-box {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 24px;
+            font-size: 0.9rem;
+            color: var(--chef-warm);
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="bg-image"></div>
+    <div class="smoke-container" id="smoke"></div>
+    
+    <div class="content">
+        <div class="pot-container">
+            <div class="wok-icon">🥘</div>
+            <div class="glow-under"></div>
+        </div>
+
+        <h1>Mijotage en cours...</h1>
+        <p>
+            De nouvelles recettes sont en train de mijoter pour le bonheur de vos papilles.<br>
+            Vous serez prévenu quand la table sera mise.
+        </p>
+
+        <div class="alert-box">
+            📲 Pensez à installer le site en application pour recevoir une alerte dès la réouverture !
+        </div>
+    </div>
+
+    <script>
+        // Générateur de fumée volumétrique
+        const smokeContainer = document.getElementById('smoke');
+        const particleCount = 25;
+
+        for (let i = 0; i < particleCount; i++) {
+            createParticle(true);
+        }
+
+        function createParticle(initial = false) {
+            const p = document.createElement('div');
+            p.className = 'smoke-particle';
+            
+            const size = Math.random() * 150 + 100;
+            const left = Math.random() * 120 - 10; // De -10% à 110%
+            const duration = Math.random() * 5 + 5;
+            const delay = initial ? Math.random() * -10 : 0;
+
+            p.style.setProperty('--size', `${size}px`);
+            p.style.setProperty('--left', `${left}%`);
+            p.style.setProperty('--duration', `${duration}s`);
+            p.style.setProperty('--delay', `${delay}s`);
+
+            smokeContainer.appendChild(p);
+        }
+    </script>
+</body>
+</html>
