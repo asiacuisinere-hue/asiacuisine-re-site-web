@@ -11,7 +11,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const { title, body, url, targetRole } = await req.json();
+    const { title, body, url, targetRole, targetSubscriptionId } = await req.json();
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -24,9 +24,11 @@ serve(async (req) => {
       Deno.env.get("VAPID_PRIVATE_KEY")!
     );
 
-    // Fetch subscriptions based on role if targetRole is specified
+    // Fetch subscriptions based on ID (priority) or Role
     let query = supabase.from('push_subscriptions').select('*');
-    if (targetRole) {
+    if (targetSubscriptionId) {
+      query = query.eq('id', targetSubscriptionId);
+    } else if (targetRole) {
       query = query.eq('role', targetRole);
     }
 

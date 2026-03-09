@@ -352,6 +352,15 @@ function initializeForm() {
                 submitBtn.textContent = 'Envoi en cours...';
                 submitBtn.disabled = true;
 
+                // Tenter de récupérer un abonnement push pour le suivi de livraison
+                let pushSubscription = null;
+                try {
+                    if ('serviceWorker' in navigator && 'PushManager' in window) {
+                        const registration = await navigator.serviceWorker.ready;
+                        pushSubscription = await registration.pushManager.getSubscription();
+                    }
+                } catch (e) { console.warn('Push not available for this request'); }
+
                 const payload = {
                     type: 'RESERVATION_SERVICE',
                     customerType: data.customer_type,
@@ -367,7 +376,8 @@ function initializeForm() {
                     allergies: data.allergies || null,
                     customerMessage: data.message || null,
                     lang: i18next.language,
-                    recaptchaToken
+                    recaptchaToken,
+                    pushSubscription: pushSubscription ? pushSubscription.toJSON() : null
                 };
 
                 try {

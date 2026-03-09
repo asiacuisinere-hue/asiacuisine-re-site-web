@@ -76,7 +76,24 @@ export const handler = async (event) => {
             clientName = ent.nom_entreprise;
         }
 
-        // 3. Create Demand
+        // 3. Register push subscription if provided
+        let push_subscription_id = null;
+        if (formData.pushSubscription) {
+            try {
+                const { data: ps, error: psErr } = await supabase
+                    .from('push_subscriptions')
+                    .insert({
+                        subscription: formData.pushSubscription,
+                        user_agent: headers['user-agent'] || 'unknown',
+                        role: 'customer'
+                    })
+                    .select('id')
+                    .single();
+                if (!psErr && ps) push_subscription_id = ps.id;
+            } catch (e) { console.error('Error saving push subscription:', e); }
+        }
+
+        // 4. Create Demand
         const status = (type === 'COMMANDE_MENU' || type === 'COMMANDE_SPECIALE') ? 'Intention WhatsApp' : 'Nouvelle';
         const business_unit = (type === 'RESERVATION_SERVICE' || type === 'COMMANDE_MENU' || type === 'COMMANDE_SPECIALE') ? 'cuisine' : 'courtage';
 
@@ -88,7 +105,8 @@ export const handler = async (event) => {
             details_json,
             status,
             business_unit,
-            lang: lang || 'fr'
+            lang: lang || 'fr',
+            push_subscription_id
         }).select().single();
 
         if (dErr) throw dErr;

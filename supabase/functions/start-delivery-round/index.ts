@@ -63,21 +63,21 @@ serve(async (req) => {
         });
       }
 
-      // C. Notification Push (via notre fonction existante)
-      // On pourrait appeler fetch vers send-push-notification ici
-      // Mais on va simuler l'envoi direct pour simplifier
-      try {
-        await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-push-notification`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}` },
-          body: JSON.stringify({
-            title: "🚗 Le Chef est en route !",
-            body: `${clientName}, suivez votre livraison en direct sur la carte.`,
-            url: trackingUrl,
-            targetRole: "customer" // On pourrait affiner par ID utilisateur si on avait les IDs push liés aux clients
-          })
-        });
-      } catch (e) { console.error("Push failed for customer", e); }
+      // C. Notification Push Individualisée
+      if (demande.push_subscription_id) {
+        try {
+          await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-push-notification`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}` },
+            body: JSON.stringify({
+              title: "🚚 Le Chef est en route !",
+              body: `${clientName}, suivez votre livraison en direct sur la carte.`,
+              url: trackingUrl,
+              targetSubscriptionId: demande.push_subscription_id
+            })
+          });
+        } catch (e) { console.error(`Push failed for demand ${demande.id}`, e); }
+      }
 
       results.push({ id: demande.id, status: 'notified' });
     }
