@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="pro.page_title">Expertise Culinaire Pro - Asiacuisine.re</title>
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d97706">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Asiacuisine">
+    
+    <meta name="description" content="Services culinaires pour professionnels à La Réunion : consulting, formation du personnel et chef freelance pour hôtels et restaurants.">
+    
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo"><img src="favicon.png" alt="Asiacuisine.re Logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html#accueil" data-i18n="nav.home">Accueil</a></li>
+                <li><a href="menu.html" data-i18n="nav.menu">Menus Semaine</a></li>
+                <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+            <button class="nav-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero pro-hero" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('assets/images/Porc-style-Hunan.jpg'); background-size: cover; background-position: center;">
+        <div class="hero-content">
+            <h1 data-i18n="pro.hero_title">Expertise Culinaire pour les Professionnels</h1>
+            <p data-i18n="pro.hero_subtitle">Consulting, Formation et Prestations Freelance pour Hôtels et Restaurants à La Réunion.</p>
+            <div class="hero-btns">
+                <a href="index.html#reservation" class="cta-button bento-btn" data-i18n="pro.hero_cta">Demander un devis</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services B2B -->
+    <section class="services-b2b py-20">
+        <div class="container">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Consulting -->
+                <div class="service-card p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 mb-6">
+                        <span style="font-size: 2rem;">📈</span>
+                    </div>
+                    <h3 class="text-2xl font-black mb-4" data-i18n="pro.section1_title">Consulting Culinaire</h3>
+                    <p class="text-gray-600 mb-6" data-i18n="pro.section1_desc">Optimisez votre offre et boostez votre rentabilité.</p>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section1_item1">Création de cartes</span></li>
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section1_item2">Formation technique</span></li>
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section1_item3">Fiches techniques</span></li>
+                    </ul>
+                </div>
+
+                <!-- Freelance -->
+                <div class="service-card p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 mb-6">
+                        <span style="font-size: 2rem;">👨‍🍳</span>
+                    </div>
+                    <h3 class="text-2xl font-black mb-4" data-i18n="pro.section2_title">Chef de Renfort</h3>
+                    <p class="text-gray-600 mb-6" data-i18n="pro.section2_desc">Une solution flexible pour vos besoins urgents.</p>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section2_item1">Remplacement Chef</span></li>
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section2_item2">Renfort événementiel</span></li>
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section2_item3">Rigueur HACCP</span></li>
+                    </ul>
+                </div>
+
+                <!-- Events -->
+                <div class="service-card p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 mb-6">
+                        <span style="font-size: 2rem;">🤝</span>
+                    </div>
+                    <h3 class="text-2xl font-black mb-4" data-i18n="pro.section3_title">Événementiel</h3>
+                    <p class="text-gray-600 mb-6" data-i18n="pro.section3_desc">Soudez vos équipes autour de la cuisine.</p>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section3_item1">Team Building</span></li>
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section3_item2">Show-cooking</span></li>
+                        <li class="flex items-start gap-2"><span>✦</span> <span data-i18n="pro.section3_item3">Cocktails Premium</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-16">
+                <h2 class="text-3xl font-black mb-8" data-i18n="pro.footer_cta">Prêt à élever votre standard culinaire ?</h2>
+                <a href="index.html#reservation" id="cta-pro-form" class="cta-button secondary-btn" data-i18n="pro.hero_cta">Demander un devis</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <section id="contact" class="footer">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <p data-i18n="footer.copyright">&copy; 2025 Asiacuisine.re - Tous droits réservés</p>
+                <p><a href="index.html" style="color: #ccc; text-decoration: underline;" data-i18n="nav.home">Retour à l'accueil</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="assets/vendor/i18next.min.js"></script>
+    <script src="script.js" defer></script>
+    <script>
+        // Script pour pré-sélectionner "Entreprise" quand on arrive sur le formulaire depuis cette page
+        document.querySelectorAll('a[href="index.html#reservation"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                localStorage.setItem('booking_type_default', 'entreprise');
+            });
+        });
+    </script>
+</body>
+</html>

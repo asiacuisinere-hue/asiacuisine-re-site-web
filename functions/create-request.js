@@ -94,7 +94,9 @@ export const handler = async (event) => {
         if (dErr) throw dErr;
 
         // 4. Alerts
-        const alertMsg = `🔔 *NOUVELLE DEMANDE (${type.replace('_',' ')})*\n\n👤 *Client:* ${clientName}\n📅 *Date:* ${requestDate || 'Non spécifiée'}\n📍 *Ville:* ${details_json.ville || details_json.deliveryCity || 'Non spécifiée'}`;
+        const isBusinessMeal = details_json.serviceType === 'repas-affaires';
+        const businessTag = isBusinessMeal ? '💼 *REPAS AFFAIRES*' : '🔔 *NOUVELLE DEMANDE*';
+        const alertMsg = `${businessTag} (${type.replace('_',' ')})\n\n👤 *Client:* ${clientName}\n📅 *Date:* ${requestDate || 'Non spécifiée'}\n📍 *Ville:* ${details_json.ville || details_json.deliveryCity || 'Non spécifiée'}`;
         
         await sendWhatsAppAlert(`${alertMsg}\n\n👉 *Gérer:* https://gestion.asiacuisine.re`);
         await sendPushNotification("🔔 Nouvelle Demande !", `Dossier de ${clientName} reçu (${type.replace('_',' ')})`);

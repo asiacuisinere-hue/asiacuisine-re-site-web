@@ -1,99 +1,87 @@
 # Idées d'Évolutions pour le Site Asiacuisine.re
 
-Ce fichier contient une liste des idées et des fonctionnalités que nous avons évoquées pour améliorer le site à l'avenir.
+Ce fichier récapitule les opportunités de croissance et d'amélioration technique pour la plateforme.
 
 ---
 
-### 1. Galerie Photo Dynamique avec Instagram
-
-*   **Idée :** Remplacer la galerie photo actuelle par un flux dynamique qui affiche automatiquement les dernières photos de votre compte Instagram.
-*   **Complexité :** Très élevée. Nécessite une authentification complexe via l'API de Facebook/Instagram.
-*   **Alternative :** Utiliser un service tiers comme Elfsight ou Taggbox qui fournit un widget à intégrer.
-
----
-
-### 2. Carte Interactive des Cuisines Asiatiques
-
-*   **Idée :** Créer une carte de l'Asie où, au survol ou au clic sur un pays, une photo d'un plat typique de ce pays s'affiche.
-*   **Complexité :** Très élevée. Demande de trouver une carte au format SVG et d'écrire un JavaScript complexe pour gérer les interactions.
-*   **Alternative (plus simple) :** Créer une section "Inspirations" avec une grille d'images, où chaque image représente un pays et sa cuisine.
+### [ ] 1. Galerie Photo Dynamique avec Instagram
+*   **Idée :** Remplacer la galerie statique par un flux Instagram en direct.
+*   **Complexité :** Élevée (API Facebook Graph).
+*   **Status :** À l'étude.
 
 ---
 
-### 3. Utilisation de GIFs pour un Contenu Dynamique
-
-*   **Idée :** Remplacer certaines images statiques par des GIFs subtils pour rendre le site plus vivant.
-*   **Exemple 1 (Photo du Chef) :** Remplacer la photo de la section "À propos" par un GIF en boucle montrant vos mains en train de cuisiner (pétrir, ciseler, dresser).
-*   **Exemple 2 (Carte des Cuisines) :** Créer des GIFs individuels pour chaque pays (une carte qui s'illumine, un plat qui apparaît) et les afficher dans une grille, comme alternative à la carte interactive.
-*   **Complexité :** Faible (si vous fournissez les GIFs). L'intégration est aussi simple que pour une image.
+### [ ] 2. Carte Interactive des Cuisines Asiatiques
+*   **Idée :** Carte SVG de l'Asie avec photos de plats au survol.
+*   **Complexité :** Élevée.
+*   **Status :** En attente de ressources graphiques.
 
 ---
 
-### 4. Système de Témoignages Semi-Automatique
-
-*   **Idée :** Ajouter un formulaire "Laissez votre avis" sur le site. Les témoignages soumis seraient sauvegardés dans la base de données avec un statut "en attente".
-*   **Fonctionnement :** Vous auriez une section dans votre page d'administration pour voir les nouveaux témoignages et choisir de les "Approuver" pour les rendre publics sur le site.
-*   **Complexité :** Moyenne. Nécessite de nouvelles API et une mise à jour de la page d'administration.
-
----
-
-### 5. Page Dédiée aux Services pour Professionnels
-
-*   **Idée :** Créer une nouvelle page (`professionnels.html`) entièrement dédiée à l'offre pour les entreprises (dîners d'affaires, séminaires, team building, etc.).
-*   **Mise en œuvre :**
-    1.  Créer la nouvelle page avec un contenu et un design adaptés à une cible professionnelle.
-    2.  Ajouter un bouton ou un lien bien visible sur la page d'accueil (par exemple, dans la section "Hero" ou dans la navigation) pour rediriger les professionnels vers cette page.
-*   **Avantages :** Permet un message marketing très ciblé et un design plus corporate, sans alourdir la page principale.
-*   **Complexité :** Moyenne à élevée (création d'une page complète).
-
----
-
-### 6. Mini-CRM pour la Gestion des Clients et Réservations
-
-*   **Idée :** Faire évoluer la page d'administration en un mini-CRM (Customer Relationship Management) pour une gestion plus avancée de l'activité.
-*   **Fonctionnalités possibles :**
-    *   **Gestion des Clients :** Créer une fiche par client avec son historique, ses préférences et ses allergies.
-    *   **Statuts de Réservation :** Marquer une réservation comme "En attente", "Confirmée", "Terminée" ou "Annulée".
-    *   **Calendrier d'Activité :** Afficher toutes les réservations sur un calendrier directement dans l'interface d'administration.
-    *   **Notes Privées :** Ajouter des commentaires sur les clients ou les réservations.
-    *   **Génération de Documents :** Créer des devis et des factures en PDF à partir des informations d'une réservation, et les envoyer par e-mail.
-*   **Complexité :** Élevée. C'est un projet de développement conséquent qui demande une refonte majeure de la base de données et des API.
-
----
-
-### 7. Mode Maintenance pour les Mises à Jour Majeures
-
-*   **Idée :** Mettre en place une page "Site en maintenance" pour pouvoir travailler sur de grosses évolutions sans perturber les visiteurs.
-*   **Mise en œuvre :**
-    1.  Créer une page simple `maintenance.html`.
-    2.  Modifier le fichier `vercel.json` pour rediriger temporairement tout le trafic vers cette page.
-    3.  Déployer avec `vercel --prod` pour activer le mode maintenance.
-    4.  Une fois la mise à jour terminée, retirer la redirection et redéployer.
+### [ ] 3. Utilisation de GIFs pour un Contenu Dynamique
+*   **Idée :** Remplacer la photo du Chef par un GIF de préparation culinaire.
 *   **Complexité :** Faible.
+*   **Status :** Nécessite les fichiers médias.
 
 ---
 
-### 8. Menu Interactif Avancé (Philosophie Culinaire)
-
-*   **Idée :** Remplacer la présentation des services par un menu interactif qui reflète la philosophie du chef, basé sur le partage et la personnalisation plutôt que sur un catalogue de plats fixes.
-*   **Structure :**
-    *   **Filtres :** Style de prestation (à partager / individuel), thème (pays, saison), niveau de piment.
-    *   **Prix :** Affichage clair du prix par personne, avec une mention sur la variabilité des ingrédients.
-    *   **Sections :** Distinction entre le "Style Asiatique (à partager)" et le "Style Occidental (portions individuelles)".
-    *   **Personnalisation :** Permettre au client d'indiquer ses préférences directement dans le menu.
-*   **Message Clé :** Inclure une note expliquant pourquoi le prix est par personne, en lien avec la tradition du partage et la fraîcheur des produits du marché.
-*   **Complexité :** Élevée. Demande une refonte majeure de la section services (HTML, CSS, et JavaScript).
+### [ ] 4. Système de Témoignages Semi-Automatique
+*   **Idée :** Formulaire de dépôt d'avis avec modération dans le dashboard.
+*   **Complexité :** Moyenne.
+*   **Status :** À planifier.
 
 ---
 
-### 9. Notifications Push (WebPush) pour l'Équipe
-
-*   **Idée :** Permettre aux administrateurs et employés de recevoir des alertes en temps réel sur leur téléphone ou ordinateur, même si le navigateur est totalement fermé.
-*   **Fonctionnement :** 
-    1.  Installation d'un **Service Worker** dans le navigateur de l'utilisateur.
-    2.  Enregistrement d'un **Token d'abonnement** unique dans Supabase.
-    3.  Déclenchement automatique d'un message via un **Serveur de Push** (ex: OneSignal ou Firebase) lors d'une nouvelle demande ou d'un retard de traitement.
-*   **Avantages :** Réactivité maximale, plus besoin de surveiller le dashboard en permanence, idéal pour les employés en cuisine ou en livraison.
-*   **Complexité :** Élevée. Nécessite la mise en place d'un Service Worker, d'une infrastructure de serveur de push et d'une gestion sécurisée des tokens d'abonnement.
+### [/] 5. Page Dédiée aux Services pour Professionnels (B2B)
+*   **Idée :** Créer `professionnels.html` pour les dîners d'affaires et séminaires.
+*   **Mise en œuvre :** Option "Repas d'affaires" déjà ajoutée au formulaire.
+*   **Status :** **Partiellement fait** (Formulaire OK, Page dédiée à créer).
 
 ---
+
+### [x] 6. Mini-CRM pour la Gestion des Clients et Réservations
+*   **Idée :** Dashboard de gestion complet avec historique et documents.
+*   **Réalisation :** Interface `gestion.asiacuisine.re` opérationnelle avec Supabase.
+*   **Status :** **Terminé**.
+
+---
+
+### [ ] 7. Mode Maintenance (Cloudflare)
+*   **Idée :** Page d'attente lors des grosses mises à jour.
+*   **Technique :** Utiliser les **Cloudflare Workers** ou les **Bulk Redirects** (anciennement `vercel.json`).
+*   **Status :** À documenter pour Cloudflare.
+
+---
+
+### [ ] 8. Menu Interactif Avancé (Philosophie Culinaire)
+*   **Idée :** Système de commande basé sur le partage et la personnalisation en temps réel.
+*   **Status :** R&D en cours.
+
+---
+
+### [x] 9. Notifications Push (WebPush) pour l'Équipe
+*   **Idée :** Alertes mobiles instantanées pour les nouvelles commandes.
+*   **Réalisation :** Service Worker et table `push_subscriptions` actifs.
+*   **Status :** **Terminé**.
+
+---
+
+### [ ] 10. Notifications Push Client pour la Livraison
+*   **Idée :** Envoyer une notification automatique au client ("Je suis en route !") lorsqu'on active le tracker GPS.
+*   **Avantage :** Améliore drastiquement l'expérience client.
+*   **Status :** **Nouveau** (Techniquement prêt, nécessite le lien commande <-> appareil).
+
+---
+
+### [/] 11. Offres Consulting & Freelance (Hôtels / Restaurants)
+*   **Idée :** Proposer des prestations contractuelles (création de carte, renfort brigade) aux pros du secteur.
+*   **Avantage :** Fort levier de crédibilité et revenus B2B stables.
+*   **Status :** **Nouveau** (Option ajoutée au formulaire, à mettre en avant sur le site).
+
+---
+
+### [ ] 12. Transformation du Dashboard en SaaS (ChefOS)
+*   **Idée :** Proposer votre interface de gestion à d'autres chefs via un abonnement.
+*   **Défis :** Isolation des données (Multi-tenancy) et intégration de Stripe.
+*   **Points importants:** Modification du nommage devis et factures ainsi que l'implémentation de logo
+*   **Status :** **Vision Long Terme**.

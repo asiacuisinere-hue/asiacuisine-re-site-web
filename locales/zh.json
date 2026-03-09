@@ -150,6 +150,7 @@
       "service_option_default": "选择服务",
       "service_option1": "私人厨师到府",
       "service_option2": "烹饪课程",
+      "service_option_business": "机密商务宴请",
       "service_option3": "订购菜品",
       "date_label": "期望日期：",
       "date_placeholder": "点击选择日期",
@@ -188,9 +189,31 @@
       "contact_phone_label": "联系人电话：",
       "cgv_checkbox_label": "我接受 <span id='open-cgv-link' style='text-decoration: underline; cursor: pointer;'>通用销售条款 (GTC)</span>",
       "view_cgv": "查看条款",
-      "validation_notice": "最迟在次日早上7:00前确认。确认函将通过电子邮件发送。"
-    },
-    "footer": {
+      "validation_notice": "最迟在次日早上 7:00 前确认。确认信息将通过电子邮件发送。"
+      },
+      "pro": {
+      "page_title": "专业烹饪专业知识 - Asiacuisine.re",
+      "hero_title": "面向专业人士的专业烹饪知识",
+      "hero_subtitle": "为留尼旺岛的酒店和餐厅提供咨询、培训和自由职业服务。",
+      "hero_cta": "索取报价",
+      "section1_title": "烹饪咨询",
+      "section1_desc": "通过量身定制的支持优化您的菜单并提高盈利能力。",
+      "section1_item1": "创建和重新设计正宗的亚洲菜单。",
+      "section1_item2": "技术人员培训（炒锅、点心、切割技术）。",
+      "section1_item3": "优化技术表和控制食品成本。",
+      "section2_title": "自由职业和代班厨师",
+      "section2_desc": "满足您的紧急或活动需求的灵活解决方案。",
+      "section2_item1": "更换领班或行政总厨。",
+      "section2_item2": "为宴会、婚礼和主题之夜提供合格的支持。",
+      "section2_item3": "绝对严谨，严格遵守 HACCP 标准。",
+      "section3_title": "活动与团队建设",
+      "section3_desc": "围绕沉浸式烹饪体验团结您的团队。",
+      "section3_item1": "为您的研讨会提供凝聚力烹饪研讨会。",
+      "section3_item2": "在您的公司活动中进行动态现场烹饪。",
+      "section3_item3": "具有亚洲风味的优质鸡尾酒招待会。",
+      "footer_cta": "准备好提升您的烹饪标准了吗？"
+      },
+      "footer": {
       "contact_title": "联系我们",
       "contact_location": "📍 留尼汪岛",
       "social_title": "关注我",

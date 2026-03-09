@@ -59,3 +59,4 @@ The backend functions require environment variables to be set up. These are conf
 *   **API:** The project exposes several API endpoints through serverless functions. They are well-structured and handle specific tasks. CORS headers on some functions suggest they are accessed from a different domain (the admin panel).
 *   **Testing:** The `package.json` includes a "test" script that currently does nothing. There are no test files in the project.
 
+- Recurring Issue: \"Disappearing Sections\" (Mon Parcours, Réservation). See docs/TROUBLESHOOTING_SECTIONS_INVISIBLES.md for causes (CSP blocking scripts, JS syntax errors) and fixes.

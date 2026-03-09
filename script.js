@@ -32,10 +32,16 @@ async function initializeI18n() {
 }
 
 function updateContent() {
+    if (typeof i18next === 'undefined' || !i18next.t) {
+        console.warn('i18next not available, skipping translation update');
+        return;
+    }
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
-        el.placeholder = key.startsWith('[placeholder]') ? i18next.t(key.replace('[placeholder]', '')) : el.placeholder;
-        if (!key.startsWith('[placeholder]')) el.innerHTML = i18next.t(key);
+        try {
+            el.placeholder = key.startsWith('[placeholder]') ? i18next.t(key.replace('[placeholder]', '')) : el.placeholder;
+            if (!key.startsWith('[placeholder]')) el.innerHTML = i18next.t(key);
+        } catch (e) { console.error(`Error translating key ${key}:`, e); }
     });
     document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active-lang', btn.dataset.lang === i18next.language));
     const currentLang = i18next.language;
@@ -55,7 +61,7 @@ function createLanguageSwitcher() {
     if (!navContainer) return;
     const switcher = document.createElement('div');
     switcher.className = 'language-switcher';
-    switcher.innerHTML = `<button class="lang-btn" data-lang="fr">FR</button> | <button class="lang-btn" data-lang="en">EN</button> | <button class="lang-btn" data-lang="zh">ZH</button>`;
+    switcher.innerHTML = `<button class="lang-btn" data-lang="fr">FR</button> | <button class="lang-btn" data-lang="en">EN</button> | <button class="lang-btn" data-lang="zh">文</button>`;
     const mobileToggle = document.querySelector('.nav-toggle');
     navContainer.insertBefore(switcher, mobileToggle || null);
     switcher.addEventListener('click', (e) => {
@@ -128,18 +134,34 @@ function initializeCgvModal() {
 function handleResponsiveLayout() {
     const switcher = document.querySelector('.language-switcher');
     const navContainer = document.querySelector('.nav-container');
-    const navLinks = document.querySelector('.nav-links');
     const navToggle = document.querySelector('.nav-toggle');
-    if (!switcher || !navContainer || !navLinks || !navToggle) return;
-    if (window.innerWidth <= 800 && !navLinks.contains(switcher)) navLinks.appendChild(switcher);
-    else if (window.innerWidth > 800 && !navContainer.contains(switcher)) navContainer.insertBefore(switcher, navToggle);
+    if (!switcher || !navContainer || !navToggle) return;
+    
+    // Toujours garder le switcher dans le navContainer, juste avant le bouton toggle
+    if (!navContainer.contains(switcher) || switcher.nextSibling !== navToggle) {
+        navContainer.insertBefore(switcher, navToggle);
+    }
 }
 
 function initializeScrollBasedEffects() {
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('visible'));
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach(el => {
+        observer.observe(el);
+        // Vérification immédiate pour les éléments déjà dans le viewport (ex: retour d'une autre page)
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.classList.add('visible');
+        }
+    });
+
     window.addEventListener('scroll', () => {
         document.querySelector('.navbar')?.style.setProperty('background', window.scrollY > 50 ? 'rgba(20, 20, 20, 0.98)' : 'rgba(20, 20, 20, 0.95)');
         document.querySelector('.hero')?.style.setProperty('transform', `translateY(${window.pageYOffset * 0.4}px)`);
@@ -291,9 +313,29 @@ function initializeForm() {
         companyFieldsDiv.style.display = isIndividual ? 'none' : 'block';
         individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = isIndividual);    
         companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = !isIndividual);      
+
+        const businessOption = document.getElementById('service-business');
+        if (businessOption) {
+            businessOption.style.display = isIndividual ? 'none' : 'block';
+            if (isIndividual && document.getElementById('service').value === 'repas-affaires') {
+                document.getElementById('service').value = '';
+            }
+        }
     };
 
     toggleCustomerFields();
+    
+    // Pré-sélection depuis localStorage (ex: venant de la page pro)
+    const typeDefault = localStorage.getItem('booking_type_default');
+    console.log('Booking type default from storage:', typeDefault);
+    if (typeDefault === 'entreprise' && companyRadio) {
+        console.log('Applying entreprise pre-selection');
+        individualRadio.checked = false;
+        companyRadio.checked = true;
+        toggleCustomerFields();
+        localStorage.removeItem('booking_type_default'); // Nettoyer après usage
+    }
+
     individualRadio.addEventListener('change', toggleCustomerFields);
     companyRadio.addEventListener('change', toggleCustomerFields);
 
