@@ -213,8 +213,33 @@
       "section3_item3": "具有亚洲风味的优质鸡尾酒招待会。",
       "footer_cta": "准备好提升您的烹饪标准了吗？"
       },
-      "footer": {
-      "contact_title": "联系我们",
+      "push": {
+        "banner_text": "不要错过任何新菜单！订阅提醒。",
+        "subscribe_button": "订阅",
+        "title_subscribe": "订阅菜单提醒",
+        "title_unsubscribe": "退订提醒",
+        "confirm_unsubscribe": "您确定要退订菜单提醒吗？",
+        "unsubscribed_notification": "您将不再收到提醒。"
+      },
+      "cookies": {
+        "text": "本网站使用 cookie 来改善您的体验。继续浏览即表示您同意我们的",
+        "link": "隐私政策",
+        "accept": "接受",
+        "decline": "拒绝"
+      },
+      "maintenance": {
+        "page_title": "正在烹饪中... - Asiacuisine.re",
+        "title": "正在烹饪中...",
+        "message": "新菜单正在为您的小味蕾精心烹制中。<br>准备就绪后，我们会第一时间通知您。",
+        "alert_app": "📲 记得将网站安装为应用，以便在重新开业时收到通知！"
+      },
+      "error404": {
+        "page_title": "页面未找到 - Asiacuisine.re",
+        "message": "这不是您的连接故障，<br>只是走错了方向。",
+        "btn_kitchens": "前往厨房",
+        "btn_travel": "前往旅游与商务"
+      },
+      "footer": {      "contact_title": "联系我们",
       "contact_location": "📍 留尼汪岛",
       "social_title": "关注我",
       "social_fb": "Facebook",

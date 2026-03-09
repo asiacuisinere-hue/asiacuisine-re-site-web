@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page non trouvée - Asiacuisine.re</title>
+    <title data-i18n="error404.page_title">Page non trouvée - Asiacuisine.re</title>
     <style>
         :root {
             --glitch-color-1: #ff00c1;
@@ -20,20 +20,21 @@
             margin: 0;
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
-            overflow-x: hidden; /* Prevent horizontal scroll only */
-            overflow-y: auto;   /* Allow vertical scroll */
+            overflow-x: hidden;
+            overflow-y: auto;
             position: relative;
         }
 
-        .container-404 {
-            padding: 2rem 1rem; /* Reduced padding for mobile */
-            max-width: 700px;
-            width: 100%;
-            position: relative;
-            z-index: 2;
-            animation: jitter 4s infinite;
-            box-sizing: border-box;
-            margin: auto; /* Center vertically if space allows */
+        /* --- VHS EFFECTS --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Resolution_White_Noise_Video_Texture.png');
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 10;
+            animation: noise 0.2s infinite;
         }
 
         @keyframes noise {
@@ -50,7 +51,6 @@
             100% { transform: translate(5%,0) }
         }
 
-        /* Scanlines */
         .vhs-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -61,7 +61,6 @@
             z-index: 11;
         }
 
-        /* Tracking Bar */
         .vhs-tracking {
             position: fixed;
             width: 100%;
@@ -73,18 +72,17 @@
             animation: tracking 8s linear infinite;
         }
 
-        @keyframes tracking {
-            0% { top: -10%; }
-            100% { top: 110%; }
-        }
+        @keyframes tracking { 0% { top: -10%; } 100% { top: 110%; } }
 
         .container-404 {
-            padding: 2rem;
+            padding: 2rem 1rem;
             max-width: 700px;
-            width: 90%;
+            width: 100%;
             position: relative;
             z-index: 2;
             animation: jitter 4s infinite;
+            box-sizing: border-box;
+            margin: auto;
         }
 
         @keyframes jitter {
@@ -95,7 +93,6 @@
             100% { transform: translate(0,0); }
         }
 
-        /* --- LOGO GLITCH --- */
         .glitch-container {
             position: relative;
             display: inline-block;
@@ -157,7 +154,6 @@
             text-shadow: 1px 1px #000;
         }
 
-        /* --- DIRECTIONS --- */
         .directions {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -186,26 +182,10 @@
             box-shadow: 0 0 20px rgba(0, 255, 249, 0.2);
         }
 
-        .direction-card img {
-            height: 60px;
-            margin-bottom: 1rem;
-            filter: drop-shadow(2px 2px #000);
-        }
+        .direction-card img { height: 60px; margin-bottom: 1rem; filter: drop-shadow(2px 2px #000); }
+        .direction-card .icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .direction-card .text { font-weight: bold; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        .direction-card .icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .direction-card .text {
-            font-weight: bold;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* VHS Static Card Overlay on Hover */
         .direction-card::after {
             content: "LOADING...";
             position: absolute;
@@ -215,10 +195,7 @@
             font-size: 0.7rem; color: #0f0;
             opacity: 0; transition: opacity 0.1s;
         }
-        .direction-card:hover::after {
-            opacity: 0.1;
-        }
-
+        .direction-card:hover::after { opacity: 0.1; }
     </style>
 </head>
 <body>
@@ -232,23 +209,48 @@
             <div class="glitch-copy glitch-copy-2"></div>
         </div>
 
-        <h1>Ceci n'est pas une défaillance de votre connexion<br>mais juste une mauvaise direction.</h1>
+        <h1 data-i18n="error404.message">Ceci n'est pas une défaillance de votre connexion<br>mais juste une mauvaise direction.</h1>
 
         <div class="directions">
             <a href="https://www.asiacuisine.re" class="direction-card">
                 <span class="icon">🍳</span>
-                <span class="text">Direction les cuisines</span>
+                <span class="text" data-i18n="error404.btn_kitchens">Direction les cuisines</span>
             </a>
             
             <a href="https://www.luxilo.fr" class="direction-card">
                 <img src="assets/images/logos/boussole_nom.svg" alt="Logo Luxilo">
-                <span class="text">Direction les voyages et affaires</span>
+                <span class="text" data-i18n="error404.btn_travel">Direction les voyages et affaires</span>
             </a>
         </div>
     </div>
 
+    <script src="assets/vendor/i18next.min.js"></script>
     <script>
-        // Flickering effect for VHS feel
+        // Initialisation I18n
+        async function init404I18n() {
+            try {
+                const [frR, enR, zhR] = await Promise.all([
+                    fetch('./locales/fr.json'),
+                    fetch('./locales/en.json'),
+                    fetch('./locales/zh.json')
+                ]);
+                const resources = {
+                    fr: await frR.json(),
+                    en: await enR.json(),
+                    zh: await zhR.json()
+                };
+                const lang = new URLSearchParams(window.location.search).get('lang') || 'fr';
+                await i18next.init({ lng: lang, resources });
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.dataset.i18n;
+                    el.innerHTML = i18next.t(key);
+                });
+                document.title = i18next.t('error404.page_title');
+            } catch (e) { console.error('I18n failed', e); }
+        }
+        init404I18n();
+
+        // Flickering effect
         setInterval(() => {
             document.body.style.opacity = Math.random() > 0.98 ? '0.8' : '1';
         }, 50);

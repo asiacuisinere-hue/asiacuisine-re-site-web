@@ -213,6 +213,32 @@
       "section3_item3": "Cocktails dînatoires premium aux saveurs d'Asie.",
       "footer_cta": "Prêt à élever votre standard culinaire ?"
     },
+    "push": {
+      "banner_text": "Ne ratez plus les nouveaux menus ! Abonnez-vous aux alertes.",
+      "subscribe_button": "M'abonner",
+      "title_subscribe": "S'abonner aux alertes menus",
+      "title_unsubscribe": "Se désabonner des alertes",
+      "confirm_unsubscribe": "Voulez-vous vraiment vous désabonner des alertes menus ?",
+      "unsubscribed_notification": "Vous ne recevrez plus d'alertes."
+    },
+    "cookies": {
+      "text": "Ce site utilise des cookies pour améliorer votre expérience. En continuant, vous acceptez notre",
+      "link": "politique de confidentialité",
+      "accept": "Accepter",
+      "decline": "Refuser"
+    },
+    "maintenance": {
+      "page_title": "Mijotage en cours... - Asiacuisine.re",
+      "title": "Mijotage en cours...",
+      "message": "De nouvelles recettes sont en train de mijoter pour le bonheur de vos papilles.<br>Vous serez prévenu quand la table sera mise.",
+      "alert_app": "📲 Pensez à installer le site en application pour recevoir une alerte dès la réouverture !"
+    },
+    "error404": {
+      "page_title": "Page non trouvée - Asiacuisine.re",
+      "message": "Ceci n'est pas une défaillance de votre connexion<br>mais juste une mauvaise direction.",
+      "btn_kitchens": "Direction les cuisines",
+      "btn_travel": "Direction les voyages et affaires"
+    },
     "footer": {
       "contact_title": "Contact",
       "contact_location": "📍 La Réunion",

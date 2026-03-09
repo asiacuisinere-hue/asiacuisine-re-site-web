@@ -75,7 +75,14 @@ function createLanguageSwitcher() {
     if (!navContainer) return;
     const switcher = document.createElement('div');
     switcher.className = 'language-switcher';
-    switcher.innerHTML = `<button class="lang-btn" data-lang="fr">FR</button> | <button class="lang-btn" data-lang="en">EN</button> | <button class="lang-btn" data-lang="zh">文</button>`;
+    switcher.innerHTML = `
+        <div id="push-nav-control" class="push-nav-item"></div>
+        <div class="lang-group">
+            <button class="lang-btn" data-lang="fr">FR</button> | 
+            <button class="lang-btn" data-lang="en">EN</button> | 
+            <button class="lang-btn" data-lang="zh">文</button>
+        </div>
+    `;
     const mobileToggle = document.querySelector('.nav-toggle');
     navContainer.insertBefore(switcher, mobileToggle || null);
     switcher.addEventListener('click', (e) => {
@@ -93,6 +100,7 @@ function initializePageContent() {
     createLanguageSwitcher();
     initializeCookieConsent();
     initializeWelcomePopup();
+    initializePushControl(); // Renommé
     fetchAndInitializeDatepicker();
     if (document.querySelector('#accueil')) {
         initializeScrollBasedEffects();
@@ -540,7 +548,41 @@ function initializeSubscriptionForm() {
     });
 }
 
-function initializeWhatsAppLinks() {
+async function initializePushControl() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+    const container = document.getElementById('push-nav-control');
+    if (!container) return;
+
+    const updatePushFabState = (isSubscribed) => {
+        container.classList.toggle('subscribed', isSubscribed);
+        const titleKey = isSubscribed ? 'push.title_unsubscribe' : 'push.title_subscribe';
+        const icon = isSubscribed ? '🔕' : '🔔';
+        container.innerHTML = `<span title="${i18next.t(titleKey)}">${icon}</span>`;
+    };
+
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        let subscription = await registration.pushManager.getSubscription();
+        updatePushFabState(!!subscription);
+
+        container.addEventListener('click', async () => {
+            if (subscription) {
+                if (!confirm(i18next.t('push.confirm_unsubscribe'))) return;
+                await subscription.unsubscribe();
+                subscription = null;
+                updatePushFabState(false);
+                showNotification(i18next.t('push.unsubscribed_notification'));
+            } else {
+                await subscribeClientToPush();
+                subscription = await registration.pushManager.getSubscription();
+                if (subscription) updatePushFabState(true);
+            }
+        });
+    } catch (e) {
+        console.warn('Push control init failed', e);
+    }
+} function initializeWhatsAppLinks() {
     document.querySelectorAll('.js-whatsapp-link').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();

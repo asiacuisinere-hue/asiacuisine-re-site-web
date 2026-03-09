@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mijotage en cours... - Asiacuisine.re</title>
+    <title data-i18n="maintenance.page_title">Mijotage en cours... - Asiacuisine.re</title>
     <style>
         :root {
             --chef-amber: #d97706;
@@ -66,28 +66,13 @@
         }
 
         @keyframes smokeRise {
-            0% {
-                transform: translateY(0) scale(1) rotate(0deg);
-                opacity: 0;
-            }
-            15% {
-                opacity: 0.3;
-            }
-            50% {
-                opacity: 0.1;
-                transform: translateY(-40vh) scale(2) rotate(90deg);
-            }
-            80% {
-                opacity: 0;
-                transform: translateY(-60vh) scale(3) rotate(180deg);
-            }
-            100% {
-                transform: translateY(-80vh) scale(4) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.3; }
+            50% { opacity: 0.1; transform: translateY(-40vh) scale(2) rotate(90deg); }
+            80% { opacity: 0; transform: translateY(-60vh) scale(3) rotate(180deg); }
+            100% { transform: translateY(-80vh) scale(4) rotate(360deg); opacity: 0; }
         }
 
-        /* --- POT & SIMMERING --- */
         .pot-container {
             position: relative;
             width: 180px;
@@ -126,7 +111,6 @@
             to { opacity: 0.9; transform: translateX(-50%) scaleX(1.3); }
         }
 
-        /* --- TEXT STYLING --- */
         h1 {
             font-size: 2.5rem;
             font-weight: 900;
@@ -159,7 +143,6 @@
             margin: 0 auto;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
-
     </style>
 </head>
 <body>
@@ -172,40 +155,52 @@
             <div class="glow-under"></div>
         </div>
 
-        <h1>Mijotage en cours...</h1>
-        <p>
+        <h1 data-i18n="maintenance.title">Mijotage en cours...</h1>
+        <p data-i18n="maintenance.message">
             De nouvelles recettes sont en train de mijoter pour le bonheur de vos papilles.<br>
             Vous serez prévenu quand la table sera mise.
         </p>
 
-        <div class="alert-box">
+        <div class="alert-box" data-i18n="maintenance.alert_app">
             📲 Pensez à installer le site en application pour recevoir une alerte dès la réouverture !
         </div>
     </div>
 
+    <script src="assets/vendor/i18next.min.js"></script>
     <script>
-        // Générateur de fumée volumétrique
-        const smokeContainer = document.getElementById('smoke');
-        const particleCount = 25;
-
-        for (let i = 0; i < particleCount; i++) {
-            createParticle(true);
+        // Initialisation I18n
+        async function initMaintenanceI18n() {
+            try {
+                const [frR, enR, zhR] = await Promise.all([
+                    fetch('./locales/fr.json'),
+                    fetch('./locales/en.json'),
+                    fetch('./locales/zh.json')
+                ]);
+                const resources = {
+                    fr: await frR.json(),
+                    en: await enR.json(),
+                    zh: await zhR.json()
+                };
+                const lang = new URLSearchParams(window.location.search).get('lang') || 'fr';
+                await i18next.init({ lng: lang, resources });
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.dataset.i18n;
+                    el.innerHTML = i18next.t(key);
+                });
+                document.title = i18next.t('maintenance.page_title');
+            } catch (e) { console.error('I18n failed', e); }
         }
+        initMaintenanceI18n();
 
-        function createParticle(initial = false) {
+        // Générateur de fumée
+        const smokeContainer = document.getElementById('smoke');
+        for (let i = 0; i < 25; i++) {
             const p = document.createElement('div');
             p.className = 'smoke-particle';
-            
-            const size = Math.random() * 150 + 100;
-            const left = Math.random() * 120 - 10; // De -10% à 110%
-            const duration = Math.random() * 5 + 5;
-            const delay = initial ? Math.random() * -10 : 0;
-
-            p.style.setProperty('--size', `${size}px`);
-            p.style.setProperty('--left', `${left}%`);
-            p.style.setProperty('--duration', `${duration}s`);
-            p.style.setProperty('--delay', `${delay}s`);
-
+            p.style.setProperty('--size', `${Math.random() * 150 + 100}px`);
+            p.style.setProperty('--left', `${Math.random() * 120 - 10}%`);
+            p.style.setProperty('--duration', `${Math.random() * 5 + 5}s`);
+            p.style.setProperty('--delay', `${Math.random() * -10}s`);
             smokeContainer.appendChild(p);
         }
     </script>

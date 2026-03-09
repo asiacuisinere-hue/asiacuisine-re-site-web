@@ -72,8 +72,42 @@ body {
 .language-switcher {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 12px;
     margin-left: 1.5rem;
+}
+
+.push-nav-item {
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.push-nav-item:hover {
+    transform: scale(1.2);
+}
+
+.push-nav-item span {
+    display: inline-block;
+}
+
+.push-nav-item:not(.subscribed) span {
+    animation: bell-ring 4s infinite;
+    filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+}
+
+.push-nav-item.subscribed {
+    color: #059669;
+}
+
+.lang-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.8rem;
 }
 
 .lang-btn {
@@ -858,3 +892,6 @@ input[type="radio"]:checked + .custom-radio::after { content: ''; position: abso
     .formula-grid-scroller { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; }
     .formula-card { flex: none; width: 100% !important; }
 }
+
+/* Fix Datepicker display */
+.datepicker { z-index: 2000 !important; }

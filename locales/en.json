@@ -213,6 +213,32 @@
       "section3_item3": "Premium cocktail receptions with Asian flavors.",
       "footer_cta": "Ready to elevate your culinary standards?"
     },
+    "push": {
+      "banner_text": "Don't miss any new menus! Subscribe to alerts.",
+      "subscribe_button": "Subscribe",
+      "title_subscribe": "Subscribe to menu alerts",
+      "title_unsubscribe": "Unsubscribe from alerts",
+      "confirm_unsubscribe": "Do you really want to unsubscribe from menu alerts?",
+      "unsubscribed_notification": "You will no longer receive alerts."
+    },
+    "cookies": {
+      "text": "This site uses cookies to improve your experience. By continuing, you agree to our",
+      "link": "privacy policy",
+      "accept": "Accept",
+      "decline": "Decline"
+    },
+    "maintenance": {
+      "page_title": "Simmering in progress... - Asiacuisine.re",
+      "title": "Simmering in progress...",
+      "message": "New recipes are simmering for your taste buds' delight.<br>You'll be notified when the table is set.",
+      "alert_app": "📲 Consider installing the site as an app to receive an alert as soon as we reopen!"
+    },
+    "error404": {
+      "page_title": "Page Not Found - Asiacuisine.re",
+      "message": "This is not a failure of your connection<br>but just a wrong direction.",
+      "btn_kitchens": "Heading to the kitchens",
+      "btn_travel": "Heading to travel and business"
+    },
     "footer": {
       "contact_title": "Contact",
       "contact_location": "📍 Reunion Island",
