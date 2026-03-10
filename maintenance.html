@@ -183,6 +183,18 @@
                 };
                 const lang = new URLSearchParams(window.location.search).get('lang') || 'fr';
                 await i18next.init({ lng: lang, resources });
+                
+                // Redirection inverse : si on est sur cette page mais que la maintenance est OFF
+                const mMode = resources[lang].translation.settings?.maintenance_mode || i18next.t('maintenance_mode'); // On peut aussi refetcher
+                
+                // Plus simple : refetcher l'état actuel
+                const checkRes = await fetch('/get-setting?key=maintenance_mode');
+                const checkData = await checkRes.json();
+                if (checkData.value === 'false') {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.dataset.i18n;
                     el.innerHTML = i18next.t(key);

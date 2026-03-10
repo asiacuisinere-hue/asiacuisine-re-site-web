@@ -1,7 +1,7 @@
 // --- SCRIPT INITIALIZATION ---
 
 async function main() {
-    // Vérification du mode maintenance (sauf si on est déjà sur la page de maintenance)
+    // 1. Maintenance Mode Check
     if (!window.location.pathname.includes('maintenance.html')) {
         try {
             const mResponse = await fetch('/get-setting?key=maintenance_mode');
@@ -12,9 +12,10 @@ async function main() {
                     return;
                 }
             }
-        } catch (e) { console.error('Maintenance check failed', e); }
+        } catch (e) { console.warn('Maintenance check skipped'); }
     }
 
+    // 2. I18n & Content
     await initializeI18n();
     initializePageContent();
 }
@@ -24,21 +25,21 @@ document.addEventListener('DOMContentLoaded', main);
 // --- I18N (TRANSLATION) LOGIC ---
 async function initializeI18n() {
     try {
-        const [frResponse, enResponse, zhResponse] = await Promise.all([
+        const [frR, enR, zhR] = await Promise.all([
             fetch('./locales/fr.json'),
             fetch('./locales/en.json'),
             fetch('./locales/zh.json')
         ]);
-        const [frTranslation, enTranslation, zhTranslation] = await Promise.all([
-            frResponse.json(),
-            enResponse.json(),
-            zhResponse.json()
-        ]);
+        const resources = {
+            fr: await frR.json(),
+            en: await enR.json(),
+            zh: await zhR.json()
+        };
         const lang = new URLSearchParams(window.location.search).get('lang') || 'fr';
         await i18next.init({
             lng: lang,
             debug: false,
-            resources: { fr: frTranslation, en: enTranslation, zh: zhTranslation }
+            resources: resources
         });
     } catch (error) {
         console.error('i18next initialization failed:', error);
@@ -46,33 +47,30 @@ async function initializeI18n() {
 }
 
 function updateContent() {
-    if (typeof i18next === 'undefined' || !i18next.t) {
-        console.warn('i18next not available, skipping translation update');
-        return;
-    }
+    if (typeof i18next === 'undefined' || !i18next.t) return;
+    
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
         try {
-            el.placeholder = key.startsWith('[placeholder]') ? i18next.t(key.replace('[placeholder]', '')) : el.placeholder;
-            if (!key.startsWith('[placeholder]')) el.innerHTML = i18next.t(key);
-        } catch (e) { console.error(`Error translating key ${key}:`, e); }
-    });
-    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active-lang', btn.dataset.lang === i18next.language));
-    const currentLang = i18next.language;
-    document.querySelectorAll('a').forEach(link => {
-        try {
-            const url = new URL(link.href);
-            if (link.hostname === window.location.hostname) {
-                url.searchParams.set('lang', currentLang);
-                link.href = url.toString();
+            if (key.startsWith('[placeholder]')) {
+                el.placeholder = i18next.t(key.replace('[placeholder]', ''));
+            } else {
+                el.innerHTML = i18next.t(key);
             }
-        } catch (e) { /* Ignore invalid URLs */ }
+        } catch (e) { console.error('Translation error', e); }
     });
+    
+    document.querySelectorAll('.lang-btn').forEach(btn => 
+        btn.classList.toggle('active-lang', btn.dataset.lang === i18next.language)
+    );
 }
+
+// --- UI COMPONENTS ---
 
 function createLanguageSwitcher() {
     const navContainer = document.querySelector('.nav-container');
     if (!navContainer) return;
+    
     const switcher = document.createElement('div');
     switcher.className = 'language-switcher';
     switcher.innerHTML = `
@@ -83,13 +81,14 @@ function createLanguageSwitcher() {
             <button class="lang-btn" data-lang="zh">文</button>
         </div>
     `;
+    
     const mobileToggle = document.querySelector('.nav-toggle');
     navContainer.insertBefore(switcher, mobileToggle || null);
+    
     switcher.addEventListener('click', (e) => {
         if (e.target.matches('.lang-btn')) {
-            const lang = e.target.dataset.lang;
             const url = new URL(window.location);
-            url.searchParams.set('lang', lang);
+            url.searchParams.set('lang', e.target.dataset.lang);
             window.location.href = url.toString();
         }
     });
@@ -100,207 +99,240 @@ function initializePageContent() {
     createLanguageSwitcher();
     initializeCookieConsent();
     initializeWelcomePopup();
-    initializePushControl(); // Renommé
+    initializePushControl();
     fetchAndInitializeDatepicker();
+    
     if (document.querySelector('#accueil')) {
         initializeScrollBasedEffects();
         initializeServiceMenu();
         initializeMobileMenu();
-        initializeMobileBottomNav();
         initializeBackToTopButton();
         initializeLightbox();
         initializeForm();
         handleResponsiveLayout();
         window.addEventListener('resize', handleResponsiveLayout);
     }
-    initializeSubscriptionForm();
     initializeWhatsAppLinks();
     initializeCgvModal();
 }
 
-function initializeCgvModal() {
-    const modal = document.getElementById('cgv-modal');
-    const cgvBody = document.getElementById('cgv-content-body');
-    const closeBtns = document.querySelectorAll('.close-modal');
-
-    document.body.addEventListener('click', (e) => {
-        if (e.target && e.target.id === 'open-cgv-link') {
-            e.preventDefault();
-            if (modal) modal.classList.add('is-visible');
-
-            if (cgvBody && (cgvBody.innerHTML.includes("Chargement") || cgvBody.innerHTML === "")) {      
-                fetch('cgv.html')
-                    .then(res => res.text())
-                    .then(html => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-                        const mainContent = doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body;
-                        cgvBody.innerHTML = mainContent.innerHTML;
-
-                        if (window.i18next && typeof i18next.t === 'function') {
-                            cgvBody.querySelectorAll('[data-i18n]').forEach(el => {
-                                const key = el.getAttribute('data-i18n');
-                                if (key) el.innerHTML = i18next.t(key);
-                            });
-                        }
-                    })
-                    .catch(() => { cgvBody.innerHTML = "Erreur lors du chargement des CGV."; });
-            }
-        }
-    });
-
-    closeBtns.forEach(btn => btn.addEventListener('click', () => modal?.classList.remove('is-visible'))); 
-    if (modal) modal.querySelector('.modal-overlay').addEventListener('click', () => modal.classList.remove('is-visible'));
-}
-
-function handleResponsiveLayout() {
-    const switcher = document.querySelector('.language-switcher');
-    const navContainer = document.querySelector('.nav-container');
-    const navToggle = document.querySelector('.nav-toggle');
-    if (!switcher || !navContainer || !navToggle) return;
+async function fetchAndInitializeDatepicker() {
+    const dateInput = document.getElementById('date');
+    if (!dateInput || typeof Datepicker === 'undefined') return;
     
-    // Toujours garder le switcher dans le navContainer, juste avant le bouton toggle
-    if (!navContainer.contains(switcher) || switcher.nextSibling !== navToggle) {
-        navContainer.insertBefore(switcher, navToggle);
+    try {
+        const response = await fetch('/disponibilites?service_type=RESERVATION_SERVICE');
+        const data = await response.json();
+        const unavailableDates = data.unavailableDates || [];
+        
+        const currentLang = i18next.language || 'fr';
+        const datepickerLang = currentLang === 'zh' ? 'zh-CN' : currentLang;
+
+        new Datepicker(dateInput, {
+            format: 'dd/mm/yyyy',
+            language: datepickerLang,
+            autohide: true,
+            datesDisabled: unavailableDates,
+            minDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+            showDaysInNextAndPreviousMonths: false
+        });
+    } catch (error) {
+        console.error('Datepicker init failed', error);
     }
 }
 
 function initializeScrollBasedEffects() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('visible');
         });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    const fadeElements = document.querySelectorAll('.fade-in');
-    fadeElements.forEach(el => {
+    document.querySelectorAll('.fade-in').forEach(el => {
         observer.observe(el);
-        // Vérification immédiate pour les éléments déjà dans le viewport (ex: retour d'une autre page)
         const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-            el.classList.add('visible');
+        if (rect.top < window.innerHeight && rect.bottom > 0) el.classList.add('visible');
+    });
+}
+
+function initializeForm() {
+    const bookingForm = document.getElementById('bookingForm');
+    if (!bookingForm) return;
+
+    const convertDateToISO = (s) => {
+        if (!s) return null;
+        const p = s.split('/');
+        return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : s;
+    };
+
+    const individualRadio = document.getElementById('customer_type_individual');
+    const companyRadio = document.getElementById('customer_type_company');
+    const individualFields = document.getElementById('particulier-fields');
+    const companyFields = document.getElementById('entreprise-fields');
+
+    const toggleFields = () => {
+        const isInd = individualRadio.checked;
+        individualFields.style.display = isInd ? 'block' : 'none';
+        companyFields.style.display = isInd ? 'none' : 'block';
+        
+        const bizOption = document.getElementById('service-business');
+        if (bizOption) bizOption.style.display = isInd ? 'none' : 'block';
+    };
+
+    if (individualRadio && companyRadio) {
+        individualRadio.addEventListener('change', toggleFields);
+        companyRadio.addEventListener('change', toggleFields);
+        
+        // Auto-select from Pro page
+        if (localStorage.getItem('booking_type_default') === 'entreprise') {
+            companyRadio.checked = true;
+            localStorage.removeItem('booking_type_default');
+        }
+        toggleFields();
+    }
+
+    bookingForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = this.querySelector('.submit-btn');
+        if (typeof grecaptcha === 'undefined') return showNotification('Security Error', 'error');
+
+        grecaptcha.ready(() => {
+            grecaptcha.execute('6LdkdoUsAAAAAHekHonAf0ngnfTgq8xs-9Xxjvla', {action: 'submit'}).then(async (token) => {                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                const originalText = submitBtn.textContent;
+                
+                submitBtn.textContent = 'Envoi...';
+                submitBtn.disabled = true;
+
+                let pushSub = null;
+                try {
+                    const reg = await navigator.serviceWorker.ready;
+                    pushSub = await reg.pushManager.getSubscription();
+                } catch (e) {}
+
+                const payload = {
+                    type: 'RESERVATION_SERVICE',
+                    customerType: data.customer_type,
+                    customer: data.customer_type === 'Particulier' 
+                        ? { lastName: data.nom_particulier, email: data.email_particulier, phone: data.telephone_particulier }
+                        : { companyName: data.nom_entreprise, siret: data.siret, contactName: data.nom_contact_entreprise, contactEmail: data.email_contact_entreprise, contactPhone: data.telephone_contact_entreprise },
+                    requestDate: convertDateToISO(data.date),
+                    lang: i18next.language,
+                    recaptchaToken: token,
+                    pushSubscription: pushSub ? pushSub.toJSON() : null,
+                    details_json: {
+                        serviceType: data.service,
+                        heure: data.heure,
+                        numberOfPeople: data.personnes,
+                        ville: data.ville,
+                        budget: data.budget || null,
+                        allergies: data.allergies || null,
+                        customerMessage: data.message || null
+                    }
+                };
+
+                try {
+                    const res = await fetch('/create-request', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) throw new Error('Error');
+                    showNotification('Demande envoyée !');
+                    bookingForm.reset();
+                } catch (err) {
+                    showNotification('Erreur lors de l\'envoi', 'error');
+                } finally {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    });
+}
+
+// --- PUSH LOGIC ---
+
+async function initializePushControl() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    const container = document.getElementById('push-nav-control');
+    if (!container) return;
+
+    const updateState = (isSub) => {
+        container.classList.toggle('subscribed', isSub);
+        const icon = isSub ? '🔕' : '🔔';
+        const title = isSub ? i18next.t('push.title_unsubscribe') : i18next.t('push.title_subscribe');
+        container.innerHTML = `<span title="${title}">${icon}</span>`;
+    };
+
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    updateState(!!sub);
+
+    container.addEventListener('click', async () => {
+        if (sub) {
+            if (!confirm(i18next.t('push.confirm_unsubscribe'))) return;
+            await sub.unsubscribe();
+            sub = null;
+            updateState(false);
+        } else {
+            await subscribeClientToPush();
+            sub = await reg.pushManager.getSubscription();
+            if (sub) updateState(true);
         }
     });
-
-    window.addEventListener('scroll', () => {
-        document.querySelector('.navbar')?.style.setProperty('background', window.scrollY > 50 ? 'rgba(20, 20, 20, 0.98)' : 'rgba(20, 20, 20, 0.95)');
-        document.querySelector('.hero')?.style.setProperty('transform', `translateY(${window.pageYOffset * 0.4}px)`);
-    }, { passive: true });
 }
 
-async function fetchAndInitializeDatepicker() {
-    const dateInput = document.getElementById('date');
-    if (!dateInput) return;
+async function subscribeClientToPush() {
     try {
-        const response = await fetch('/disponibilites?service_type=RESERVATION_SERVICE');
-        if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
-        const data = await response.json();
-
-        const unavailableDates = data.unavailableDates || [];
-        const s = data.settings || {};
-
-        const daysOfWeekDisabled = [];
-        if (s.sunday === false) daysOfWeekDisabled.push(0);
-        if (s.monday === false) daysOfWeekDisabled.push(1);
-        if (s.tuesday === false) daysOfWeekDisabled.push(2);
-        if (s.wednesday === false) daysOfWeekDisabled.push(3);
-        if (s.thursday === false) daysOfWeekDisabled.push(4);
-        if (s.friday === false) daysOfWeekDisabled.push(5);
-        if (s.saturday === false) daysOfWeekDisabled.push(6);
-
-        new Datepicker(dateInput, {
-            format: 'dd/mm/yyyy',
-            language: 'fr',
-            autohide: true,
-            datesDisabled: unavailableDates,
-            daysOfWeekDisabled: daysOfWeekDisabled,
-            minDate: new Date(new Date().setDate(new Date().getDate() + 7)),
-            showDaysInNextAndPreviousMonths: false
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array("BLjAkonu9QmbdntAaPmgfo0H_9qCHZ-MDnzLZnDtwZz077Nlhte6gptHMrg5hU7dZzw9XnKa6gd7zpKeDEz19VA")
         });
-    } catch (error) {
-        console.error('Failed to fetch availability:', error);
-        dateInput.placeholder = 'Erreur de chargement.';
-        dateInput.disabled = true;
-    }
+        
+        await fetch('https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/push_subscriptions', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'apikey': 'VOTRE_CLE_ANON_REELLE',
+                'Authorization': 'Bearer VOTRE_CLE_ANON_REELLE'
+            },
+            body: JSON.stringify({ subscription: sub.toJSON(), role: 'customer' })
+        });
+    } catch (e) { console.error('Push failed', e); }
 }
 
-function initializeServiceMenu() {
-    const flippablePages = document.querySelectorAll('.flippable-page');
-    let currentFlippedIndex = 0;
-    const updateMenuState = () => flippablePages.forEach((page, index) => {
-        page.classList.toggle('is-flipped', index < currentFlippedIndex);
-        page.style.zIndex = index < currentFlippedIndex ? 10 + index : flippablePages.length - index;     
-    });
-    const goToNextPage = () => { if (currentFlippedIndex < flippablePages.length) { currentFlippedIndex++; updateMenuState(); } };
-    const goToPrevPage = () => { if (currentFlippedIndex > 0) { currentFlippedIndex--; updateMenuState(); } };
-    if (flippablePages.length > 0) {
-        flippablePages.forEach(page => {
-            page.querySelector('.page-front')?.addEventListener('click', goToNextPage);
-            page.querySelector('.page-back')?.addEventListener('click', goToPrevPage);
-        });
-        updateMenuState();
-    }
+// --- UTILS ---
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
+    return outputArray;
 }
 
-function initializeMobileMenu() {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    if (navToggle && navLinks) {
-        navToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            navLinks.classList.toggle('active');
-        });
-    }
+function handleResponsiveLayout() {
+    const switcher = document.querySelector('.language-switcher');
+    const container = document.querySelector('.nav-container');
+    const toggle = document.querySelector('.nav-toggle');
+    if (switcher && container && toggle) container.insertBefore(switcher, toggle);
 }
 
-function initializeMobileBottomNav() {
-    const bottomNavItems = document.querySelectorAll('.mobile-bottom-nav .nav-item');
-    if (bottomNavItems.length === 0) return;
-
-    bottomNavItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href.startsWith('#')) {
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                    bottomNavItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                }
-            }
+function initializeWhatsAppLinks() {
+    document.querySelectorAll('.js-whatsapp-link').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const phone = this.dataset.phone;
+            const msg = encodeURIComponent("Bonjour, je souhaite commander...");
+            const url = /iPad|iPhone|iPod/.test(navigator.userAgent) ? `whatsapp://send?phone=${phone}&text=${msg}` : `https://wa.me/${phone}?text=${msg}`;
+            window.open(url, '_blank');
         });
     });
-
-    window.addEventListener('scroll', () => {
-        let current = "";
-        const sections = document.querySelectorAll("section");
-        sections.forEach((section) => {
-            const sectionTop = section.offsetTop;
-            if (pageYOffset >= sectionTop - 100) {
-                current = section.getAttribute("id");
-            }
-        });
-
-        bottomNavItems.forEach((item) => {
-            item.classList.remove("active");
-            if (item.getAttribute("href") === `#${current}`) {
-                item.classList.add("active");
-            }
-            if (window.location.pathname.includes('menu.html') && item.getAttribute('href') === 'menu.html') {
-                item.classList.add('active');
-            }
-        });
-    }, { passive: true });
-}
-
-function initializeBackToTopButton() {
-    const backToTopBtn = document.getElementById('back-to-top-btn');
-    if (backToTopBtn) {
-        window.addEventListener('scroll', () => backToTopBtn.classList.toggle('visible', window.scrollY > 300), { passive: true });
-    }
 }
 
 function showNotification(message, type = 'success') {
@@ -314,162 +346,18 @@ function showNotification(message, type = 'success') {
     }, 4000);
 }
 
-function initializeForm() {
-    const bookingForm = document.getElementById('bookingForm');
-    if (!bookingForm) return;
-
-    const convertDateToISO = (dateString) => {
-        if (!dateString) return null;
-        const parts = dateString.split('/');
-        return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateString;
-    };
-
-    const individualFieldsDiv = document.getElementById('particulier-fields');
-    const companyFieldsDiv = document.getElementById('entreprise-fields');
-    const individualRadio = document.getElementById('customer_type_individual');
-    const companyRadio = document.getElementById('customer_type_company');
-
-    const toggleCustomerFields = () => {
-        const isIndividual = individualRadio.checked;
-        individualFieldsDiv.style.display = isIndividual ? 'block' : 'none';
-        companyFieldsDiv.style.display = isIndividual ? 'none' : 'block';
-        individualFieldsDiv.querySelectorAll('input').forEach(input => input.required = isIndividual);    
-        companyFieldsDiv.querySelectorAll('input').forEach(input => input.required = !isIndividual);      
-
-        const businessOption = document.getElementById('service-business');
-        if (businessOption) {
-            businessOption.style.display = isIndividual ? 'none' : 'block';
-            if (isIndividual && document.getElementById('service').value === 'repas-affaires') {
-                document.getElementById('service').value = '';
-            }
-        }
-    };
-
-    toggleCustomerFields();
-    
-    // Pré-sélection depuis localStorage (ex: venant de la page pro)
-    const typeDefault = localStorage.getItem('booking_type_default');
-    console.log('Booking type default from storage:', typeDefault);
-    if (typeDefault === 'entreprise' && companyRadio) {
-        console.log('Applying entreprise pre-selection');
-        individualRadio.checked = false;
-        companyRadio.checked = true;
-        toggleCustomerFields();
-        localStorage.removeItem('booking_type_default'); // Nettoyer après usage
-    }
-
-    individualRadio.addEventListener('change', toggleCustomerFields);
-    companyRadio.addEventListener('change', toggleCustomerFields);
-
-    bookingForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const submitBtn = this.querySelector('.submit-btn');
-        if (typeof grecaptcha === 'undefined') return showNotification('Erreur de configuration de la sécurité.', 'error');
-
-        grecaptcha.ready(() => {
-            grecaptcha.execute('6LcYThAsAAAAAOV055t1Nvd5Uo94kcTmPUBd-cmq', {action: 'submit'}).then(async (recaptchaToken) => {
-                const formData = new FormData(this);
-                const data = Object.fromEntries(formData.entries());
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Envoi en cours...';
-                submitBtn.disabled = true;
-
-                // Tenter de récupérer un abonnement push pour le suivi de livraison
-                let pushSubscription = null;
-                try {
-                    if ('serviceWorker' in navigator && 'PushManager' in window) {
-                        const registration = await navigator.serviceWorker.ready;
-                        pushSubscription = await registration.pushManager.getSubscription();
-                    }
-                } catch (e) { console.warn('Push not available for this request'); }
-
-                const payload = {
-                    type: 'RESERVATION_SERVICE',
-                    customerType: data.customer_type,
-                    customer: data.customer_type === 'Particulier'
-                        ? { lastName: data.nom_particulier, email: data.email_particulier, phone: data.telephone_particulier }
-                        : { companyName: data.nom_entreprise, siret: data.siret, contactName: data.nom_contact_entreprise, contactEmail: data.email_contact_entreprise, contactPhone: data.telephone_contact_entreprise },
-                    requestDate: convertDateToISO(data.date),
-                    heure: data.heure,
-                    serviceType: data.service,
-                    numberOfPeople: data.personnes,
-                    ville: data.ville,
-                    budget: data.budget || null,
-                    allergies: data.allergies || null,
-                    customerMessage: data.message || null,
-                    lang: i18next.language,
-                    recaptchaToken,
-                    pushSubscription: pushSubscription ? pushSubscription.toJSON() : null
-                };
-
-                try {
-                    const response = await fetch('/create-request/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload),
-                    });
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.error || 'Une erreur est survenue.');        
-                    showNotification('Votre demande a été envoyée avec succès !');
-                    bookingForm.reset();
-                    fetchAndInitializeDatepicker();
-                } catch (error) {
-                    showNotification(`Erreur: ${error.message}`, 'error');
-                } finally {
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }
-            });
-        });
-    });
-}
-
-function initializeLightbox() {
-    document.body.addEventListener('click', (e) => {
-        const galleryItem = e.target.closest('.gallery-item');
-        if (!galleryItem) return;
-
-        e.preventDefault();
-        const imgSrc = galleryItem.querySelector('img').src;
-        const imgAlt = galleryItem.querySelector('img').alt;
-        const lightbox = document.createElement('div');
-        lightbox.className = 'lightbox';
-        lightbox.innerHTML = `<div class="lightbox-bg" style="background-image: url(${imgSrc})"></div><div class="lightbox-content"><span class="lightbox-close">&times;</span><img src="${imgSrc}" alt="${imgAlt}" class="lightbox-image"></div>`;
-        document.body.appendChild(lightbox);
-        const closeLightbox = () => lightbox.remove();
-        lightbox.addEventListener('click', (ev) => (ev.target === lightbox || ev.target.matches('.lightbox-close')) && closeLightbox());
-    });
-}
-
-function initializeCookieConsent() {
-    const banner = document.getElementById('cookie-consent-banner');
-    if (!banner || localStorage.getItem('asiacuisine.re-cookie-consent') === 'true') return;
-
-    setTimeout(() => banner.classList.add('is-visible'), 500);
-
-    banner.addEventListener('click', (e) => {
-        if (e.target.matches('#cookie-consent-accept, #cookie-consent-decline')) {
-            localStorage.setItem('asiacuisine.re-cookie-consent', 'true');
-            banner.classList.remove('is-visible');
-        }
-    });
-}
-
-async function initializeWelcomePopup() {
+function initializeWelcomePopup() {
     const popup = document.getElementById('welcome-popup');
     if (!popup || sessionStorage.getItem('asiacuisine.re-welcome-shown') === 'true') return;
 
-    try {
-        const response = await fetch('/get-setting?key=welcomePopupMessage');
-        if (response.ok) {
-            const data = await response.json();
-            if (data.value) document.getElementById('welcome-popup-message').textContent = data.value;    
-        }
-    } catch (error) {
-        console.error('Could not fetch welcome popup message:', error);
-    }
+    fetch('/get-setting?key=welcomePopupMessage')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (data && data.value) document.getElementById('welcome-popup-message').textContent = data.value;
+            setTimeout(() => popup.classList.add('is-visible'), 1500);
+        })
+        .catch(err => console.error('Welcome popup failed', err));
 
-    setTimeout(() => popup.classList.add('is-visible'), 1500);
     popup.addEventListener('click', (e) => {
         if (e.target.matches('#welcome-popup-close, #welcome-popup')) {
             popup.classList.remove('is-visible');
@@ -478,181 +366,106 @@ async function initializeWelcomePopup() {
     });
 }
 
+function initializeCookieConsent() {
+    const banner = document.getElementById('cookie-consent-banner');
+    if (!banner || localStorage.getItem('asiacuisine.re-cookie-consent') === 'true') return;
+    setTimeout(() => banner.classList.add('is-visible'), 500);
+    banner.addEventListener('click', (e) => {
+        if (e.target.matches('#cookie-consent-accept, #cookie-consent-decline')) {
+            localStorage.setItem('asiacuisine.re-cookie-consent', 'true');
+            banner.classList.remove('is-visible');
+        }
+    });
+}
+
+function initializeCgvModal() {
+    const modal = document.getElementById('cgv-modal');
+    const cgvBody = document.getElementById('cgv-content-body');
+    const closeBtns = document.querySelectorAll('.close-modal');
+
+    document.body.addEventListener('click', (e) => {
+        if (e.target && e.target.id === 'open-cgv-link') {
+            e.preventDefault();
+            if (modal) modal.classList.add('is-visible');
+            if (cgvBody && (cgvBody.innerHTML.includes("Chargement") || cgvBody.innerHTML === "")) {      
+                fetch('cgv.html')
+                    .then(res => res.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        cgvBody.innerHTML = (doc.querySelector('.legal-container') || doc.querySelector('main') || doc.body).innerHTML;
+                        if (window.i18next && typeof i18next.t === 'function') {
+                            cgvBody.querySelectorAll('[data-i18n]').forEach(el => {
+                                const key = el.getAttribute('data-i18n');
+                                if (key) el.innerHTML = i18next.t(key);
+                            });
+                        }
+                    })
+                    .catch(() => { cgvBody.innerHTML = "Erreur chargement CGV."; });
+            }
+        }
+    });
+    closeBtns.forEach(btn => btn.addEventListener('click', () => modal?.classList.remove('is-visible'))); 
+}
+
+function initializeLightbox() {
+    document.body.addEventListener('click', (e) => {
+        const item = e.target.closest('.gallery-item');
+        if (!item) return;
+        e.preventDefault();
+        const img = item.querySelector('img');
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        lightbox.innerHTML = `<div class="lightbox-bg" style="background-image: url(${img.src})"></div><div class="lightbox-content"><span class="lightbox-close">&times;</span><img src="${img.src}" alt="${img.alt}" class="lightbox-image"></div>`;
+        document.body.appendChild(lightbox);
+        lightbox.addEventListener('click', (ev) => (ev.target === lightbox || ev.target.matches('.lightbox-close')) && lightbox.remove());
+    });
+}
+
+function initializeMobileMenu() {
+    const toggle = document.querySelector('.nav-toggle');
+    const links = document.querySelector('.nav-links');
+    if (toggle && links) {
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            links.classList.toggle('active');
+        });
+    }
+}
+
+function initializeBackToTopButton() {
+    const btn = document.getElementById('back-to-top-btn');
+    if (btn) window.addEventListener('scroll', () => btn.classList.toggle('visible', window.scrollY > 300), { passive: true });
+}
+
+function initializeServiceMenu() {
+    const pages = document.querySelectorAll('.flippable-page');
+    let current = 0;
+    const update = () => pages.forEach((p, i) => {
+        p.classList.toggle('is-flipped', i < current);
+        p.style.zIndex = i < current ? 10 + i : pages.length - i;
+    });
+    pages.forEach(p => {
+        p.querySelector('.page-front')?.addEventListener('click', () => { if(current < pages.length) { current++; update(); } });
+        p.querySelector('.page-back')?.addEventListener('click', () => { if(current > 0) { current--; update(); } });
+    });
+    update();
+}
+
 function initializeSubscriptionForm() {
     const modal = document.getElementById('subscription-form-modal');
     if (!modal) return;
-
     const form = document.getElementById('subscription-form');
-    const formulaNameEl = modal.querySelector('#selected-formula-name');
-    const formulaInputEl = document.getElementById('form_formula');
-    const messageDiv = document.getElementById('subscription-message');
-    let selectedFormula = '';
-
-    const openForm = (formula) => {
-        selectedFormula = formula;
-        if (formulaNameEl) formulaNameEl.textContent = formula;
+    document.querySelectorAll('.choose-button').forEach(btn => btn.addEventListener('click', (e) => {
+        e.preventDefault();
         modal.style.display = 'flex';
         setTimeout(() => modal.classList.add('is-visible'), 10);
-        document.body.style.overflow = 'hidden';
-    };
-
-    const closeForm = () => {
-        modal.classList.remove('is-visible');
-        setTimeout(() => { modal.style.display = 'none'; }, 400);
-        document.body.style.overflow = '';
-        if (messageDiv) messageDiv.textContent = '';
-    };
-
-    document.querySelectorAll('.choose-button').forEach(btn => btn.addEventListener('click', (e) => {     
-        e.preventDefault();
-        openForm(e.target.dataset.formula);
     }));
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal || e.target.matches('#close-subscription-modal-btn')) {
-            e.preventDefault();
-            closeForm();
-        }
-    });
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Envoi...';
-        submitBtn.disabled = true;
-
-        if (formulaInputEl) formulaInputEl.value = selectedFormula;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-
-        try {
-            const response = await fetch('/create-subscription', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Une erreur est survenue.');
-            messageDiv.textContent = 'Demande envoyée ! Nous vous contacterons bientôt.';
-            messageDiv.className = 'mt-4 text-center text-green-600';
-            form.reset();
-            setTimeout(closeForm, 3000);
-        } catch (error) {
-            messageDiv.textContent = error.message;
-            messageDiv.className = 'mt-4 text-center text-red-600';
-        } finally {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
-    });
+    modal.addEventListener('click', (e) => (e.target === modal || e.target.id === 'close-subscription-modal-btn') && modal.classList.remove('is-visible'));
 }
 
-async function initializePushControl() {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-
-    const container = document.getElementById('push-nav-control');
-    if (!container) return;
-
-    const updatePushFabState = (isSubscribed) => {
-        container.classList.toggle('subscribed', isSubscribed);
-        const titleKey = isSubscribed ? 'push.title_unsubscribe' : 'push.title_subscribe';
-        const icon = isSubscribed ? '🔕' : '🔔';
-        container.innerHTML = `<span title="${i18next.t(titleKey)}">${icon}</span>`;
-    };
-
-    try {
-        const registration = await navigator.serviceWorker.ready;
-        let subscription = await registration.pushManager.getSubscription();
-        updatePushFabState(!!subscription);
-
-        container.addEventListener('click', async () => {
-            if (subscription) {
-                if (!confirm(i18next.t('push.confirm_unsubscribe'))) return;
-                await subscription.unsubscribe();
-                subscription = null;
-                updatePushFabState(false);
-                showNotification(i18next.t('push.unsubscribed_notification'));
-            } else {
-                await subscribeClientToPush();
-                subscription = await registration.pushManager.getSubscription();
-                if (subscription) updatePushFabState(true);
-            }
-        });
-    } catch (e) {
-        console.warn('Push control init failed', e);
-    }
-} function initializeWhatsAppLinks() {
-    document.querySelectorAll('.js-whatsapp-link').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            const phone = this.dataset.phone;
-            const message = "Bonjour, je souhaite commander..."; 
-            const encodedMessage = encodeURIComponent(message);
-
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-            if (isIOS || isSafari) {
-                const appLink = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
-                const webLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;    
-                window.location.href = appLink;
-                setTimeout(() => { window.location.href = webLink; }, 1000);
-            } else {
-                window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-            }
-        });
-    });
-}
-
-// LOGIQUE PUSH CLIENT
-async function subscribeClientToPush() {
-  if (!('serviceWorker' in navigator)) return;
-  try {
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') return;
-
-    const registration = await navigator.serviceWorker.ready;
-    const VAPID_PUBLIC_KEY = "BLjAkonu9QmbdntAaPmgfo0H_9qCHZ-MDnzLZnDtwZz077Nlhte6gptHMrg5hU7dZzw9XnKa6gd7zpKeDEz19VA"; 
-
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    });
-
-    await fetch('https://zgniojabjywrnwovlmaf.supabase.co/rest/v1/push_subscriptions', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnbmlvamFianl3cm53b3ZsbWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0ODg2MzgsImV4cCI6MjA3NzA2NDYzOH0.W2oBIE4AkBEfi2k3apLK3Gr2bn22vKqQG2sTixQVPu0', // À REMPLACER PAR VOTRE CLÉ ANONYME
-        'Authorization': 'Bearer VOTRE_CLE_ANON_REELLE' // À REMPLACER
-      },
-      body: JSON.stringify({
-        subscription: subscription.toJSON(),
-        user_agent: navigator.userAgent,
-        role: 'customer'
-      })
-    });
-
-    alert('Vous recevrez désormais les alertes nouveaux menus !');
-  } catch (err) { console.error('Push subscription failed', err); }
-}
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
-  return outputArray;
-}
-
-// Enregistrement du Service Worker pour la PWA
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(reg => console.log('PWA Service Worker enregistré'))
-      .catch(err => console.log('Erreur PWA Service Worker', err));
-  });
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(err => console.log('SW Error', err));
+    });
 }

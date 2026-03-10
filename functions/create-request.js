@@ -1,11 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
-import fetch from 'node-fetch';
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+};
 
-async function sendWhatsAppAlert(message) {
-    const phone = process.env.ADMIN_WHATSAPP_NUMBER;
-    const apiKey = process.env.ADMIN_WHATSAPP_API_KEY;
+async function sendWhatsAppAlert(message, env) {
+    const phone = env.ADMIN_WHATSAPP_NUMBER;
+    const apiKey = env.ADMIN_WHATSAPP_API_KEY;
     if (!phone || !apiKey) return;
     try {
         const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${apiKey}`;
@@ -13,36 +16,52 @@ async function sendWhatsAppAlert(message) {
     } catch (err) { console.error("WhatsApp Alert Error:", err); }
 }
 
-async function sendPushNotification(title, body, url = "https://gestion.asiacuisine.re/") {
+async function sendPushNotification(title, body, env, url = "https://gestion.asiacuisine.re/") {
     try {
-        await fetch(`${process.env.SUPABASE_URL}/functions/v1/send-push-notification`, {
+        await fetch(`${env.SUPABASE_URL}/functions/v1/send-push-notification`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` },
             body: JSON.stringify({ title, body, url })
         });
     } catch (e) { console.error("Push Alert Error:", e); }
 }
 
-export const handler = async (event) => {
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-    };
+export async function onRequest(context) {
+    const { request, env } = context;
 
-    if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+        return new Response(null, {
+            status: 204,
+            headers: corsHeaders
+        });
+    }
+
+    if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: `Method ${request.method} Not Allowed` }), {
+            status: 405,
+            headers: { ...corsHeaders, 'Allow': 'POST', 'Content-Type': 'application/json' }
+        });
+    }
+
+    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
     try {
-        const { type, customerType, customer, requestDate, details_json, recaptchaToken, lang } = JSON.parse(event.body);
+        const body = await request.json();
+        const { type, customerType, customer, requestDate, details_json, recaptchaToken, lang, pushSubscription } = body;
 
         // 1. Verify reCAPTCHA
         if (recaptchaToken) {
-            const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`;
+            const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`;
             const recaptchaRes = await fetch(verifyUrl, { method: 'POST' });
             const recaptchaJson = await recaptchaRes.json();
+            
             if (!recaptchaJson.success || recaptchaJson.score < 0.5) {
-                console.error("reCAPTCHA failed:", recaptchaJson);
-                return { statusCode: 403, headers, body: JSON.stringify({ error: 'Security verification failed' }) };
+                console.error("reCAPTCHA Verification Failed:", recaptchaJson);
+                return new Response(JSON.stringify({ 
+                    error: 'Security verification failed', 
+                    details: recaptchaJson['error-codes'] || 'Low score' 
+                }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
             }
         }
 
@@ -57,6 +76,7 @@ export const handler = async (event) => {
                 first_name: customer.firstName || '',
                 email: customer.email,
                 phone: customer.phone,
+                type: 'Particulier',
                 updated_at: new Date().toISOString()
             }, { onConflict: 'email' }).select().single();
             if (cErr) throw cErr;
@@ -78,13 +98,13 @@ export const handler = async (event) => {
 
         // 3. Register push subscription if provided
         let push_subscription_id = null;
-        if (formData.pushSubscription) {
+        if (pushSubscription) {
             try {
                 const { data: ps, error: psErr } = await supabase
                     .from('push_subscriptions')
                     .insert({
-                        subscription: formData.pushSubscription,
-                        user_agent: headers['user-agent'] || 'unknown',
+                        subscription: pushSubscription,
+                        user_agent: request.headers.get('user-agent') || 'unknown',
                         role: 'customer'
                     })
                     .select('id')
@@ -111,18 +131,24 @@ export const handler = async (event) => {
 
         if (dErr) throw dErr;
 
-        // 4. Alerts
+        // 5. Alerts
         const isBusinessMeal = details_json.serviceType === 'repas-affaires';
         const businessTag = isBusinessMeal ? '💼 *REPAS AFFAIRES*' : '🔔 *NOUVELLE DEMANDE*';
         const alertMsg = `${businessTag} (${type.replace('_',' ')})\n\n👤 *Client:* ${clientName}\n📅 *Date:* ${requestDate || 'Non spécifiée'}\n📍 *Ville:* ${details_json.ville || details_json.deliveryCity || 'Non spécifiée'}`;
         
-        await sendWhatsAppAlert(`${alertMsg}\n\n👉 *Gérer:* https://gestion.asiacuisine.re`);
-        await sendPushNotification("🔔 Nouvelle Demande !", `Dossier de ${clientName} reçu (${type.replace('_',' ')})`);
+        await sendWhatsAppAlert(`${alertMsg}\n\n👉 *Gérer:* https://gestion.asiacuisine.re`, env);
+        await sendPushNotification("🔔 Nouvelle Demande !", `Dossier de ${clientName} reçu (${type.replace('_',' ')})`, env);
 
-        return { statusCode: 200, headers, body: JSON.stringify({ message: 'Request created successfully', id: demandData.id }) };
+        return new Response(JSON.stringify({ message: 'Request created successfully', id: demandData.id }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
 
     } catch (error) {
         console.error("Error creating request:", error);
-        return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
+        return new Response(JSON.stringify({ error: error.message }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
     }
-};
+}
