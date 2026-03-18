@@ -55,4 +55,4 @@ dashboard/
 #/*.md
 /*.xlsx
 /*.py
-#/SUGGESTIONS_AMELIORATIONS_CLIENT.md
+#/SUGGESTIONS_AMELIORATIONS_CLIENT.md`n# Secrets and local environment variables`n.dev.vars`n.env
