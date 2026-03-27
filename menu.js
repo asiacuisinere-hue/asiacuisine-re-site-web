@@ -325,9 +325,25 @@ document.addEventListener('DOMContentLoaded', () => {
             orderCutoffDays = data.order_cutoff_days || 2; orderCutoffHour = data.order_cutoff_hour || 11;
             menuPrices = { menu_decouverte_price: parseFloat(data.menu_decouverte_price || 0), menu_standard_price: parseFloat(data.menu_standard_price || 0), menu_confort_price: parseFloat(data.menu_confort_price || 0), menu_duo_price: parseFloat(data.menu_duo_price || 0) };
 
+            // Mettre à jour les prix sur les cartes (AVANT le possible return de l'override)
+            const d1 = document.getElementById('price-decouverte'); if(d1) d1.textContent = `${data.menu_decouverte_price || '--'}€`;
+            const d2 = document.getElementById('price-standard'); if(d2) d2.textContent = `${data.menu_standard_price || '--'}€`;
+            const d3 = document.getElementById('price-confort'); if(d3) d3.textContent = `${data.menu_confort_price || '--'}€`;
+            const d4 = document.getElementById('price-duo'); if(d4) d4.textContent = `${data.menu_duo_price || '--'}€`;
+
             if (data.menu_override_enabled === 'true' || data.menu_override_enabled === true) {
+                console.log("Menu override detected, displaying message...");
                 isOverrideEnabled = true; const overrideEl = document.getElementById('menu-override-message');
-                if(overrideEl) { overrideEl.style.display = 'block'; overrideEl.querySelector('p').innerHTML = marked.parse(data.menu_override_message); }
+                if(overrideEl) { 
+                    overrideEl.style.display = 'block'; 
+                    const pEl = overrideEl.querySelector('p') || overrideEl;
+                    // Utilisation sécurisée de marked.parse
+                    if (typeof marked !== 'undefined' && marked.parse) {
+                        pEl.innerHTML = marked.parse(data.menu_override_message || "");
+                    } else {
+                        pEl.innerHTML = data.menu_override_message || "";
+                    }
+                }
                 document.querySelectorAll('#whatsapp-order-form, .stepper-progress').forEach(e => e.style.display = 'none'); return;
             }
 
@@ -353,12 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (duoVal !== "" && duoVal !== standardContent) fillContent('content-duo', 'menu.formula_duo_label', data.menu_duo);
             else { const el = document.getElementById('content-duo'); if(el) el.style.display = 'none'; } 
 
-            document.querySelectorAll('.formula-card').forEach(card => card.style.display = 'block');     
-
-            const d1 = document.getElementById('price-decouverte'); if(d1) d1.textContent = `${data.menu_decouverte_price}€`;
-            const d2 = document.getElementById('price-standard'); if(d2) d2.textContent = `${data.menu_standard_price}€`;
-            const d3 = document.getElementById('price-confort'); if(d3) d3.textContent = `${data.menu_confort_price}€`;
-            const d4 = document.getElementById('price-duo'); if(d4) d4.textContent = `${data.menu_duo_price}€`;
+            document.querySelectorAll('.formula-card').forEach(card => card.style.display = 'block');
 
             if(data.special_offer_enabled === 'true' || data.special_offer_enabled === true) {
                 specialOfferDetails = typeof data.special_offer_details === 'string' ? JSON.parse(data.special_offer_details) : data.special_offer_details;
